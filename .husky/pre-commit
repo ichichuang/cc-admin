@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# 运行lint-staged进行代码格式检查和修复
+pnpm dlx lint-staged

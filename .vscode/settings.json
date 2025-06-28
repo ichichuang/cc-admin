@@ -1,0 +1,115 @@
+{
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "package.json": "package-lock.json, pnpm-lock.yaml, yarn.lock, .yarnrc*, yarn*, .npmrc, .nvmrc, .node-version",
+    "tsconfig.json": "tsconfig.*.json, env.d.ts",
+    "vite.config.*": "jsconfig*, vitest.config.*, cypress.config.*, playwright.config.*, rollup.config.*, webpack.config.*",
+    ".gitignore": ".gitattributes, .gitmodules, .gitkeep",
+    "eslint.config.*": ".eslint*, .oxlint*, oxlint*",
+    ".eslintrc.*": ".eslint*, .oxlint*, oxlint*",
+    ".prettierrc.*": ".prettier*",
+    ".editorconfig": ".vscode/settings.json, .vscode/extensions.json, .vscode/launch.json, .vscode/tasks.json",
+    "README.md": "README.*, CHANGELOG.*, CONTRIBUTING.*, LICENSE*, SECURITY.*",
+    ".env": ".env.*, .envrc",
+    "Dockerfile": "Dockerfile.*, .dockerignore, docker-compose.*, .docker*",
+    "jest.config.*": "jest.*.config.*, .jestrc*",
+    "vitest.config.*": "vitest.*.config.*",
+    "babel.config.*": ".babel*",
+    "tailwind.config.*": "tailwind.*.config.*, postcss.config.*",
+    ".browserslistrc": ".browserslist*",
+    "vercel.json": ".vercel*, vercel-*",
+    "netlify.toml": ".netlify*, netlify-*",
+    "index.html": "favicon.ico, favicon.*, robots.txt, manifest.json, sw.js, workbox-config.js"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.formatOnType": false,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  "editor.trimAutoWhitespace": true,
+  "editor.wordWrap": "off",
+  "editor.rulers": [100],
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "files.trimFinalNewlines": true,
+  "eslint.enable": true,
+  "eslint.format.enable": true,
+  "eslint.lintTask.enable": true,
+  "eslint.run": "onSave",
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact", "vue"],
+  "prettier.enable": true,
+  "prettier.requireConfig": true,
+  "vetur.format.enable": false,
+  "vetur.validation.template": false,
+  "vetur.validation.script": false,
+  "vetur.validation.style": false,
+  "vue.codeActions.enabled": true,
+  "vue.complete.casing.status": true,
+  "vue.updateImportsOnFileMove.enabled": true,
+  "typescript.format.enable": false,
+  "typescript.validate.enable": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "typescript.suggest.autoImports": true,
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.wordWrap": "on",
+    "editor.quickSuggestions": {
+      "comments": "off",
+      "strings": "off",
+      "other": "off"
+    }
+  },
+  "explorer.compactFolders": false,
+  "explorer.sortOrder": "type",
+  "explorer.decorations.badges": true,
+  "explorer.decorations.colors": true,
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/coverage": true,
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/pnpm-lock.yaml": true,
+    "**/package-lock.json": true
+  },
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/coverage/**": true,
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true
+  }
+}

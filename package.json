@@ -4,17 +4,39 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": "24.3.0",
-    "npm": ">=10.0.0"
+    "node": ">=20.19.0",
+    "pnpm": ">=8.0.0"
   },
+  "packageManager": "pnpm@9.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check \"build-only {@}\" --",
+    "build": "pnpm run type-check && pnpm run build-only",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
-    "format": "prettier --write src/"
+    "lint:check": "eslint .",
+    "format": "prettier --write src/",
+    "format:check": "prettier --check src/",
+    "code-check": "pnpm run lint:check && pnpm run format:check && pnpm run type-check",
+    "code-fix": "pnpm run lint && pnpm run format",
+    "commit": "git add . && git cz",
+    "commitlint": "commitlint",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,vue}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,scss,sass,less,styl,json,md}": [
+      "prettier --write"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   },
   "dependencies": {
     "pinia": "^3.0.3",
@@ -22,16 +44,24 @@
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
     "@tsconfig/node22": "^22.0.2",
     "@types/node": "^22.15.32",
+    "@typescript-eslint/eslint-plugin": "^8.35.0",
+    "@typescript-eslint/parser": "^8.35.0",
     "@vitejs/plugin-vue": "^6.0.0",
     "@vitejs/plugin-vue-jsx": "^5.0.0",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.5.1",
     "@vue/tsconfig": "^0.7.0",
+    "commitizen": "^4.3.1",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^9.29.0",
     "eslint-plugin-vue": "~10.2.0",
+    "husky": "^9.1.7",
     "jiti": "^2.4.2",
+    "lint-staged": "^16.1.2",
     "npm-run-all2": "^8.0.4",
     "prettier": "3.5.3",
     "typescript": "~5.8.0",
