@@ -20,7 +20,7 @@
     "format:check": "prettier --check src/",
     "code-check": "pnpm run lint:check && pnpm run format:check && pnpm run type-check",
     "code-fix": "pnpm run lint && pnpm run format",
-    "commit": "git add . && git cz",
+    "commit": "git add . && npx git-cz",
     "commitlint": "commitlint",
     "prepare": "husky install"
   },
