@@ -1,8 +1,24 @@
 {
   "recommendations": [
     "Vue.volar",
+    "Vue.vscode-typescript-vue-plugin",
+    "ms-vscode.vscode-typescript-next",
+    "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
-    "EditorConfig.EditorConfig",
-    "esbenp.prettier-vscode"
-  ]
+    "eamodio.gitlens",
+    "GitHub.vscode-github-actions",
+    "vscode-icons-team.vscode-icons",
+    "PKief.material-icon-theme",
+    "streetsidesoftware.code-spell-checker",
+    "wayou.vscode-todo-highlight",
+    "formulahendry.auto-rename-tag",
+    "antfu.unocss",
+    "yzhang.markdown-all-in-one",
+    "DavidAnson.vscode-markdownlint",
+    "christian-kohler.path-intellisense",
+    "ms-vscode.sublime-keybindings",
+    "usernamehw.errorlens",
+    "aaron-bond.better-comments"
+  ],
+  "unwantedRecommendations": ["ms-vscode.vscode-typescript", "octref.vetur"]
 }

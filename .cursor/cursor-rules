@@ -1,0 +1,28 @@
+# CC Admin 项目编码规范
+
+## 命名约定
+- 文件：Vue页面用kebab-case，组件用PascalCase
+- 变量/函数：camelCase
+- 常量：SCREAMING_SNAKE_CASE
+- 接口/类型：PascalCase
+- 目录：kebab-case
+
+## Vue 3 最佳实践
+- 使用 Composition API
+- TypeScript 严格模式
+- 组件名多词组合
+- Props 类型定义
+- 事件命名使用 handle 前缀
+
+## 项目结构
+- 页面模块独立目录（components/views/utils/types）
+- 使用路径别名 @/ @test/ @components/ @utils/
+- 文件嵌套显示配置
+
+## 代码质量
+- ESLint + Prettier 自动格式化
+- Git Hooks 提交前检查
+- 命名规范自动验证
+- TypeScript 严格类型检查
+
+使用 pnpm 作为包管理器，遵循企业级开发规范。

@@ -24,11 +24,15 @@ coverage
 *.local
 
 # Environment variables
+# 忽略包含敏感信息的环境变量文件
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+
+# 注意：.env.development 和 .env.production 不被忽略
+# 它们可以安全地提交到版本控制中（不包含敏感信息）
 
 # Editor directories and files
 .vscode/*

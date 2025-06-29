@@ -1,0 +1,28 @@
+/* 清除系统默认无用样式 */
+*,
+*:after,
+*:before {
+  box-sizing: border-box;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  width: 100%;
+  height: 100%;
+  vertical-align: middle;
+}

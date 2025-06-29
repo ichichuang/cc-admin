@@ -1,92 +1,136 @@
-import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
-import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript'
+import js from '@eslint/js'
 import pluginVue from 'eslint-plugin-vue'
-import { globalIgnores } from 'eslint/config'
+import tseslint from 'typescript-eslint'
 
-// To allow more languages other than `ts` in `.vue` files, uncomment the following lines:
-// import { configureVueProject } from '@vue/eslint-config-typescript'
-// configureVueProject({ scriptLangs: ['ts', 'tsx'] })
-// More info at https://github.com/vuejs/eslint-config-typescript/#advanced-setup
-
-export default defineConfigWithVueTs(
+export default tseslint.config(
+  { name: 'app/files-to-lint', files: ['**/*.{ts,mts,tsx,vue}'] },
+  { name: 'app/files-to-ignore', ignores: ['**/dist/**', '**/dist-ssr/**', '**/coverage/**'] },
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
+  ...pluginVue.configs['flat/essential'],
   {
-    name: 'app/files-to-lint',
-    files: ['**/*.{ts,mts,tsx,vue}'],
+    name: 'app/vue-rules',
+    files: ['**/*.vue'],
+    languageOptions: {
+      parserOptions: {
+        parser: tseslint.parser,
+      },
+    },
   },
-
-  globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**', '**/node_modules/**']),
-
-  pluginVue.configs['flat/essential'],
-  vueTsConfigs.recommended,
-
-  // 自定义规则配置
   {
     name: 'app/custom-rules',
+    files: ['**/*.{ts,mts,tsx,vue}'],
     rules: {
-      // TypeScript 相关规则
+      // 允许未使用的变量以_开头
       '@typescript-eslint/no-unused-vars': [
-        'warn',
+        'error',
         {
           argsIgnorePattern: '^_',
           varsIgnorePattern: '^_',
           caughtErrorsIgnorePattern: '^_',
         },
       ],
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-var-requires': 'error',
-      '@typescript-eslint/explicit-function-return-type': 'off',
-      '@typescript-eslint/explicit-module-boundary-types': 'off',
-      '@typescript-eslint/no-empty-function': 'warn',
-      '@typescript-eslint/no-non-null-assertion': 'warn',
 
-      // Vue 相关规则
-      'vue/multi-word-component-names': 'off',
-      'vue/no-unused-vars': 'error',
-      'vue/no-unused-components': 'warn',
-      'vue/require-default-prop': 'off',
-      'vue/html-self-closing': [
+      // 命名规范：完整版本
+      '@typescript-eslint/naming-convention': [
         'error',
+        // 变量使用 camelCase，允许 UPPER_CASE 常量和特殊变量
         {
-          html: {
-            void: 'never',
-            normal: 'always',
-            component: 'always',
+          selector: 'variable',
+          format: ['camelCase', 'UPPER_CASE'],
+          leadingUnderscore: 'allow',
+          filter: {
+            regex: '^(__.*__|VITE_.*)',
+            match: false,
           },
-          svg: 'always',
-          math: 'always',
+        },
+        // 函数使用 camelCase
+        {
+          selector: 'function',
+          format: ['camelCase'],
+        },
+        // 参数使用 camelCase
+        {
+          selector: 'parameter',
+          format: ['camelCase'],
+          leadingUnderscore: 'allow',
+        },
+        // 接口使用 PascalCase
+        {
+          selector: 'interface',
+          format: ['PascalCase'],
+        },
+        // 类型别名使用 PascalCase
+        {
+          selector: 'typeAlias',
+          format: ['PascalCase'],
+        },
+        // 枚举使用 PascalCase
+        {
+          selector: 'enum',
+          format: ['PascalCase'],
+        },
+        // 枚举成员使用 PascalCase
+        {
+          selector: 'enumMember',
+          format: ['PascalCase'],
+        },
+        // 类使用 PascalCase
+        {
+          selector: 'class',
+          format: ['PascalCase'],
+        },
+        // 类方法使用 camelCase
+        {
+          selector: 'method',
+          format: ['camelCase'],
+        },
+        // 类属性使用 camelCase，但允许特殊属性名
+        {
+          selector: 'property',
+          format: ['camelCase'],
+          leadingUnderscore: 'allow',
+          filter: {
+            regex: '^(@|vue/|no-|prefer-|eqeqeq|curly|VITE_|__.*__|drop_|AtRule)',
+            match: false,
+          },
         },
       ],
-      'vue/max-attributes-per-line': [
+
+      // Vue 组件命名规范
+      'vue/component-definition-name-casing': ['error', 'PascalCase'],
+      'vue/component-name-in-template-casing': ['error', 'PascalCase'],
+      'vue/prop-name-casing': ['error', 'camelCase'],
+      'vue/attribute-hyphenation': ['error', 'always'],
+      'vue/v-on-event-hyphenation': ['error', 'always'],
+
+      // Vue 最佳实践
+      'vue/multi-word-component-names': [
         'error',
         {
-          singleline: 3,
-          multiline: 1,
+          ignores: ['index'],
         },
       ],
-      'vue/singleline-html-element-content-newline': 'off',
-      'vue/multiline-html-element-content-newline': 'error',
+      'vue/require-default-prop': 'warn',
+      'vue/require-prop-types': 'error',
+      'vue/no-unused-components': 'warn',
+      'vue/no-unused-vars': 'error',
 
-      // 通用规则
+      // 一般代码质量规则
       'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-      'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-      'no-unused-vars': 'off', // 使用 TypeScript 版本的规则
+      'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
       'prefer-const': 'error',
       'no-var': 'error',
-      'object-shorthand': 'error',
-      'prefer-arrow-callback': 'error',
-      'prefer-template': 'error',
-      'template-curly-spacing': 'error',
-      'yield-star-spacing': 'error',
-      'prefer-rest-params': 'error',
-      'no-useless-escape': 'error',
-      'no-irregular-whitespace': 'error',
-      'no-prototype-builtins': 'error',
-      'no-fallthrough': 'error',
-      'no-extra-boolean-cast': 'error',
-      'no-case-declarations': 'error',
-      'no-async-promise-executor': 'error',
+      eqeqeq: ['error', 'always'],
+      curly: ['error', 'all'],
+      '@typescript-eslint/no-explicit-any': 'off',
+      'no-undef': 'off', // TypeScript 处理未定义变量
     },
   },
-
-  skipFormatting
+  {
+    files: ['uno.config.ts'],
+    rules: {
+      '@typescript-eslint/naming-convention': 'off',
+    },
+  }
 )

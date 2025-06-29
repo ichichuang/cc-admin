@@ -1,5 +1,10 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# 运行lint-staged进行代码格式检查和修复
-pnpm dlx lint-staged
+# 运行lint-staged检查暂存文件
+npx lint-staged
+
+# 检查命名规范
+pnpm naming-check
+
+echo "✅ 代码检查和命名规范检查通过！"
