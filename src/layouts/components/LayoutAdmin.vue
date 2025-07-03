@@ -34,7 +34,10 @@ const containerClass = computed(() => [
   <!-- 主内容区域 -->
   <div class="main-container">
     <!-- 头部 -->
-    <AppHeader v-if="config.showHeader" />
+    <header class="w-full bg-theme-success h-header p-gap">
+      <div class="w-gap h-gap bg-theme radius-radius"></div>
+      <AppHeader v-if="config.showHeader" />
+    </header>
 
     <!-- 面包屑 -->
     <AppBreadcrumb v-if="config.showBreadcrumb" />

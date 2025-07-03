@@ -26,6 +26,9 @@ interface ImportMetaEnv {
   /** 应用版本号 - 用于版本控制和显示 */
   readonly VITE_APP_VERSION: string
 
+  /** 应用 pinia 持久化存储 关键 key 前缀 */
+  readonly VITE_PINIA_PERSIST_KEY_PREFIX: string
+
   /** 当前运行环境 - 用于区分不同的部署环境 */
   readonly VITE_APP_ENV: 'development' | 'production' | 'test'
 

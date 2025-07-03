@@ -7,7 +7,7 @@
     "node": ">=24.3.0",
     "pnpm": ">=8.0.0"
   },
-  "packageManager": "pnpm@9.0.0",
+  "packageManager": "pnpm@10.12.4",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
@@ -37,7 +37,13 @@
       "path": "./node_modules/cz-conventional-changelog"
     }
   },
+  "pnpm": {
+    "overrides": {
+      "glob": "^11.0.3"
+    }
+  },
   "dependencies": {
+    "@unocss/preset-rem-to-px": "^66.3.2",
     "alova": "^3.3.3",
     "crypto-js": "^4.2.0",
     "lodash-es": "^4.17.21",

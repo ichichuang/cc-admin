@@ -1,819 +1,666 @@
-# 动态主题变量系统使用指南
+# 主题变量系统使用指南
 
-## 🎨 概述
+## 📋 概述
 
-本项目采用基于CSS自定义属性（CSS Variables）的动态主题系统，相比传统的SCSS变量具有以下优势：
+CC-Admin 采用了先进的动态主题变量系统，现已重构为独立的颜色管理(`color.ts`)和尺寸管理(`size.ts`)模块，提供更加清晰和易于维护的主题配置。
 
-- ✅ **动态性**：可以在运行时动态修改变量值
-- ✅ **响应式**：支持实时主题切换，无需重新编译
-- ✅ **灵活性**：可以针对不同组件或页面设置不同的主题
-- ✅ **兼容性**：现代浏览器原生支持，性能更好
+## 🎨 颜色配置 (Color Store)
 
-## 🏗️ 系统架构
+### 基础概念
 
-### Store 管理
+颜色配置通过 `useColorStore` 管理，支持：
 
-- `src/stores/modules/theme.ts` - 主题变量管理中心
-- 支持颜色变量和尺寸变量的统一管理
-- 提供持久化存储，刷新页面后保持用户设置
+- 🌓 三种主题模式（亮色/暗色/自动跟随系统）
+- 🎯 5种功能色系（Primary、Success、Warning、Error、Info）
+- 🎨 可自定义主题色和背景色
+- 🔄 动态CSS变量实时更新
+- 📱 响应式系统主题跟随
 
-### TypeScript 类型管理
-
-为了更好地组织和管理主题相关的 TypeScript 类型定义，本项目采用统一的类型管理策略：
-
-#### 类型文件结构
-
-```
-src/stores/types/
-└── themes.ts  # 主题系统所有类型定义
-```
-
-#### 核心类型接口
-
-所有主题相关的类型定义都统一放在 `src/stores/types/themes.ts` 中：
+### 主题模式
 
 ```typescript
-// 从统一的类型文件导入
-import type {
-  FunctionalColor, // 功能色定义接口
-  ColorVariables, // 颜色变量定义接口
-  SizeVariables, // 尺寸变量定义接口
-  ThemeMode, // 主题模式类型
-  SizeOption, // 尺寸选项类型
-  SizePreset, // 尺寸预设接口
-  ThemePreset, // 预设主题接口
-  ThemeState, // 主题store状态接口
-  ThemeConfig, // 主题配置选项接口
-  ThemeUpdateOptions, // 主题更新选项接口
-  ThemeEvent, // 主题事件接口
-  ThemeListener, // 主题监听器类型
-} from '@/stores/types/themes'
+import { useColorStore } from '@/stores/modules/color'
+
+const colorStore = useColorStore()
+
+// 设置主题模式
+colorStore.setMode('light') // 亮色主题
+colorStore.setMode('dark') // 暗色主题
+colorStore.setMode('auto') // 自动跟随系统
+
+// 快速切换 light/dark
+colorStore.toggleMode()
+
+// 检查当前模式
+console.log(colorStore.getMode) // 获取当前实际主题模式
+console.log(colorStore.isDark) // 是否为暗色
+console.log(colorStore.isLight) // 是否为亮色
+console.log(colorStore.isAuto) // 是否为自动模式
 ```
 
-#### 优势说明
-
-1. **统一管理**：避免类型定义分散在多个文件中
-2. **易于维护**：修改类型定义只需在一个地方进行
-3. **类型安全**：确保所有引用都使用统一的类型定义
-4. **开发体验**：IDE可以提供更好的类型提示和自动补全
-5. **团队协作**：团队成员都从同一个地方导入类型，避免混乱
-
-#### 使用示例
+### 主题色和背景色配置
 
 ```typescript
-// 在组件中使用
-import type { ColorVariables, SizeVariables } from '@/stores/types/themes'
-import { useThemeStore } from '@/stores/modules/theme'
+// 设置主题色
+colorStore.setTheme('蓝色主题') // 从预设选项中选择
+colorStore.setTheme('绿色主题')
+colorStore.setTheme('红色主题')
 
-// 自定义函数使用类型
-const updateColors = (colors: Partial<ColorVariables>) => {
-  const themeStore = useThemeStore()
-  themeStore.updateColors(colors)
+// 设置背景色
+colorStore.setBackground('白色背景')
+colorStore.setBackground('深黑色背景')
+
+// 获取可用选项
+console.log(colorStore.getThemeOptions) // 主题色选项列表
+console.log(colorStore.getBackgroundOptions) // 背景色选项列表
+```
+
+### 获取颜色值
+
+```typescript
+// 功能色获取
+const primaryColor = colorStore.getPrimary
+const primaryHover = colorStore.getPrimaryHover
+const successColor = colorStore.getSuccess
+const errorColor = colorStore.getError
+
+// 主题相关颜色
+const themeColor = colorStore.getTheme
+const backgroundColor = colorStore.getBackground
+const textColor = colorStore.getText
+```
+
+### CSS变量使用
+
+```css
+/* 功能色变量 */
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
 }
 
-const updateSizes = (sizes: Partial<SizeVariables>) => {
-  const themeStore = useThemeStore()
-  themeStore.updateSizes(sizes)
+.btn-primary:hover {
+  background-color: var(--primary-hover-color);
+}
+
+.btn-success {
+  background-color: var(--success-color);
+}
+
+/* 主题相关变量 */
+.container {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.card {
+  background-color: var(--background-highlight-color);
 }
 ```
 
-## 🎭 主题模式
+## 📏 尺寸配置 (Size Store)
 
-### 支持的主题模式
+### 基础概念
 
-- `light` - 浅色主题
-- `dark` - 深色主题
-- `auto` - 跟随系统主题（未来扩展）
+尺寸配置通过 `useSizeStore` 管理，支持：
 
-### 主题切换示例
+- 📐 三种尺寸预设（紧凑、舒适、宽松）
+- 🔧 完整的布局尺寸管理
+- 📊 间距系统管理
+- 🎯 动态尺寸变量
+
+### 尺寸模式
+
+```typescript
+import { useSizeStore, type SizeOption } from '@/stores/modules/size'
+
+const sizeStore = useSizeStore()
+
+// 设置尺寸模式
+sizeStore.setSize('compact') // 紧凑尺寸
+sizeStore.setSize('comfortable') // 舒适尺寸（默认）
+sizeStore.setSize('loose') // 宽松尺寸
+
+// 检查当前模式
+console.log(sizeStore.getSize) // 获取当前尺寸模式
+console.log(sizeStore.isCompact) // 是否为紧凑模式
+console.log(sizeStore.isComfortable) // 是否为舒适模式
+console.log(sizeStore.isLoose) // 是否为宽松模式
+```
+
+### 布局尺寸获取
+
+```typescript
+// 获取布局尺寸
+const sidebarWidth = sizeStore.getSidebarWidth // 侧边栏宽度
+const headerHeight = sizeStore.getHeaderHeight // 头部高度
+const footerHeight = sizeStore.getFooterHeight // 底部高度
+const breadcrumbHeight = sizeStore.getBreadcrumbHeight // 面包屑高度
+const tabsHeight = sizeStore.getTabsHeight // 标签页高度
+```
+
+### 间距系统
+
+```typescript
+// 设置间距大小
+sizeStore.setGap('xs') // 超小间距
+sizeStore.setGap('sm') // 小间距
+sizeStore.setGap('md') // 中等间距（默认）
+sizeStore.setGap('lg') // 大间距
+sizeStore.setGap('xl') // 超大间距
+
+// 获取间距信息
+console.log(sizeStore.getGap) // 当前间距大小标识
+console.log(sizeStore.getGapValue) // 当前间距的具体像素值
+console.log(sizeStore.getGapOptions) // 可用间距选项
+```
+
+### 批量设置方法
+
+```typescript
+// 批量更新布局尺寸
+sizeStore.updateLayout({
+  sidebarWidth: '220px',
+  headerHeight: '65px',
+})
+
+// 重置为默认
+sizeStore.resetToDefault()
+sizeStore.resetSizes()
+```
+
+### CSS变量使用
+
+```css
+/* 布局尺寸变量 */
+.sidebar {
+  width: var(--sidebar-width);
+}
+
+.sidebar.collapsed {
+  width: var(--sidebar-collapsed-width);
+}
+
+.header {
+  height: var(--header-height);
+}
+
+/* 间距变量 */
+.container {
+  padding: var(--gap); /* 当前激活的间距值 */
+  gap: var(--gap);
+}
+
+/* 使用具体间距大小 */
+.small-padding {
+  padding: var(--gap-sm); /* 小间距 */
+}
+
+.large-margin {
+  margin: var(--gap-lg); /* 大间距 */
+}
+```
+
+## 🎯 实际应用示例
+
+### Vue 组件中的完整使用
 
 ```vue
 <template>
-  <div class="theme-switcher">
-    <button
-      @click="themeStore.setThemeMode('light')"
-      :class="{ active: themeStore.mode === 'light' }"
-    >
-      🌞 浅色
-    </button>
-    <button
-      @click="themeStore.setThemeMode('dark')"
-      :class="{ active: themeStore.mode === 'dark' }"
-    >
-      🌙 深色
-    </button>
-    <button @click="themeStore.toggleTheme()">🔄 切换</button>
+  <div class="theme-demo">
+    <!-- 主题控制区域 -->
+    <div class="theme-controls">
+      <!-- 主题模式切换 -->
+      <div class="control-group">
+        <label>主题模式：</label>
+        <select :value="colorStore.mode" @change="handleModeChange">
+          <option
+            v-for="option in colorStore.getModeOptions"
+            :key="option.value"
+            :value="option.value"
+          >
+            {{ option.label }}
+          </option>
+        </select>
+        <button @click="colorStore.toggleMode()">
+          {{ colorStore.isDark ? '🌙' : '☀️' }} 快速切换
+        </button>
+      </div>
+
+      <!-- 尺寸模式切换 -->
+      <div class="control-group">
+        <label>尺寸模式：</label>
+        <select :value="sizeStore.getSize" @change="handleSizeChange">
+          <option
+            v-for="option in sizeStore.getSizeOptions"
+            :key="option.value"
+            :value="option.value"
+          >
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
+
+      <!-- 主题色选择 -->
+      <div class="control-group">
+        <label>主题色：</label>
+        <select @change="handleThemeChange">
+          <option
+            v-for="theme in colorStore.getThemeOptions"
+            :key="theme.label"
+            :value="theme.label"
+          >
+            {{ theme.label }}
+          </option>
+        </select>
+      </div>
+
+      <!-- 间距大小选择 -->
+      <div class="control-group">
+        <label>间距大小：</label>
+        <select :value="sizeStore.getGap" @change="handleGapChange">
+          <option
+            v-for="gap in sizeStore.getGapOptions"
+            :key="gap.label"
+            :value="gap.label"
+          >
+            {{ gap.label.toUpperCase() }} ({{ gap.value }})
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 功能色演示 -->
+    <div class="color-demo">
+      <button class="btn btn-primary">主要按钮</button>
+      <button class="btn btn-success">成功按钮</button>
+      <button class="btn btn-warning">警告按钮</button>
+      <button class="btn btn-error">错误按钮</button>
+      <button class="btn btn-info">信息按钮</button>
+    </div>
+
+    <!-- 尺寸演示 */
+    <div class="size-demo">
+      <div class="demo-card">
+        <h3>当前配置信息</h3>
+        <p><strong>主题模式：</strong>{{ colorStore.getMode }}</p>
+        <p><strong>尺寸模式：</strong>{{ sizeStore.getSize }}</p>
+        <p><strong>间距大小：</strong>{{ sizeStore.getGap }} ({{ sizeStore.getGapValue }})</p>
+        <p><strong>侧边栏宽度：</strong>{{ sizeStore.getSidebarWidth }}</p>
+        <p><strong>头部高度：</strong>{{ sizeStore.getHeaderHeight }}</p>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useThemeStore } from '@/stores/modules/theme'
-const themeStore = useThemeStore()
-</script>
-```
+import { useColorStore } from '@/stores/modules/color'
+import { useSizeStore, type SizeOption } from '@/stores/modules/size'
 
-## 📐 可用的CSS变量
+const colorStore = useColorStore()
+const sizeStore = useSizeStore()
 
-### 颜色变量
-
-#### 功能色系
-
-```css
-/* Primary 主色调 */
---theme-primary-color     /* 主色调 */
---theme-primary-hover     /* 悬停色 */
---theme-primary-active    /* 激活色 */
---theme-primary-disabled  /* 禁用色 */
---theme-primary-light     /* 浅色 */
-
-/* Success 成功色 */
---theme-success-color     /* 成功色 */
---theme-success-hover     /* 悬停色 */
---theme-success-active    /* 激活色 */
---theme-success-disabled  /* 禁用色 */
---theme-success-light     /* 浅色 */
-
-/* Warning 警告色 */
---theme-warning-color     /* 警告色 */
---theme-warning-hover     /* 悬停色 */
---theme-warning-active    /* 激活色 */
---theme-warning-disabled  /* 禁用色 */
---theme-warning-light     /* 浅色 */
-
-/* Error 错误色 */
---theme-error-color       /* 错误色 */
---theme-error-hover       /* 悬停色 */
---theme-error-active      /* 激活色 */
---theme-error-disabled    /* 禁用色 */
---theme-error-light       /* 浅色 */
-
-/* Info 信息色 */
---theme-info-color        /* 信息色 */
---theme-info-hover        /* 悬停色 */
---theme-info-active       /* 激活色 */
---theme-info-disabled     /* 禁用色 */
---theme-info-light        /* 浅色 */
-```
-
-#### 主题相关颜色
-
-```css
---theme-color             /* 主题颜色（与primary.color相同） */
---theme-text-color        /* 主题文字颜色 */
-```
-
-#### 基础颜色
-
-```css
---text-color              /* 默认文字颜色 */
---text-muted-color        /* 置灰文字颜色 */
---background-color        /* 默认背景颜色 */
---background-highlight-color /* 背景高亮色 */
-```
-
-#### 功能色系
-
-```css
---theme-success         /* 成功色 */
---theme-success-hover   /* 成功悬停色 */
---theme-success-active  /* 成功激活色 */
---theme-success-light   /* 成功浅色 */
-
---theme-warning         /* 警告色 */
---theme-warning-hover   /* 警告悬停色 */
---theme-warning-active  /* 警告激活色 */
---theme-warning-light   /* 警告浅色 */
-
---theme-error          /* 错误色 */
---theme-error-hover    /* 错误悬停色 */
---theme-error-active   /* 错误激活色 */
---theme-error-light    /* 错误浅色 */
-
---theme-info          /* 信息色 */
---theme-info-hover    /* 信息悬停色 */
---theme-info-active   /* 信息激活色 */
---theme-info-light    /* 信息浅色 */
-```
-
-#### 中性色系
-
-```css
---theme-text-primary     /* 主要文本色 */
---theme-text-secondary   /* 次要文本色 */
---theme-text-disabled    /* 禁用文本色 */
---theme-text-inverse     /* 反色文本 */
---theme-text-placeholder /* 占位符文本色 */
-
---theme-border-base      /* 基础边框色 */
---theme-border-light     /* 浅色边框 */
---theme-border-split     /* 分割线颜色 */
-
---theme-bg-base         /* 基础背景色 */
---theme-bg-light        /* 浅色背景 */
---theme-bg-dark         /* 深色背景 */
---theme-bg-hover        /* 悬停背景色 */
---theme-bg-disabled     /* 禁用背景色 */
-```
-
-#### 灰度色阶
-
-```css
---theme-gray-1    /* 最浅灰 #ffffff */
---theme-gray-2    /* 浅灰 #fafafa */
---theme-gray-3    /* 浅灰 #f5f5f5 */
---theme-gray-4    /* 浅灰 #f0f0f0 */
---theme-gray-5    /* 中灰 #d9d9d9 */
---theme-gray-6    /* 中灰 #bfbfbf */
---theme-gray-7    /* 中灰 #8c8c8c */
---theme-gray-8    /* 深灰 #595959 */
---theme-gray-9    /* 最深灰 #262626 */
-```
-
-### 尺寸变量 (SizeVariables)
-
-专注于布局相关和设计系统变量，避免与UI框架冲突：
-
-#### 尺寸选项系统
-
-系统提供三种预设尺寸选项：
-
-```typescript
-export type SizeOption = 'compact' | 'default' | 'comfortable'
-```
-
-- `compact` - 紧凑：适合信息密度高的场景
-- `default` - 默认：标准的视觉舒适度
-- `comfortable` - 舒适：适合长时间使用的场景
-
-#### 布局相关尺寸
-
-```css
---sidebar-width
---sidebar-collapsed-width
---header-height
---breadcrumb-height
---footer-height
---tabs-height
-```
-
-#### 设计系统 - 间距
-
-```css
---gap-xs
---gap-sm
---gap-md
---gap-lg
---gap-xl
-```
-
-#### 设计系统 - 圆角
-
-```css
---radius-xs
---radius-sm
---radius-md
---radius-lg
---radius-xl
---radius-round
-```
-
-## 🚀 基本使用
-
-### 1. 在Vue组件中使用Store
-
-```vue
-<script setup lang="ts">
-import { useThemeStore } from '@/stores/modules/theme'
-
-const themeStore = useThemeStore()
-
-// 切换主题
-const toggleTheme = () => {
-  themeStore.toggleTheme()
+// 主题模式切换
+const handleModeChange = (event: Event) => {
+  const target = event.target as HTMLSelectElement
+  colorStore.setMode(target.value as any)
 }
 
-// 设置特定主题
-const setLightTheme = () => {
-  themeStore.setThemeMode('light')
+// 尺寸模式切换
+const handleSizeChange = (event: Event) => {
+  const target = event.target as HTMLSelectElement
+  sizeStore.setSize(target.value as SizeOption)
 }
 
-// 动态修改颜色
-const updatePrimaryColor = (color: string) => {
-  themeStore.updateFunctionalColor('primary', { color })
+// 主题色切换
+const handleThemeChange = (event: Event) => {
+  const target = event.target as HTMLSelectElement
+  colorStore.setTheme(target.value)
 }
 
-// 或者更新整个功能色
-const updatePrimaryColors = () => {
-  themeStore.updateFunctionalColor('primary', {
-    color: '#ff6b6b',
-    hover: '#ff5252',
-    active: '#e53e3e',
-  })
+// 间距大小切换
+const handleGapChange = (event: Event) => {
+  const target = event.target as HTMLSelectElement
+  sizeStore.setGap(target.value as any)
 }
 </script>
-```
 
-### 2. 在CSS中使用变量
-
-```vue
 <style scoped>
-.my-component {
-  /* 使用颜色变量 */
-  color: var(--text-color);
+.theme-demo {
+  padding: var(--gap);
   background-color: var(--background-color);
-  border: 1px solid var(--theme-primary-color);
-
-  /* 使用尺寸变量 */
-  padding: var(--gap-md);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-base);
+  color: var(--text-color);
+  border-radius: 8px;
+  border: 1px solid var(--background-highlight-color);
 }
 
-.primary-button {
-  background: var(--theme-primary-color);
-  color: var(--theme-text-color);
+.theme-controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  margin-bottom: var(--gap);
+  padding: var(--gap);
+  background-color: var(--background-highlight-color);
+  border-radius: 6px;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+}
+
+.control-group label {
+  min-width: 80px;
+  font-weight: 500;
+}
+
+.color-demo {
+  display: flex;
+  gap: var(--gap);
+  margin-bottom: var(--gap);
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: var(--gap-sm) var(--gap);
   border: none;
-  padding: var(--gap-sm) var(--gap-md);
-  border-radius: var(--radius-md);
+  border-radius: 4px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
-.primary-button:hover {
-  background: var(--theme-primary-hover);
+.btn-primary {
+  background-color: var(--primary-color);
+  color: var(--theme-text-color);
 }
 
-.primary-button:active {
-  background: var(--theme-primary-active);
+.btn-primary:hover {
+  background-color: var(--primary-hover-color);
 }
 
-.primary-button:disabled {
-  background: var(--theme-primary-disabled);
-  cursor: not-allowed;
+.btn-success {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: var(--success-hover-color);
+}
+
+.btn-warning {
+  background-color: var(--warning-color);
+  color: white;
+}
+
+.btn-warning:hover {
+  background-color: var(--warning-hover-color);
+}
+
+.btn-error {
+  background-color: var(--error-color);
+  color: white;
+}
+
+.btn-error:hover {
+  background-color: var(--error-hover-color);
+}
+
+.btn-info {
+  background-color: var(--info-color);
+  color: white;
+}
+
+.btn-info:hover {
+  background-color: var(--info-hover-color);
+}
+
+.demo-card {
+  padding: var(--gap);
+  background-color: var(--background-highlight-color);
+  border-radius: 6px;
+  border: 1px solid var(--text-muted-color);
+}
+
+.demo-card h3 {
+  margin: 0 0 var(--gap-sm) 0;
+  color: var(--theme-color);
+}
+
+.demo-card p {
+  margin: var(--gap-xs) 0;
+  color: var(--text-muted-color);
 }
 </style>
-```
-
-### 3. 直接操作CSS变量
-
-```javascript
-// 设置单个变量
-document.documentElement.style.setProperty('--theme-primary-color', '#ff6b6b')
-
-// 或使用Store方法
-themeStore.setCSSVariable('theme-primary-color', '#ff6b6b')
-
-// 批量设置
-themeStore.setCSSVariables({
-  'theme-primary-color': '#ff6b6b',
-  'theme-success-color': '#51cf66',
-  'gap-md': '20px',
-})
-
-// 更新功能色（推荐方式）
-themeStore.updateFunctionalColor('primary', {
-  color: '#ff6b6b',
-  hover: '#ff5252',
-})
-
-// 更新尺寸变量
-themeStore.updateSizes({
-  sidebarWidth: '240px',
-  gapMd: '20px',
-  radiusMd: '8px',
-})
-
-// 设置尺寸选项（会应用对应的预设尺寸）
-themeStore.setSizeOption('compact') // 紧凑模式
-themeStore.setSizeOption('default') // 默认模式
-themeStore.setSizeOption('comfortable') // 舒适模式
-
-// 应用尺寸预设（与setSizeOption相同）
-themeStore.applySizePreset('comfortable')
-
-// 获取当前尺寸选项
-console.log(themeStore.currentSizeOption) // 'default'
-console.log(themeStore.currentSizePreset.label) // '默认'
-
-// 设置单个CSS变量
-```
-
-## 🎭 主题模式
-
-### 支持的主题模式
-
-- `light` - 浅色主题
-- `dark` - 深色主题
-- `auto` - 跟随系统主题（未来扩展）
-
-### 主题切换示例
-
-```vue
-<template>
-  <div class="theme-switcher">
-    <button
-      @click="themeStore.setThemeMode('light')"
-      :class="{ active: themeStore.mode === 'light' }"
-    >
-      🌞 浅色
-    </button>
-    <button
-      @click="themeStore.setThemeMode('dark')"
-      :class="{ active: themeStore.mode === 'dark' }"
-    >
-      🌙 深色
-    </button>
-    <button @click="themeStore.toggleTheme()">🔄 切换</button>
-  </div>
-</template>
-
-<script setup lang="ts">
-import { useThemeStore } from '@/stores/modules/theme'
-const themeStore = useThemeStore()
-</script>
-```
-
-## 📐 可用的CSS变量
-
-### 颜色变量
-
-#### 功能色系
-
-```css
-/* Primary 主色调 */
---theme-primary-color     /* 主色调 */
---theme-primary-hover     /* 悬停色 */
---theme-primary-active    /* 激活色 */
---theme-primary-disabled  /* 禁用色 */
---theme-primary-light     /* 浅色 */
-
-/* Success 成功色 */
---theme-success-color     /* 成功色 */
---theme-success-hover     /* 悬停色 */
---theme-success-active    /* 激活色 */
---theme-success-disabled  /* 禁用色 */
---theme-success-light     /* 浅色 */
-
-/* Warning 警告色 */
---theme-warning-color     /* 警告色 */
---theme-warning-hover     /* 悬停色 */
---theme-warning-active    /* 激活色 */
---theme-warning-disabled  /* 禁用色 */
---theme-warning-light     /* 浅色 */
-
-/* Error 错误色 */
---theme-error-color       /* 错误色 */
---theme-error-hover       /* 悬停色 */
---theme-error-active      /* 激活色 */
---theme-error-disabled    /* 禁用色 */
---theme-error-light       /* 浅色 */
-
-/* Info 信息色 */
---theme-info-color        /* 信息色 */
---theme-info-hover        /* 悬停色 */
---theme-info-active       /* 激活色 */
---theme-info-disabled     /* 禁用色 */
---theme-info-light        /* 浅色 */
-```
-
-#### 主题相关颜色
-
-```css
---theme-color             /* 主题颜色（与primary.color相同） */
---theme-text-color        /* 主题文字颜色 */
-```
-
-#### 基础颜色
-
-```css
---text-color              /* 默认文字颜色 */
---text-muted-color        /* 置灰文字颜色 */
---background-color        /* 默认背景颜色 */
---background-highlight-color /* 背景高亮色 */
-```
-
-#### 功能色系
-
-```css
---theme-success         /* 成功色 */
---theme-success-hover   /* 成功悬停色 */
---theme-success-active  /* 成功激活色 */
---theme-success-light   /* 成功浅色 */
-
---theme-warning         /* 警告色 */
---theme-warning-hover   /* 警告悬停色 */
---theme-warning-active  /* 警告激活色 */
---theme-warning-light   /* 警告浅色 */
-
---theme-error          /* 错误色 */
---theme-error-hover    /* 错误悬停色 */
---theme-error-active   /* 错误激活色 */
---theme-error-light    /* 错误浅色 */
-
---theme-info          /* 信息色 */
---theme-info-hover    /* 信息悬停色 */
---theme-info-active   /* 信息激活色 */
---theme-info-light    /* 信息浅色 */
-```
-
-#### 中性色系
-
-```css
---theme-text-primary     /* 主要文本色 */
---theme-text-secondary   /* 次要文本色 */
---theme-text-disabled    /* 禁用文本色 */
---theme-text-inverse     /* 反色文本 */
---theme-text-placeholder /* 占位符文本色 */
-
---theme-border-base      /* 基础边框色 */
---theme-border-light     /* 浅色边框 */
---theme-border-split     /* 分割线颜色 */
-
---theme-bg-base         /* 基础背景色 */
---theme-bg-light        /* 浅色背景 */
---theme-bg-dark         /* 深色背景 */
---theme-bg-hover        /* 悬停背景色 */
---theme-bg-disabled     /* 禁用背景色 */
-```
-
-#### 灰度色阶
-
-```css
---theme-gray-1    /* 最浅灰 #ffffff */
---theme-gray-2    /* 浅灰 #fafafa */
---theme-gray-3    /* 浅灰 #f5f5f5 */
---theme-gray-4    /* 浅灰 #f0f0f0 */
---theme-gray-5    /* 中灰 #d9d9d9 */
---theme-gray-6    /* 中灰 #bfbfbf */
---theme-gray-7    /* 中灰 #8c8c8c */
---theme-gray-8    /* 深灰 #595959 */
---theme-gray-9    /* 最深灰 #262626 */
-```
-
-### 尺寸变量
-
-#### 布局相关尺寸
-
-```css
---sidebar-width
---sidebar-collapsed-width
---header-height
---breadcrumb-height
---footer-height
---tabs-height
-```
-
-#### 设计系统 - 间距
-
-```css
---gap-xs
---gap-sm
---gap-md
---gap-lg
---gap-xl
-```
-
-#### 设计系统 - 圆角
-
-```css
---radius-xs
---radius-sm
---radius-md
---radius-lg
---radius-xl
---radius-round
 ```
 
 ## 🔧 高级用法
 
-### 1. 自定义主题预设
+### 1. 监听主题变化
 
 ```typescript
-// 创建自定义主题
-const customColors: ColorVariables = {
-  primary: '#ff6b6b',
-  primaryHover: '#ff5252',
-  primaryActive: '#ff1744',
-  // ... 其他颜色
-}
+import { watch } from 'vue'
 
-// 应用自定义主题
-themeStore.updateColors(customColors)
-
-// 保存自定义主题
-themeStore.saveCustomTheme('我的主题')
-```
-
-### 2. 响应式主题
-
-```vue
-<style scoped>
-.responsive-component {
-  padding: var(--gap-sm);
-  font-size: var(--font-size-sm);
-}
-
-@media (min-width: 768px) {
-  .responsive-component {
-    padding: var(--gap-md);
-    font-size: var(--font-size-base);
+// 监听颜色模式变化
+watch(
+  () => colorStore.getMode,
+  newMode => {
+    console.log('主题模式已切换为:', newMode)
+    // 执行相关逻辑
   }
-}
+)
 
-@media (min-width: 1024px) {
-  .responsive-component {
-    padding: var(--gap-lg);
-    font-size: var(--font-size-lg);
+// 监听尺寸模式变化
+watch(
+  () => sizeStore.getSize,
+  newSize => {
+    console.log('尺寸模式已切换为:', newSize)
+    // 执行相关逻辑
   }
-}
-</style>
+)
 ```
 
-### 3. 主题感知组件
-
-```vue
-<template>
-  <div :class="['card', { 'card--dark': themeStore.isDark }]">
-    <h3>主题感知卡片</h3>
-    <p>当前主题：{{ themeStore.mode }}</p>
-  </div>
-</template>
-
-<script setup lang="ts">
-import { useThemeStore } from '@/stores/modules/theme'
-const themeStore = useThemeStore()
-</script>
-
-<style scoped>
-.card {
-  background: var(--theme-bg-base);
-  color: var(--theme-text-primary);
-  border: 1px solid var(--theme-border-base);
-  border-radius: var(--radius-base);
-  padding: var(--gap-lg);
-  transition: all 0.3s ease;
-}
-
-.card--dark {
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
-}
-</style>
-```
-
-### 4. 动态计算颜色
+### 2. 计算属性优化
 
 ```typescript
-// 在store中扩展方法
-const generateHoverColor = (baseColor: string, factor: number = 0.1) => {
-  // 实现颜色计算逻辑
-  // 可以使用第三方库如 tinycolor2
-  return adjustColor(baseColor, factor)
-}
+import { computed } from 'vue'
 
-// 自动生成相关颜色
-const updatePrimaryColorWithVariants = (primaryColor: string) => {
-  themeStore.updateColors({
-    primary: primaryColor,
-    primaryHover: generateHoverColor(primaryColor, 0.1),
-    primaryActive: generateHoverColor(primaryColor, -0.1),
-    primaryLight: generateHoverColor(primaryColor, 0.8),
-  })
-}
+// 缓存主题相关计算
+const themeInfo = computed(() => ({
+  mode: colorStore.getMode,
+  isDark: colorStore.isDark,
+  primary: colorStore.getPrimary,
+  background: colorStore.getBackground,
+}))
+
+// 缓存尺寸相关计算
+const sizeInfo = computed(() => ({
+  size: sizeStore.getSize,
+  gap: sizeStore.getGapValue,
+  sidebarWidth: sizeStore.getSidebarWidth,
+}))
 ```
 
-## 📱 响应式设计
+### 3. 在 Pinia 外部使用
 
-### 结合媒体查询使用
+```typescript
+import { useColorStoreWithOut } from '@/stores/modules/color'
+import { useSizeStoreWithOut } from '@/stores/modules/size'
+
+// 在非组件环境中使用
+const colorStore = useColorStoreWithOut()
+const sizeStore = useSizeStoreWithOut()
+
+colorStore.setMode('dark')
+sizeStore.setSize('loose')
+```
+
+## 📊 可用的CSS变量列表
+
+### 颜色相关变量
 
 ```css
-.responsive-layout {
-  padding: var(--gap-sm);
-  gap: var(--gap-sm);
-}
+/* 功能色 */
+--primary-color                 /* 主色 */
+--primary-hover-color          /* 主色悬停 */
+--primary-active-color         /* 主色激活 */
+--primary-disabled-color       /* 主色禁用 */
+--primary-light-color          /* 主色浅色背景 */
 
-@media (min-width: 768px) {
-  .responsive-layout {
-    padding: var(--gap-md);
-    gap: var(--gap-md);
-  }
-}
+--success-color                /* 成功色 */
+--success-hover-color          /* 成功色悬停 */
+/* ... 其他功能色类似 ... */
 
-@media (min-width: 1024px) {
-  .responsive-layout {
-    padding: var(--gap-lg);
-    gap: var(--gap-lg);
-  }
-}
+--warning-color                /* 警告色 */
+--error-color                  /* 错误色 */
+--info-color                   /* 信息色 */
+
+/* 主题色 */
+--theme-color                  /* 主题颜色 */
+--theme-text-color             /* 主题文字颜色 */
+
+/* 基础色 */
+--text-color                   /* 文字颜色 */
+--text-muted-color             /* 弱化文字颜色 */
+--background-color             /* 背景颜色 */
+--background-highlight-color   /* 高亮背景颜色 */
 ```
 
-### 动态调整尺寸
+### 尺寸相关变量
+
+```css
+/* 布局尺寸 */
+--sidebar-width                /* 侧边栏宽度 */
+--sidebar-collapsed-width      /* 侧边栏折叠宽度 */
+--header-height                /* 头部高度 */
+--breadcrumb-height            /* 面包屑高度 */
+--footer-height                /* 底部高度 */
+--tabs-height                  /* 标签页高度 */
+
+/* 间距系统 */
+--gap                          /* 当前激活的间距值 */
+--gap-size                     /* 当前间距大小标识 */
+--gap-xs                       /* 超小间距 */
+--gap-sm                       /* 小间距 */
+--gap-md                       /* 中等间距 */
+--gap-lg                       /* 大间距 */
+--gap-xl                       /* 超大间距 */
+```
+
+## 🚀 最佳实践
+
+### 1. 模块化导入
 
 ```typescript
-// 根据屏幕尺寸动态调整变量
-const updateSizesForScreen = () => {
-  const width = window.innerWidth
+// ✅ 推荐：按需导入
+import { useColorStore } from '@/stores/modules/color'
+import { useSizeStore, type SizeOption } from '@/stores/modules/size'
 
-  if (width < 768) {
-    themeStore.updateSizes({
-      gap-md: '12px',
-      font-size-base: '13px',
-    })
-  } else if (width < 1024) {
-    themeStore.updateSizes({
-      gap-md: '16px',
-      font-size-base: '14px',
-    })
-  } else {
-    themeStore.updateSizes({
-      gap-md: '20px',
-      font-size-base: '15px',
-    })
-  }
-}
+// ❌ 避免：导入整个 stores
+import stores from '@/stores'
 ```
-
-## 🎯 最佳实践
-
-### 1. 命名规范
-
-- 颜色变量：`--theme-[category]-[variant]`
-- 尺寸变量：`--[property]-[size]`
-- 语义化命名，避免使用具体的颜色名称
 
 ### 2. 性能优化
 
-- 避免频繁修改CSS变量，考虑批量更新
-- 使用`themeStore.setCSSVariables()`进行批量设置
-- 在组件卸载时清理监听器
+```typescript
+// ✅ 使用计算属性缓存
+const themeStyles = computed(() => ({
+  '--custom-primary': colorStore.getPrimary,
+  '--custom-gap': sizeStore.getGapValue,
+}))
 
-### 3. 兼容性处理
+// ❌ 避免：在模板中频繁调用方法
+// 直接在模板中使用 colorStore.getPrimary 会导致频繁计算
+```
 
-- 为不支持CSS变量的浏览器提供回退值
+### 3. 类型安全
+
+```typescript
+// ✅ 使用导出的类型
+import type { SizeOption } from '@/stores/modules/size'
+
+const setSizeOption = (option: SizeOption) => {
+  sizeStore.setSize(option) // 类型安全
+}
+
+// ✅ 利用 TypeScript 的智能提示
+const themeOptions = colorStore.getThemeOptions // 自动推断类型
+```
+
+### 4. 初始化建议
+
+```typescript
+// 在应用启动时初始化主题
+import { useColorStore } from '@/stores/modules/color'
+import { useSizeStore } from '@/stores/modules/size'
+
+const initTheme = () => {
+  const colorStore = useColorStore()
+  const sizeStore = useSizeStore()
+
+  // 初始化颜色配置
+  colorStore.init()
+
+  // 初始化尺寸配置
+  sizeStore.init()
+}
+
+// 在 main.ts 中调用
+initTheme()
+```
+
+## 📚 迁移指南
+
+如果您正在从旧版本迁移，请注意以下变化：
+
+### API 变化
+
+```typescript
+// 🔄 旧版本 -> 新版本
+
+// 主题切换
+// colorStore.toggleTheme() -> colorStore.toggleMode()
+
+// 尺寸设置
+// sizeStore.setSizeOption() -> sizeStore.setSize()
+
+// 间距设置
+// sizeStore.setActiveGapSize() -> sizeStore.setGap()
+
+// 获取器变化
+// colorStore.isDark -> colorStore.isDark (保持不变，但逻辑优化)
+// sizeStore.currentGapValue -> sizeStore.getGapValue
+```
+
+### CSS变量变化
 
 ```css
-.component {
-  color: #000000; /* 回退值 */
-  color: var(--theme-text-primary, #000000); /* CSS变量 + 回退值 */
-}
+/* 🔄 旧版本 -> 新版本 */
+
+/* 间距变量简化 */
+/* var(--theme-active-gap-size) -> var(--gap) */
+/* var(--theme-active-radius-size) -> 已移除，现在专注于间距 */
+
+/* 布局变量简化 */
+/* var(--theme-active-sidebar-width) -> var(--sidebar-width) */
 ```
 
-### 4. 类型安全
+## 📚 总结
 
-- 使用TypeScript接口确保类型安全
-- 定义严格的颜色和尺寸类型
-- 使用枚举定义预设主题
+新的主题系统具有以下优势：
 
-## 🔍 调试技巧
+1. **🎯 职责清晰**：颜色和尺寸管理完全分离
+2. **💪 类型安全**：完整的 TypeScript 类型支持
+3. **🔄 响应式**：自动跟随系统主题变化
+4. **⚡ 性能优化**：高效的 CSS 变量更新机制
+5. **🛠️ 易于维护**：清晰的 API 设计和代码结构
+6. **📱 现代化**：支持最新的设计系统理念
 
-### 1. 查看当前变量值
+通过这个全新的主题系统，您可以：
 
-```javascript
-// 在浏览器控制台中查看
-getComputedStyle(document.documentElement).getPropertyValue('--theme-primary')
-
-// 或者使用store
-console.log(themeStore.colors.primary)
-```
-
-### 2. 实时调试
-
-访问 `/test/theme-variables` 页面，可以：
-
-- 实时切换主题模式
-- 动态修改颜色和尺寸
-- 查看所有变量的当前值
-- 测试组件在不同主题下的表现
-
-### 3. 开发者工具
-
-在浏览器开发者工具中，可以直接修改CSS变量：
-
-1. 打开Elements面板
-2. 选择`<html>`元素
-3. 在Styles面板中查看和修改`--theme-*`变量
-
-## 🚀 未来扩展
-
-### 计划中的功能
-
-- [ ] 更多内置主题预设
-- [ ] 主题动画过渡效果
-- [ ] 主题配置导入/导出
-- [ ] 基于AI的智能配色建议
-- [ ] 无障碍性主题支持
-- [ ] 主题编辑器可视化界面
-
-## 📞 技术支持
-
-如果在使用过程中遇到问题：
-
-1. 查看浏览器控制台是否有错误信息
-2. 确认CSS变量名称是否正确
-3. 检查主题store是否正确初始化
-4. 访问演示页面确认功能是否正常
-
-## 相关链接
-
-- [演示页面](/test/theme-variables)
-- [布局系统指南](./LAYOUT_SYSTEM_GUIDE.md)
-- [Pinia状态管理文档](./PINIA_PERSISTED_GUIDE.md)
+- 🎨 轻松实现深色/浅色主题切换，支持自动跟随系统
+- 📐 灵活配置三种尺寸预设和精细的布局控制
+- 🔄 享受实时的主题变化响应
+- 💼 构建专业级的企业管理后台界面
+- 🚀 提升开发效率和用户体验

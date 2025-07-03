@@ -12,6 +12,7 @@ CC-Admin 是一个基于 Vue 3 + TypeScript + Vite 的现代化管理后台项�
 - **路由管理**: Vue Router 4
 - **HTTP 客户端**: Alova (替代 Axios)
 - **CSS 框架**: SCSS + UnoCSS (原子化 CSS)
+- **主题系统**: 动态CSS变量 + Pinia状态管理
 - **包管理器**: pnpm
 - **Node.js 版本**: 24.3.0
 
@@ -53,14 +54,20 @@ src/api/
 src/stores/
 ├── index.ts           # Store 入口文件
 └── modules/
-    └── app.ts         # 应用状态管理
+    ├── app.ts         # 应用状态管理
+    ├── color.ts       # 颜色主题管理
+    ├── size.ts        # 尺寸配置管理
+    ├── layout.ts      # 布局状态管理
+    └── user.ts        # 用户状态管理
 ```
 
 **特点**:
 
 - 基于 Pinia 的响应式状态管理
 - 自动导入所有 Store 模块
-- 支持 `import { useAppStore } from '@/stores'` 用法
+- 支持 `import { useAppStore, useColorStore, useSizeStore } from '@/stores'` 用法
+- 模块化主题系统，颜色和尺寸管理分离
+- 完整的 TypeScript 类型支持
 
 #### 3. 路由管理 (`src/router/`)
 
@@ -106,6 +113,8 @@ src/common/
 
 - `constants.ts`: 应用级常量管理（API配置、存储键名、路由常量等）
 - `helpers.ts`: 通用工具函数（日期格式化、防抖节流、深拷贝等）
+- `function.ts`: 系统级功能函数（系统主题检测、环境判断等）
+- `router.ts`: 路由相关工具函数
 
 ## 🔧 自动导入机制
 
@@ -134,7 +143,7 @@ import api from '@/api' // 默认导入
 import { useAppStore } from '@/stores'
 
 // 公共模块示例
-import { constants, helpers } from '@/common'
+import { constants, helpers, functions, router } from '@/common'
 ```
 
 ## 🛠️ 路径别名配置
@@ -159,6 +168,132 @@ export const alias: Record<string, string> = {
 ```
 
 同时在 `tsconfig.app.json` 中配置了相应的 TypeScript 路径映射。
+
+## 🎨 现代化主题系统
+
+### 🔥 重构亮点 (v2.0)
+
+项目已重构为独立的**颜色管理**(`color.ts`)和**尺寸管理**(`size.ts`)模块，实现了更加清晰和可维护的主题配置架构。
+
+### 核心特性
+
+- **三模式支持**: Light/Dark/Auto 主题模式，Auto 可自动跟随系统
+- **模块化管理**: 颜色和尺寸配置完全分离，职责清晰
+- **丰富的预设**: 5种功能色系 + 3种尺寸预设
+- **完整类型支持**: TypeScript 类型安全的主题配置
+- **动态CSS变量**: 运行时实时更新，无需重新编译
+- **持久化存储**: 用户设置自动保存和恢复
+
+### 颜色管理系统 (color.ts)
+
+#### 主题模式
+
+```typescript
+// 三种主题模式
+colorStore.setMode('light') // 亮色主题
+colorStore.setMode('dark') // 暗色主题
+colorStore.setMode('auto') // 自动跟随系统
+
+// 便捷方法
+colorStore.toggleMode() // 快速切换 light/dark
+console.log(colorStore.getMode) // 获取当前实际模式
+```
+
+#### 功能色系
+
+```css
+/* 完整的功能色变量 */
+--primary-color             /* 主色 */
+--primary-hover-color       /* 主色悬停 */
+--success-color             /* 成功色 */
+--warning-color             /* 警告色 */
+--error-color               /* 错误色 */
+--info-color                /* 信息色 */
+
+/* 主题相关 */
+--theme-color               /* 主题颜色 */
+--theme-text-color          /* 主题文字色 */
+--background-color          /* 背景颜色 */
+--text-color                /* 文字颜色 */
+```
+
+### 尺寸管理系统 (size.ts)
+
+#### 尺寸预设
+
+```typescript
+// 三种尺寸模式
+sizeStore.setSize('compact') // 紧凑尺寸
+sizeStore.setSize('comfortable') // 舒适尺寸（默认）
+sizeStore.setSize('loose') // 宽松尺寸
+
+// 布局尺寸控制
+console.log(sizeStore.getSidebarWidth) // 侧边栏宽度
+console.log(sizeStore.getHeaderHeight) // 头部高度
+```
+
+#### 间距系统
+
+```css
+/* 动态间距变量 */
+--gap                       /* 当前激活的间距值 */
+--gap-xs                    /* 超小间距 */
+--gap-sm                    /* 小间距 */
+--gap-md                    /* 中等间距 */
+--gap-lg                    /* 大间距 */
+--gap-xl                    /* 超大间距 */
+
+/* 布局变量 */
+--sidebar-width             /* 侧边栏宽度 */
+--header-height             /* 头部高度 */
+--footer-height             /* 底部高度 */
+```
+
+### 使用优势
+
+- **🎯 职责分离**: 颜色和尺寸管理独立，易于维护
+- **🔄 响应式**: 自动跟随系统主题变化
+- **⚡ 高性能**: 高效的CSS变量更新机制
+- **🛠️ 开发友好**: 清晰的API设计和完整的类型提示
+- **📱 现代化**: 支持最新的设计系统理念
+
+### 实际应用
+
+```vue
+<template>
+  <div class="modern-card">
+    <h3>{{ title }}</h3>
+    <p>{{ content }}</p>
+    <button class="action-btn">操作按钮</button>
+  </div>
+</template>
+
+<style scoped>
+.modern-card {
+  /* 使用动态间距和背景 */
+  padding: var(--gap);
+  margin-bottom: var(--gap);
+  background-color: var(--background-color);
+  color: var(--text-color);
+  border: 1px solid var(--background-highlight-color);
+  border-radius: 8px;
+}
+
+.action-btn {
+  /* 使用主题色和间距 */
+  padding: var(--gap-sm) var(--gap);
+  background-color: var(--primary-color);
+  color: var(--theme-text-color);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.action-btn:hover {
+  background-color: var(--primary-hover-color);
+}
+</style>
+```
 
 ## ✨ 项目优势
 
@@ -186,6 +321,15 @@ export const alias: Record<string, string> = {
 
 - 可以轻松添加新的功能目录
 - 支持复杂的模块依赖关系
+
+### 6. 🔥 现代化主题系统优势（v2.0重构）
+
+- **模块化架构**: 颜色和尺寸管理完全分离，职责清晰
+- **智能响应**: Auto模式自动跟随系统主题，无需手动切换
+- **类型安全**: 完整的TypeScript类型支持和智能提示
+- **性能优化**: 高效的CSS变量更新机制，避免重新渲染
+- **开发体验**: 清晰的API设计，支持链式调用和批量操作
+- **一致性**: 统一的设计规范和变量命名约定
 
 ## 📋 开发规范
 
@@ -246,6 +390,7 @@ pnpm preview
 
 - [目录结构规范](./DIRECTORY_STRUCTURE.md)
 - [命名规范](./NAMING_CONVENTIONS.md)
+- [主题变量系统指南](./THEME_VARIABLES_GUIDE.md) 🔥
 - [环境变量配置](./ENVIRONMENT_VARIABLES.md)
 - [UnoCSS 配置指南](./UNOCSS_GUIDE.md)
 - [Cursor UnoCSS 配置](./CURSOR_UNOCSS_CONFIG.md)

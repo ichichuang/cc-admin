@@ -11,20 +11,12 @@ export const useAppStore = defineStore(
     // 侧边栏是否展开
     const sidebarCollapsed = ref(false)
 
-    // 主题模式
-    const theme = ref<'light' | 'dark'>('light')
-
     // 语言设置
     const locale = ref('zh-CN')
 
     // 切换侧边栏状态
     const toggleSidebar = () => {
       sidebarCollapsed.value = !sidebarCollapsed.value
-    }
-
-    // 切换主题
-    const toggleTheme = () => {
-      theme.value = theme.value === 'light' ? 'dark' : 'light'
     }
 
     // 设置语言
@@ -43,12 +35,10 @@ export const useAppStore = defineStore(
       // 状态
       title,
       sidebarCollapsed,
-      theme,
       locale,
 
       // 方法
       toggleSidebar,
-      toggleTheme,
       setLocale,
       setTitle,
     }
@@ -56,13 +46,17 @@ export const useAppStore = defineStore(
   {
     // 持久化配置
     persist: {
-      key: 'cc-admin-app', // 存储的键名
+      key: `${import.meta.env.VITE_PINIA_PERSIST_KEY_PREFIX}-app`, // 存储的键名
       storage: localStorage, // 存储方式，默认是 localStorage
-      pick: ['theme', 'locale', 'sidebarCollapsed'], // 只持久化这些字段
+      pick: ['locale', 'sidebarCollapsed'], // 只持久化这些字段
       // 不持久化 title，因为它可能会动态变化
     },
   }
 )
 
 // 默认导出
+export const useAppStoreWithOut = () => {
+  return useAppStore()
+}
+
 export default useAppStore

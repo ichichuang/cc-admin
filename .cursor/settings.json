@@ -1,0 +1,91 @@
+{
+  "npm.packageManager": "pnpm",
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "terminal.integrated.profiles.osx": {
+    "zsh": {
+      "path": "zsh",
+      "args": ["-l"]
+    }
+  },
+  "terminal.integrated.env.osx": {
+    "FORCE_COLOR": "1"
+  },
+  "python.defaultInterpreterPath": "/usr/bin/python3",
+  "extensions.ignoreRecommendations": false,
+  "editor.suggest.showStatusBar": true,
+  "editor.inlineSuggest.enabled": true,
+  "github.copilot.enable": {
+    "*": true,
+    "yaml": true,
+    "plaintext": true,
+    "markdown": true,
+    "vue": true,
+    "typescript": true,
+    "javascript": true
+  },
+  "scm.inputFontFamily": "JetBrains Mono",
+  "debug.console.fontFamily": "JetBrains Mono",
+  "editor.fontFamily": "JetBrains Mono, Monaco, 'Courier New', monospace",
+  "terminal.integrated.fontFamily": "JetBrains Mono, Monaco, 'Courier New', monospace",
+  "workbench.startupEditor": "welcomePage",
+  "git.openRepositoryInParentFolders": "always",
+  "extensions.autoUpdate": true,
+  "update.mode": "start",
+  "telemetry.telemetryLevel": "off",
+  "workbench.settings.enableNaturalLanguageSearch": false,
+  "search.useIgnoreFiles": true,
+  "search.smartCase": true,
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.git": true,
+    "**/pnpm-lock.yaml": false
+  },
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/build/**": true,
+    "**/.git/**": true
+  },
+  "task.allowAutomaticTasks": "on",
+  "task.quickOpen.detail": false,
+  "task.quickOpen.skip": false,
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "typescript.suggest.autoImports": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "eslint.workingDirectories": ["./"],
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact", "vue"],
+  "vue.updateImportsOnFileMove.enabled": true,
+  "unocss.root": "./",
+  "unocss.configFile": "uno.config.ts",
+
+  // === Vue 开发配置 ===
+  "vue.codeActions.enabled": true,
+  "vue.complete.casing.tags": "pascal",
+  "vue.complete.casing.props": "camel",
+  "vue.updateImportsOnFileMove.enabled": true,
+
+  // === TypeScript 增强配置 ===
+  "typescript.preferences.includePackageJsonAutoImports": "auto",
+  "typescript.suggest.completeFunctionCalls": true,
+  "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
+  "typescript.inlayHints.parameterNames.enabled": "all",
+  "typescript.inlayHints.parameterTypes.enabled": true,
+  "typescript.inlayHints.variableTypes.enabled": true,
+
+  // === 项目特定配置 ===
+  "files.associations": {
+    "*.vue": "vue",
+    "uno.config.ts": "typescript"
+  },
+
+  // === 性能优化配置 ===
+  "typescript.preferences.includePackageJsonAutoImports": "auto",
+  "search.useIgnoreFiles": true,
+  "search.smartCase": true
+}

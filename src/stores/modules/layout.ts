@@ -190,9 +190,13 @@ export const useLayoutStore = defineStore(
   {
     // 持久化配置
     persist: {
-      key: 'cc-admin-layout',
+      key: `${import.meta.env.VITE_PINIA_PERSIST_KEY_PREFIX}-layout`,
       storage: localStorage,
       pick: ['layoutConfigs', 'sidebarCollapsed'], // 持久化所有布局配置
     },
   }
 )
+
+export const useLayoutStoreWithOut = () => {
+  return useLayoutStore()
+}
