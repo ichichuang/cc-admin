@@ -26,7 +26,7 @@ const containerClass = computed(() => [
 </script>
 
 <template>
-  <!-- 侧边栏 -->
+  <!-- 侧边栏1 -->
   <div :class="containerClass">
     <AppSidebar v-if="config.showSidebar" />
   </div>
