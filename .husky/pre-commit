@@ -1,8 +1,5 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 # 运行lint-staged检查暂存文件
-npx lint-staged
+pnpm dlx lint-staged
 
 # 检查命名规范
 pnpm naming-check

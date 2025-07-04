@@ -21,7 +21,8 @@
     "code-check": "pnpm type-check && pnpm lint && pnpm naming-check",
     "code-fix": "pnpm format && pnpm lint",
     "pre-commit": "pnpm code-check",
-    "commit": "git-cz"
+    "commit": "git-cz",
+    "prepare": "husky"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,vue}": [
