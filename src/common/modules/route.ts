@@ -1,5 +1,4 @@
 import router, { routeUtils } from '@/router'
-import type { MenuItem, RouteConfig } from '@/router/types'
 import type { LocationQueryRaw, RouteLocationNormalized, RouteRecordRaw } from 'vue-router'
 
 /**

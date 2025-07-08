@@ -8,3 +8,10 @@ store.use(piniaPluginPersistedstate)
 
 // 导出默认store实例
 export default store
+
+export * from './modules/app'
+export * from './modules/color'
+export * from './modules/layout'
+export * from './modules/permission'
+export * from './modules/size'
+export * from './modules/user'

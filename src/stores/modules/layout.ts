@@ -1,202 +1,213 @@
+/* 尺寸配置 */
+import store from '@/stores'
+import { getDeviceInfo } from '@/utils/deviceInfo'
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
+import { onBeforeUnmount } from 'vue'
 
-/** 布局模式类型 */
-export type LayoutMode = 'admin' | 'screen' | 'fullscreen'
-
-/** Admin布局配置 */
-export interface AdminLayoutConfig {
-  /** 是否显示头部 */
+/* 布局配置 */
+// Admin布局配置
+interface AdminLayoutConfig {
   showHeader: boolean
-  /** 是否显示顶部预设设置菜单 */
-  showTopMenu: boolean
-  /** 是否显示侧边栏 */
+  showMenu: boolean
   showSidebar: boolean
-  /** 是否显示面包屑 */
   showBreadcrumb: boolean
-  /** 是否显示底部 */
   showFooter: boolean
-  /** 是否显示标签页 */
   showTabs: boolean
 }
+const adminLayoutConfig: AdminLayoutConfig = {
+  showHeader: true,
+  showMenu: true,
+  showSidebar: true,
+  showBreadcrumb: true,
+  showFooter: true,
+  showTabs: true,
+}
 
-/** Screen布局配置 */
-export interface ScreenLayoutConfig {
-  /** 是否显示头部 */
+// Screen布局配置
+interface ScreenLayoutConfig {
   showHeader: boolean
-  /** 是否显示顶部预设设置菜单 */
-  showTopMenu: boolean
-  /** 是否显示底部 */
+  showMenu: boolean
   showFooter: boolean
 }
-
-/** Fullscreen布局配置 */
-export interface FullscreenLayoutConfig {
-  /** 是否显示顶部预设设置菜单 */
-  showTopMenu: boolean
+const screenLayoutConfig: ScreenLayoutConfig = {
+  showHeader: true,
+  showMenu: true,
+  showFooter: true,
 }
 
-/** 所有布局配置 */
-export interface LayoutConfigs {
+// Fullscreen布局配置
+interface FullscreenLayoutConfig {
+  showMenu: boolean
+}
+const fullscreenLayoutConfig: FullscreenLayoutConfig = {
+  showMenu: false,
+}
+
+// 所有布局配置
+interface LayoutConfigs {
   admin: AdminLayoutConfig
   screen: ScreenLayoutConfig
   fullscreen: FullscreenLayoutConfig
 }
 
-// Layout 布局状态管理
-export const useLayoutStore = defineStore(
-  'layout',
-  () => {
-    // 当前布局模式
-    const currentLayout = ref<LayoutMode>('admin')
+interface LayoutState {
+  // 当前布局模式
+  currentLayout: LayoutMode
+  // 布局配置
+  layoutConfigs: LayoutConfigs
+  // 侧边栏折叠状态
+  sidebarCollapsed: boolean
+  // 移动端侧边栏可见状态
+  mobileSidebarVisible: boolean
 
-    // 所有布局配置
-    const layoutConfigs = ref<LayoutConfigs>({
-      admin: {
-        showHeader: true,
-        showTopMenu: true,
-        showSidebar: true,
-        showBreadcrumb: true,
-        showFooter: true,
-        showTabs: false, // 默认不显示标签页
-      },
-      screen: {
-        showHeader: true,
-        showTopMenu: true,
-        showFooter: true,
-      },
-      fullscreen: {
-        showTopMenu: false,
-      },
-    })
+  // 框架加载状态
+  isLoading: boolean
+  // 页面加载状态
+  isPageLoading: boolean
 
-    // 侧边栏是否折叠
-    const sidebarCollapsed = ref(false)
+  // 设备信息
+  deviceInfo: DeviceInfo
+}
 
-    // 移动端侧边栏是否显示
-    const mobileSidebarVisible = ref(false)
+/* 尺寸store */
+export const useLayoutStore = defineStore('layout', {
+  state: (): LayoutState => ({
+    currentLayout: 'admin',
 
-    // 获取当前布局配置
-    const currentConfig = computed(() => {
-      return layoutConfigs.value[currentLayout.value]
-    })
-
-    // 设置布局模式
-    const setLayoutMode = (mode: LayoutMode) => {
-      currentLayout.value = mode
-    }
-
-    // 更新指定布局配置
-    const updateLayoutConfig = <T extends LayoutMode>(
-      mode: T,
-      config: Partial<LayoutConfigs[T]>
-    ) => {
-      layoutConfigs.value[mode] = { ...layoutConfigs.value[mode], ...config }
-    }
-
-    // 更新Admin布局配置 (保持向后兼容)
-    const updateAdminConfig = (config: Partial<AdminLayoutConfig>) => {
-      updateLayoutConfig('admin', config)
-    }
-
-    // 更新Screen布局配置
-    const updateScreenConfig = (config: Partial<ScreenLayoutConfig>) => {
-      updateLayoutConfig('screen', config)
-    }
-
-    // 更新Fullscreen布局配置
-    const updateFullscreenConfig = (config: Partial<FullscreenLayoutConfig>) => {
-      updateLayoutConfig('fullscreen', config)
-    }
-
-    // 切换侧边栏折叠状态
-    const toggleSidebarCollapse = () => {
-      sidebarCollapsed.value = !sidebarCollapsed.value
-    }
-
-    // 切换移动端侧边栏显示
-    const toggleMobileSidebar = () => {
-      mobileSidebarVisible.value = !mobileSidebarVisible.value
-    }
-
-    // 隐藏移动端侧边栏
-    const hideMobileSidebar = () => {
-      mobileSidebarVisible.value = false
-    }
-
-    // 重置所有配置为默认值
-    const resetAllConfigs = () => {
-      layoutConfigs.value = {
-        admin: {
-          showHeader: true,
-          showTopMenu: true,
-          showSidebar: true,
-          showBreadcrumb: true,
-          showFooter: true,
-          showTabs: false,
-        },
-        screen: {
-          showHeader: true,
-          showTopMenu: true,
-          showFooter: true,
-        },
-        fullscreen: {
-          showTopMenu: false,
-        },
-      }
-    }
-
-    // 重置Admin配置为默认值 (保持向后兼容)
-    const resetAdminConfig = () => {
-      updateAdminConfig({
-        showHeader: true,
-        showTopMenu: true,
-        showSidebar: true,
-        showBreadcrumb: true,
-        showFooter: true,
-        showTabs: false,
-      })
-    }
-
-    // 便捷访问器
-    const adminConfig = computed(() => layoutConfigs.value.admin)
-    const screenConfig = computed(() => layoutConfigs.value.screen)
-    const fullscreenConfig = computed(() => layoutConfigs.value.fullscreen)
-
-    return {
-      // 状态
-      currentLayout,
-      layoutConfigs,
-      currentConfig,
-      adminConfig,
-      screenConfig,
-      fullscreenConfig,
-      sidebarCollapsed,
-      mobileSidebarVisible,
-
-      // 方法
-      setLayoutMode,
-      updateLayoutConfig,
-      updateAdminConfig,
-      updateScreenConfig,
-      updateFullscreenConfig,
-      toggleSidebarCollapse,
-      toggleMobileSidebar,
-      hideMobileSidebar,
-      resetAllConfigs,
-      resetAdminConfig,
-    }
-  },
-  {
-    // 持久化配置
-    persist: {
-      key: `${import.meta.env.VITE_PINIA_PERSIST_KEY_PREFIX}-layout`,
-      storage: localStorage,
-      pick: ['layoutConfigs', 'sidebarCollapsed'], // 持久化所有布局配置
+    layoutConfigs: {
+      admin: adminLayoutConfig,
+      screen: screenLayoutConfig,
+      fullscreen: fullscreenLayoutConfig,
     },
-  }
-)
+    sidebarCollapsed: false,
+    mobileSidebarVisible: false,
+
+    isLoading: false,
+    isPageLoading: false,
+
+    deviceInfo: getDeviceInfo(),
+  }),
+
+  getters: {
+    // 获取当前模式
+    getCurrentLayout: (state: LayoutState) => state.currentLayout,
+
+    // 是否展示头部
+    getShowHeader: (state: LayoutState) => state.layoutConfigs.admin.showHeader,
+    // 是否展示顶部菜单
+    getShowMenu: (state: LayoutState) => state.layoutConfigs.admin.showMenu,
+    // 是否展示侧边栏
+    getShowSidebar: (state: LayoutState) => state.layoutConfigs.admin.showSidebar,
+    // 是否展示面包屑
+    getShowBreadcrumb: (state: LayoutState) => state.layoutConfigs.admin.showBreadcrumb,
+    // 是否展示底部
+    getShowFooter: (state: LayoutState) => state.layoutConfigs.admin.showFooter,
+    // 是否展示标签页
+    getShowTabs: (state: LayoutState) => state.layoutConfigs.admin.showTabs,
+
+    // 是否折叠侧边栏
+    getSidebarCollapsed: (state: LayoutState) => state.sidebarCollapsed,
+    // 是否移动端侧边栏可见
+    getMobileSidebarVisible: (state: LayoutState) => state.mobileSidebarVisible,
+
+    // 框架加载状态
+    getIsLoading: (state: LayoutState) => state.isLoading,
+    // 页面加载状态
+    getIsPageLoading: (state: LayoutState) => state.isPageLoading,
+
+    /* 设备信息 */
+    // 是否是 PC 端
+    getIsPC: (state: LayoutState) => state.deviceInfo.type === 'PC',
+    // 是否是 Mobile 端
+    getIsMobile: (state: LayoutState) => state.deviceInfo.type === 'Mobile',
+    // 设备宽度
+    getDeviceWidth: (state: LayoutState) => state.deviceInfo.screen.deviceWidth,
+    // 设备高度
+    getDeviceHeight: (state: LayoutState) => state.deviceInfo.screen.deviceHeight,
+    // 设备方向
+    getDeviceOrientation: (state: LayoutState) => state.deviceInfo.screen.orientation,
+    // 实际宽度
+    getWidth: (state: LayoutState) => state.deviceInfo.screen.width,
+    // 实际高度
+    getHeight: (state: LayoutState) => state.deviceInfo.screen.height,
+    // 绝对大小
+    getDefinitely: (state: LayoutState) => state.deviceInfo.screen.definitely,
+    // 系统导航栏高度
+    getNavHeight: (state: LayoutState) => state.deviceInfo.screen.navHeight,
+    // 系统标签栏高度
+    getTabHeight: (state: LayoutState) => state.deviceInfo.screen.tabHeight,
+    // 系统
+    getSystem: (state: LayoutState) => state.deviceInfo.system,
+  },
+
+  actions: {
+    // 设置当前布局模式
+    setCurrentLayout(layout: LayoutMode) {
+      this.currentLayout = layout
+    },
+
+    // 设置侧边栏折叠状态
+    setSidebarCollapsed(collapsed: boolean) {
+      this.sidebarCollapsed = collapsed
+    },
+    // 设置移动端侧边栏可见状态
+    setMobileSidebarVisible(visible: boolean) {
+      this.mobileSidebarVisible = visible
+    },
+
+    // 设置框架加载状态
+    setIsLoading(loading: boolean) {
+      this.isLoading = loading
+    },
+    // 设置页面加载状态
+    setIsPageLoading(loading: boolean) {
+      this.isPageLoading = loading
+    },
+
+    // 初始化设备信息
+    initDeviceInfo() {
+      this.deviceInfo = getDeviceInfo()
+    },
+
+    init() {
+      this.initDeviceInfo()
+
+      const events = [
+        'resize',
+        'orientationchange',
+        'load',
+        'DOMContentLoaded',
+        'pageshow',
+        'pagehide',
+        'visibilitychange',
+        'focus',
+        'blur',
+        'beforeunload',
+        'unload',
+        'scroll',
+        'scrollend',
+        'scrollstart',
+      ]
+
+      // 统一的 handler（绑定 this）
+      const handler = (this._deviceInfoListener ??= this.initDeviceInfo.bind(this))
+
+      // 添加事件监听
+      events.forEach(event => window.addEventListener(event, handler))
+
+      // 清除事件监听
+      onBeforeUnmount(() => {
+        events.forEach(event => window.removeEventListener(event, handler))
+      })
+    },
+  },
+
+  persist: {
+    key: `${import.meta.env.VITE_PINIA_PERSIST_KEY_PREFIX}-layout`,
+    storage: localStorage,
+  },
+})
 
 export const useLayoutStoreWithOut = () => {
-  return useLayoutStore()
+  return useLayoutStore(store)
 }

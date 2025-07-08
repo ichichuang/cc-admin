@@ -1,5 +1,5 @@
 /* 颜色配置 (https://aicolors.co/) */
-import { applyOpacityToColor, getSystemColorMode } from '@/common'
+import { applyOpacityToColor, getSystemColorMode, toCamelCase } from '@/common'
 import store from '@/stores'
 import { defineStore } from 'pinia'
 
@@ -227,8 +227,8 @@ const lightColors: ColorVariables = {
 // 深色主题预设
 const darkColors: ColorVariables = {
   primary: {
-    color: '#1890ff',
-    hover: '#40a9ff',
+    color: '#2563eb',
+    hover: '#598EF3',
     active: '#096dd9',
     disabled: '#434343',
     light: '#111b26',
@@ -266,7 +266,7 @@ const darkColors: ColorVariables = {
     light: '#111b26',
   },
 
-  theme: '#1890ff',
+  theme: '#2563eb',
   themeText: '#ffffff',
   themeOptions: darkThemeOptions,
 
@@ -515,6 +515,14 @@ export const useColorStore = defineStore('color', {
       }
       return state.colors.theme
     },
+    getThemes: state => {
+      if (state.mode === 'auto') {
+        return getSystemColorMode() === 'dark' ? lightColors.theme : darkColors.theme
+      } else {
+        const isDark = state.mode === 'dark'
+        return isDark ? lightColors.theme : darkColors.theme
+      }
+    },
     // 获取主题色透明度 opacity 0-100
     getThemeOpacity: state => {
       return (opacity: number): string => {
@@ -527,11 +535,32 @@ export const useColorStore = defineStore('color', {
         return applyOpacityToColor(themeColor, opacity)
       }
     },
+    getThemeOpacitys: state => {
+      const isDark = state.mode === 'dark'
+      return (opacity: number): string => {
+        const themeColor =
+          state.mode === 'auto'
+            ? getSystemColorMode() === 'dark'
+              ? lightColors.theme
+              : darkColors.theme
+            : isDark
+              ? lightColors.theme
+              : darkColors.theme
+        return applyOpacityToColor(themeColor, opacity)
+      }
+    },
     getThemeText: state => {
       if (state.mode === 'auto') {
         return getSystemColorMode() === 'dark' ? darkColors.themeText : lightColors.themeText
       }
       return state.colors.themeText
+    },
+    getThemeTexts: state => {
+      if (state.mode === 'auto') {
+        return getSystemColorMode() === 'dark' ? lightColors.themeText : darkColors.themeText
+      }
+      const isDark = state.mode === 'dark'
+      return isDark ? lightColors.themeText : darkColors.themeText
     },
     getText: state => {
       if (state.mode === 'auto') {
@@ -539,17 +568,38 @@ export const useColorStore = defineStore('color', {
       }
       return state.colors.text
     },
+    getTexts: state => {
+      if (state.mode === 'auto') {
+        return getSystemColorMode() === 'dark' ? lightColors.text : darkColors.text
+      }
+      const isDark = state.mode === 'dark'
+      return isDark ? lightColors.text : darkColors.text
+    },
     getTextMuted: state => {
       if (state.mode === 'auto') {
         return getSystemColorMode() === 'dark' ? darkColors.textMuted : lightColors.textMuted
       }
       return state.colors.textMuted
     },
+    getTextMuteds: state => {
+      if (state.mode === 'auto') {
+        return getSystemColorMode() === 'dark' ? lightColors.textMuted : darkColors.textMuted
+      }
+      const isDark = state.mode === 'dark'
+      return isDark ? lightColors.textMuted : darkColors.textMuted
+    },
     getBackground: state => {
       if (state.mode === 'auto') {
         return getSystemColorMode() === 'dark' ? darkColors.background : lightColors.background
       }
       return state.colors.background
+    },
+    getBackgrounds: state => {
+      if (state.mode === 'auto') {
+        return getSystemColorMode() === 'dark' ? lightColors.background : darkColors.background
+      }
+      const isDark = state.mode === 'dark'
+      return isDark ? lightColors.background : darkColors.background
     },
     getBackgroundHighlight: state => {
       if (state.mode === 'auto') {
@@ -558,6 +608,15 @@ export const useColorStore = defineStore('color', {
           : lightColors.backgroundHighlight
       }
       return state.colors.backgroundHighlight
+    },
+    getBackgroundHighlights: state => {
+      if (state.mode === 'auto') {
+        return getSystemColorMode() === 'dark'
+          ? lightColors.backgroundHighlight
+          : darkColors.backgroundHighlight
+      }
+      const isDark = state.mode === 'dark'
+      return isDark ? lightColors.backgroundHighlight : darkColors.backgroundHighlight
     },
   },
 
@@ -604,51 +663,50 @@ export const useColorStore = defineStore('color', {
 
     /* 将颜色变量都存储到 css 变量中 用于全局样式 */
     setCssVariables() {
-      // 不检查驼峰命名 因为 css 变量不支持驼峰命名 所以需要手动转换
-
-      // 将驼峰命名转换为 css 变量命名 primaryColor 转换为 --primary-color
-      const camelToCss = (str: string) => {
-        return `--${str.replace(/([A-Z])/g, '-$1').toLowerCase()}`
-      }
-
       const cssVariables: Record<string, string> = {
-        [camelToCss('primaryColor')]: this.getPrimary,
-        [camelToCss('primaryHoverColor')]: this.getPrimaryHover,
-        [camelToCss('primaryActiveColor')]: this.getPrimaryActive,
-        [camelToCss('primaryDisabledColor')]: this.getPrimaryDisabled,
-        [camelToCss('primaryLightColor')]: this.getPrimaryLight,
+        [toCamelCase('primaryColor', '--')]: this.getPrimary,
+        [toCamelCase('primaryHoverColor', '--')]: this.getPrimaryHover,
+        [toCamelCase('primaryActiveColor', '--')]: this.getPrimaryActive,
+        [toCamelCase('primaryDisabledColor', '--')]: this.getPrimaryDisabled,
+        [toCamelCase('primaryLightColor', '--')]: this.getPrimaryLight,
 
-        [camelToCss('successColor')]: this.getSuccess,
-        [camelToCss('successHoverColor')]: this.getSuccessHover,
-        [camelToCss('successActiveColor')]: this.getSuccessActive,
-        [camelToCss('successDisabledColor')]: this.getSuccessDisabled,
-        [camelToCss('successLightColor')]: this.getSuccessLight,
+        [toCamelCase('successColor', '--')]: this.getSuccess,
+        [toCamelCase('successHoverColor', '--')]: this.getSuccessHover,
+        [toCamelCase('successActiveColor', '--')]: this.getSuccessActive,
+        [toCamelCase('successDisabledColor', '--')]: this.getSuccessDisabled,
+        [toCamelCase('successLightColor', '--')]: this.getSuccessLight,
 
-        [camelToCss('infoColor')]: this.getInfo,
-        [camelToCss('infoHoverColor')]: this.getInfoHover,
-        [camelToCss('infoActiveColor')]: this.getInfoActive,
-        [camelToCss('infoDisabledColor')]: this.getInfoDisabled,
-        [camelToCss('infoLightColor')]: this.getInfoLight,
+        [toCamelCase('infoColor', '--')]: this.getInfo,
+        [toCamelCase('infoHoverColor', '--')]: this.getInfoHover,
+        [toCamelCase('infoActiveColor', '--')]: this.getInfoActive,
+        [toCamelCase('infoDisabledColor', '--')]: this.getInfoDisabled,
+        [toCamelCase('infoLightColor', '--')]: this.getInfoLight,
 
-        [camelToCss('warningColor')]: this.getWarning,
-        [camelToCss('warningHoverColor')]: this.getWarningHover,
-        [camelToCss('warningActiveColor')]: this.getWarningActive,
-        [camelToCss('warningDisabledColor')]: this.getWarningDisabled,
-        [camelToCss('warningLightColor')]: this.getWarningLight,
+        [toCamelCase('warningColor', '--')]: this.getWarning,
+        [toCamelCase('warningHoverColor', '--')]: this.getWarningHover,
+        [toCamelCase('warningActiveColor', '--')]: this.getWarningActive,
+        [toCamelCase('warningDisabledColor', '--')]: this.getWarningDisabled,
+        [toCamelCase('warningLightColor', '--')]: this.getWarningLight,
 
-        [camelToCss('errorColor')]: this.getError,
-        [camelToCss('errorHoverColor')]: this.getErrorHover,
-        [camelToCss('errorActiveColor')]: this.getErrorActive,
-        [camelToCss('errorDisabledColor')]: this.getErrorDisabled,
-        [camelToCss('errorLightColor')]: this.getErrorLight,
+        [toCamelCase('errorColor', '--')]: this.getError,
+        [toCamelCase('errorHoverColor', '--')]: this.getErrorHover,
+        [toCamelCase('errorActiveColor', '--')]: this.getErrorActive,
+        [toCamelCase('errorDisabledColor', '--')]: this.getErrorDisabled,
+        [toCamelCase('errorLightColor', '--')]: this.getErrorLight,
 
-        [camelToCss('themeColor')]: this.getTheme,
-        [camelToCss('themeTextColor')]: this.getThemeText,
+        [toCamelCase('themeColor', '--')]: this.getTheme,
+        [toCamelCase('themeColors', '--')]: this.getThemes,
+        [toCamelCase('themeTextColor', '--')]: this.getThemeText,
+        [toCamelCase('themeTextColors', '--')]: this.getThemeTexts,
 
-        [camelToCss('textColor')]: this.getText,
-        [camelToCss('textMutedColor')]: this.getTextMuted,
-        [camelToCss('backgroundColor')]: this.getBackground,
-        [camelToCss('backgroundHighlightColor')]: this.getBackgroundHighlight,
+        [toCamelCase('textColor', '--')]: this.getText,
+        [toCamelCase('textColors', '--')]: this.getTexts,
+        [toCamelCase('textMutedColor', '--')]: this.getTextMuted,
+        [toCamelCase('textMutedColors', '--')]: this.getTextMuteds,
+        [toCamelCase('backgroundColor', '--')]: this.getBackground,
+        [toCamelCase('backgroundColors', '--')]: this.getBackgrounds,
+        [toCamelCase('backgroundHighlightColor', '--')]: this.getBackgroundHighlight,
+        [toCamelCase('backgroundHighlightColors', '--')]: this.getBackgroundHighlights,
       }
       Object.entries(cssVariables).forEach(([key, value]) => {
         document.documentElement.style.setProperty(key, value)

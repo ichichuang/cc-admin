@@ -30,7 +30,16 @@ interface ImportMetaEnv {
   readonly VITE_PINIA_PERSIST_KEY_PREFIX: string
 
   /** 当前运行环境 - 用于区分不同的部署环境 */
-  readonly VITE_APP_ENV: 'development' | 'production' | 'test'
+  readonly VITE_APP_ENV: 'development' | 'production'
+
+  /** 应用根路径 */
+  readonly VITE_PUBLIC_PATH: string
+
+  /** 开发服务器端口 */
+  readonly VITE_PORT: string
+
+  /** rootRedirect 重定向路径 */
+  readonly VITE_ROOT_REDIRECT: string
 
   /**
    * ==========================================
@@ -59,6 +68,9 @@ interface ImportMetaEnv {
   /** 是否启用控制台日志 - 控制 console.log 等调试信息的输出 */
   readonly VITE_CONSOLE_LOG: string
 
+  /** 是否启用 debug 模式 - 控制调试信息 */
+  readonly VITE_DEBUG: boolean
+
   /**
    * ==========================================
    * 构建优化配置
@@ -76,6 +88,18 @@ interface ImportMetaEnv {
 
   /** 是否启用构建分析 - 生成打包分析报告 */
   readonly VITE_BUILD_ANALYZE: string
+
+  /** 是否生成 sourcemap */
+  readonly VITE_BUILD_SOURCEMAP: string
+
+  /** 压缩方式 none | gzip | brotli | both */
+  readonly VITE_COMPRESSION: string
+
+  /** 是否启用 legacy 浏览器支持 */
+  readonly VITE_LEGACY: string
+
+  /** 是否启用 CDN */
+  readonly VITE_CDN: string
 
   /**
    * ==========================================

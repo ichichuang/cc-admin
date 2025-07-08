@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useLayoutStore } from '@/stores/modules/layout'
+import { useLayoutStore } from '@/stores'
 import { computed } from 'vue'
 import AppBreadcrumb from './AppBreadcrumb.vue'
 import AppFooter from './AppFooter.vue'
@@ -8,16 +8,20 @@ import AppSidebar from './AppSidebar.vue'
 
 const layoutStore = useLayoutStore()
 
-// 响应式配置
-const config = computed(() => layoutStore.adminConfig)
+const showHeader = computed(() => layoutStore.getShowHeader)
+const showMenu = computed(() => layoutStore.getShowMenu)
+const showSidebar = computed(() => layoutStore.getShowSidebar)
+const showBreadcrumb = computed(() => layoutStore.getShowBreadcrumb)
+const showFooter = computed(() => layoutStore.getShowFooter)
+const showTabs = computed(() => layoutStore.getShowTabs)
+
 // 侧边栏折叠
 const sidebarCollapsed = computed(() => layoutStore.sidebarCollapsed)
 // 移动端侧边栏可见
 const mobileSidebarVisible = computed(() => layoutStore.mobileSidebarVisible)
 
 // 主容器类名
-const containerClass = computed(() => [
-  'admin-layout',
+const sidebarClass = computed(() => [
   {
     sidebarCollapsed: sidebarCollapsed.value,
     mobileSidebarVisible: mobileSidebarVisible.value,
@@ -26,30 +30,46 @@ const containerClass = computed(() => [
 </script>
 
 <template>
-  <!-- 侧边栏1 -->
-  <div :class="containerClass">
-    <AppSidebar v-if="config.showSidebar" />
-  </div>
-
-  <!-- 主内容区域 -->
-  <div class="main-container">
-    <!-- 头部 -->
-    <header class="w-full bg-theme-success h-header p-gap">
-      <div class="w-gap h-gap bg-theme radius-radius"></div>
-      <AppHeader v-if="config.showHeader" />
-    </header>
-
-    <!-- 面包屑 -->
-    <AppBreadcrumb v-if="config.showBreadcrumb" />
-
-    <!-- 内容区域 -->
-    <main class="content-wrapper">
-      <div class="content-container">
-        <RouterView />
+  <div class="container">
+    <!-- 侧边栏 -->
+    <template v-if="showSidebar">
+      <div
+        class="w-sidebarWidth h-100% bg-themeColor"
+        :class="sidebarClass"
+      >
+        <AppSidebar />
       </div>
-    </main>
+    </template>
 
-    <!-- 底部 -->
-    <AppFooter v-if="config.showFooter" />
+    <!-- 主内容区域 -->
+    <div class="w100% h100% bg-themeColors">
+      <!-- 头部 -->
+      <template v-if="showHeader">
+        <header class="w-full">
+          <div class=""></div>
+          <AppHeader :show-menu="showMenu" />
+        </header>
+      </template>
+
+      <!-- 面包屑 -->
+      <template v-if="showBreadcrumb">
+        <AppBreadcrumb />
+      </template>
+
+      <!-- 内容区域 -->
+      <main class="content-wrapper">
+        <template v-if="showTabs">
+          <div>标签页</div>
+        </template>
+        <div class="content-container">
+          <RouterView />
+        </div>
+      </main>
+
+      <!-- 底部 -->
+      <template v-if="showFooter">
+        <AppFooter />
+      </template>
+    </div>
   </div>
 </template>

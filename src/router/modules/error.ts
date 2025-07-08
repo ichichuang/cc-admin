@@ -1,10 +1,8 @@
-import type { RouteConfig } from '../types'
-
 const errorRoutes: RouteConfig[] = [
   {
     path: '/404',
-    name: 'NotFound',
-    component: () => import('@/views/notfound/NotFoundPage.vue'),
+    name: '404',
+    component: () => import('@/views/notfound/not-found-page.vue'),
     meta: {
       title: '页面未找到',
       showLink: false,
@@ -13,8 +11,8 @@ const errorRoutes: RouteConfig[] = [
   },
   {
     path: '/403',
-    name: 'Forbidden',
-    component: () => import('@/views/notfound/ForbiddenPage.vue'),
+    name: '403',
+    component: () => import('@/views/notfound/forbidden-page.vue'),
     meta: {
       title: '访问被拒绝',
       showLink: false,
@@ -23,8 +21,8 @@ const errorRoutes: RouteConfig[] = [
   },
   {
     path: '/500',
-    name: 'ServerError',
-    component: () => import('@/views/notfound/ServerErrorPage.vue'),
+    name: '500',
+    component: () => import('@/views/notfound/server-error-page.vue'),
     meta: {
       title: '服务器错误',
       showLink: false,

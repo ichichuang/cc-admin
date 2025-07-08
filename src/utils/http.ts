@@ -1,6 +1,8 @@
+import { useUserStoreWithOut } from '@/stores'
 import { createAlova } from 'alova'
 import adapterFetch from 'alova/fetch'
 import VueHook from 'alova/vue'
+const isDebug = import.meta.env.VITE_DEBUG
 
 // 创建全局 alova 实例
 export const alovaInstance = createAlova({
@@ -22,19 +24,23 @@ export const alovaInstance = createAlova({
     }
 
     // 添加认证 token
-    const token = localStorage.getItem('token')
+    const token = useUserStoreWithOut().getToken
     if (token) {
       method.config.headers.authorization = `Bearer ${token}`
     }
 
-    console.log(`🚀 [${method.type}] ${method.url}`, method.data)
+    if (isDebug) {
+      console.log(`🚀 [${method.type}] ${method.url}`, method.data ?? '')
+    }
   },
 
   // 全局响应拦截器 - 适配 cc-server 的响应格式
   async responded(response) {
     const json = await response.json()
 
-    console.log('📥 响应数据:', json)
+    if (isDebug) {
+      console.log('📥 响应数据:', json)
+    }
 
     // cc-server 使用 success 字段而不是 code
     if (json.success === false) {
@@ -63,11 +69,12 @@ export const uploadFile = (url: string, file: File) => {
   const formData = new FormData()
   formData.append('file', file)
 
-  return post(url, formData, {
+  /* return post(url, formData, {
     headers: {
       ['content-type']: 'multipart/form-data',
     },
-  })
+  }) */
+  return post(url, formData)
 }
 
 export default alovaInstance

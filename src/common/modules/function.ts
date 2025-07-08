@@ -68,3 +68,13 @@ export function applyOpacityToColor(color: string, opacity: number): string {
   console.warn(`Unsupported color format: "${color}"`)
   return `rgba(0, 0, 0, ${alpha})`
 }
+
+/* 将 - 命名转换为驼峰命名
+ * @param str 字符串
+ * @param start 拼接前缀
+ * @param end 拼接后缀
+ * @returns 驼峰命名的字符串
+ */
+export function toCamelCase(str: string, start: string = '', end: string = ''): string {
+  return start + `${str.replace(/([A-Z])/g, '-$1').toLowerCase()}` + end
+}

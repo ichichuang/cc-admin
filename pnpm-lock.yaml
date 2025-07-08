@@ -11,9 +11,6 @@ importers:
 
   .:
     dependencies:
-      '@unocss/preset-rem-to-px':
-        specifier: ^66.3.2
-        version: 66.3.2
       alova:
         specifier: ^3.3.3
         version: 3.3.3
@@ -1318,9 +1315,6 @@ packages:
 
   '@unocss/preset-mini@66.3.2':
     resolution: {integrity: sha512-9jaJ3Kk7qTUHY84PIUU53yl1BaFYnoFYu22TGLqd9bV6/OihsZ454sTRmpkjXFWGPWENEv6vfs1BQANliMZGIA==}
-
-  '@unocss/preset-rem-to-px@66.3.2':
-    resolution: {integrity: sha512-frLL0BuNLjKudRdSkL06flO/yWmemPw9Tla4YW+gTdDCURdjSp8aQuC2WytZbgVBN7WlhydCC8EQRgPsUwGxTA==}
 
   '@unocss/preset-tagify@66.3.2':
     resolution: {integrity: sha512-6nGSu6EE0s3HI0Ni+AZDGFhcKrz5Q0Ic+t6fS2+x1ZFgGQfHs5UVvSzr8W2pfLFJ5WUWZ0PLdIrRj8aw1X8x3A==}
@@ -4555,10 +4549,6 @@ snapshots:
       '@unocss/core': 66.3.2
       '@unocss/extractor-arbitrary-variants': 66.3.2
       '@unocss/rule-utils': 66.3.2
-
-  '@unocss/preset-rem-to-px@66.3.2':
-    dependencies:
-      '@unocss/core': 66.3.2
 
   '@unocss/preset-tagify@66.3.2':
     dependencies:

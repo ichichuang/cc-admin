@@ -1,4 +1,5 @@
 /* 尺寸配置 */
+import { toCamelCase } from '@/common/modules/function'
 import store from '@/stores'
 import { defineStore } from 'pinia'
 
@@ -20,17 +21,17 @@ const sizeOptions: SizeOptionConfig[] = [
 // 布局尺寸具体定义
 interface LayoutSizes {
   // 侧边栏宽度
-  sidebarWidth: string
+  sidebarWidth: number
   // 侧边栏折叠宽度
-  sidebarCollapsedWidth: string
+  sidebarCollapsedWidth: number
   // 头部高度
-  headerHeight: string
+  headerHeight: number
   // 面包屑高度
-  breadcrumbHeight: string
+  breadcrumbHeight: number
   // 底部高度
-  footerHeight: string
+  footerHeight: number
   // 标签页高度
-  tabsHeight: string
+  tabsHeight: number
 }
 
 // 间距具体定义
@@ -44,7 +45,7 @@ type Sizes = {
 
 interface SizesOptions {
   label: keyof Sizes
-  value: string
+  value: number
 }
 
 // 尺寸变量
@@ -65,63 +66,78 @@ interface SizeState {
 
   gap: keyof Sizes
   gapOptions: SizesOptions[]
+
+  // 圆角尺寸
+  rounded: keyof Sizes
+  roundedOptions: SizesOptions[]
+
+  sizesLabel: Record<keyof Sizes, string>
+}
+
+// 尺寸标签
+const sizesLabel: Record<keyof Sizes, string> = {
+  xs: '小',
+  sm: '中',
+  md: '大',
+  lg: '特大',
+  xl: '超大',
 }
 
 /* 尺寸预设 */
 // 紧凑尺寸预设
 const compactSizes: SizeVariables = {
   layout: {
-    sidebarWidth: '180px',
-    sidebarCollapsedWidth: '50px',
-    headerHeight: '50px',
-    breadcrumbHeight: '32px',
-    footerHeight: '50px',
-    tabsHeight: '32px',
+    sidebarWidth: 180,
+    sidebarCollapsedWidth: 50,
+    headerHeight: 50,
+    breadcrumbHeight: 32,
+    footerHeight: 50,
+    tabsHeight: 32,
   },
   gapOptions: [
-    { label: 'xs', value: '2px' },
-    { label: 'sm', value: '4px' },
-    { label: 'md', value: '8px' },
-    { label: 'lg', value: '12px' },
-    { label: 'xl', value: '16px' },
+    { label: 'xs', value: 2 },
+    { label: 'sm', value: 4 },
+    { label: 'md', value: 6 },
+    { label: 'lg', value: 8 },
+    { label: 'xl', value: 10 },
   ],
 }
 
 // 舒适尺寸预设
 const comfortableSizes: SizeVariables = {
   layout: {
-    sidebarWidth: '200px',
-    sidebarCollapsedWidth: '60px',
-    headerHeight: '60px',
-    breadcrumbHeight: '40px',
-    footerHeight: '60px',
-    tabsHeight: '40px',
+    sidebarWidth: 200,
+    sidebarCollapsedWidth: 60,
+    headerHeight: 60,
+    breadcrumbHeight: 40,
+    footerHeight: 60,
+    tabsHeight: 40,
   },
   gapOptions: [
-    { label: 'xs', value: '4px' },
-    { label: 'sm', value: '8px' },
-    { label: 'md', value: '12px' },
-    { label: 'lg', value: '16px' },
-    { label: 'xl', value: '20px' },
+    { label: 'xs', value: 4 },
+    { label: 'sm', value: 6 },
+    { label: 'md', value: 8 },
+    { label: 'lg', value: 10 },
+    { label: 'xl', value: 12 },
   ],
 }
 
 // 宽松尺寸预设
 const looseSizes: SizeVariables = {
   layout: {
-    sidebarWidth: '240px',
-    sidebarCollapsedWidth: '70px',
-    headerHeight: '70px',
-    breadcrumbHeight: '48px',
-    footerHeight: '70px',
-    tabsHeight: '48px',
+    sidebarWidth: 240,
+    sidebarCollapsedWidth: 70,
+    headerHeight: 70,
+    breadcrumbHeight: 48,
+    footerHeight: 70,
+    tabsHeight: 48,
   },
   gapOptions: [
-    { label: 'xs', value: '6px' },
-    { label: 'sm', value: '12px' },
-    { label: 'md', value: '20px' },
-    { label: 'lg', value: '28px' },
-    { label: 'xl', value: '36px' },
+    { label: 'xs', value: 6 },
+    { label: 'sm', value: 8 },
+    { label: 'md', value: 10 },
+    { label: 'lg', value: 12 },
+    { label: 'xl', value: 14 },
   ],
 }
 
@@ -138,6 +154,19 @@ export const useSizeStore = defineStore('size', {
     // 默认舒适间隔尺寸
     gap: 'md',
     gapOptions: comfortableSizes.gapOptions,
+
+    // 圆角尺寸
+    rounded: 'md',
+    roundedOptions: [
+      { label: 'xs', value: 4 },
+      { label: 'sm', value: 6 },
+      { label: 'md', value: 8 },
+      { label: 'lg', value: 10 },
+      { label: 'xl', value: 12 },
+    ],
+
+    // 尺寸标签
+    sizesLabel,
   }),
 
   getters: {
@@ -152,6 +181,11 @@ export const useSizeStore = defineStore('size', {
     isComfortable: state => state.size === 'comfortable',
     // 获取当前是否是宽松模式
     isLoose: state => state.size === 'loose',
+
+    // 获取当前尺寸标签
+    getSizesLabel: state => {
+      return (key: keyof Sizes) => state.sizesLabel[key]
+    },
 
     /* 尺寸变量配置相关 layout */
     // 获取侧边栏宽度
@@ -171,10 +205,22 @@ export const useSizeStore = defineStore('size', {
     // 获取间距尺寸
     getGap: state => state.gap,
     // 获取当前间距的具体数值
-    getGapValue: state =>
-      state.gapOptions.find(option => option.label === state.gap)?.value || '12px',
+    getGapValue: state => state.gapOptions.find(option => option.label === state.gap)?.value,
+    // 获取间距尺寸标签
+    getGapLabel: state => state.sizesLabel[state.gap],
     // 获取间距选项
     getGapOptions: state => state.gapOptions,
+
+    /* 尺寸变量配置相关 rounded */
+    // 获取圆角尺寸
+    getRounded: state => state.rounded,
+    // 获取圆角尺寸的具体数值
+    getRoundedValue: state =>
+      state.roundedOptions.find(option => option.label === state.rounded)?.value,
+    // 获取圆角尺寸标签
+    getRoundedLabel: state => state.sizesLabel[state.rounded],
+    // 获取圆角尺寸选项
+    getRoundedOptions: state => state.roundedOptions,
 
     /* 获取所有尺寸变量 */
     getAllSizes: state => {
@@ -211,6 +257,11 @@ export const useSizeStore = defineStore('size', {
       this.gap = gap
       this.setCssVariables()
     },
+    // 设置圆角尺寸
+    setRounded(rounded: keyof Sizes) {
+      this.rounded = rounded
+      this.setCssVariables()
+    },
 
     /* 批量设置方法 */
     updateLayout(layout: Partial<LayoutSizes>) {
@@ -240,37 +291,26 @@ export const useSizeStore = defineStore('size', {
       this.setCssVariables()
     },
 
-    /* CSS变量应用方法 */
-    setCSSVariable(name: string, value: string) {
-      document.documentElement.style.setProperty(`--${name}`, value)
-    },
-
-    setCSSVariables(variables: Record<string, string>) {
-      Object.entries(variables).forEach(([name, value]) => {
-        this.setCSSVariable(name, value)
-      })
-    },
-
     setCssVariables() {
-      // 将驼峰命名转换为 css 变量命名
-      const camelToCss = (str: string) => {
-        return `--${str.replace(/([A-Z])/g, '-$1').toLowerCase()}`
-      }
-
       const cssVariables: Record<string, string> = {
         // 布局尺寸变量
-        [camelToCss('sidebarWidth')]: this.getSidebarWidth,
-        [camelToCss('sidebarCollapsedWidth')]: this.getSidebarCollapsedWidth,
-        [camelToCss('headerHeight')]: this.getHeaderHeight,
-        [camelToCss('breadcrumbHeight')]: this.getBreadcrumbHeight,
-        [camelToCss('footerHeight')]: this.getFooterHeight,
-        [camelToCss('tabsHeight')]: this.getTabsHeight,
+        [toCamelCase('sidebarWidth', '--')]: this.getSidebarWidth + 'px',
+        [toCamelCase('sidebarCollapsedWidth', '--')]: this.getSidebarCollapsedWidth + 'px',
+        [toCamelCase('headerHeight', '--')]: this.getHeaderHeight + 'px',
+        [toCamelCase('breadcrumbHeight', '--')]: this.getBreadcrumbHeight + 'px',
+        [toCamelCase('footerHeight', '--')]: this.getFooterHeight + 'px',
+        [toCamelCase('tabsHeight', '--')]: this.getTabsHeight + 'px',
 
         // 间距变量
-        [camelToCss('gap')]: this.getGapValue,
-      }
+        [toCamelCase('gap', '--')]: this.getGapValue + 'px',
+        [toCamelCase('gaps', '--')]: (this.getGapValue ? this.getGapValue / 2 : 0) + 'px',
 
-      this.setCSSVariables(cssVariables)
+        // 圆角变量
+        [toCamelCase('rounded', '--')]: this.getRoundedValue + 'px',
+      }
+      Object.entries(cssVariables).forEach(([key, value]) => {
+        document.documentElement.style.setProperty(key, value)
+      })
     },
 
     /* 初始化方法 */

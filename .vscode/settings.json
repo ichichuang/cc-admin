@@ -9,7 +9,7 @@
     ".prettierrc.json": ".prettierignore,.prettierrc.*",
     "commitlint.config.js": ".gitmessage,.czrc,.cz-config.js",
     "README.md": "CHANGELOG.md,LICENSE,CONTRIBUTING.md",
-    "env.d.ts": "$(capture).env.*",
+    "env.d.ts": "$(capture).env.*,.env",
     "index.vue": "components,views,utils,types,README.md"
   },
   "editor.codeActionsOnSave": {

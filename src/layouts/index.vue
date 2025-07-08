@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { LayoutMode } from '@/router/types'
-import { useLayoutStore } from '@/stores/modules/layout'
+import Loading from '@/components/layout/Loading.vue'
+import { useLayoutStore } from '@/stores'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import AdminLayout from './components/LayoutAdmin.vue'
@@ -10,6 +10,8 @@ import ScreenLayout from './components/LayoutScreen.vue'
 const route = useRoute()
 const layoutStore = useLayoutStore()
 
+const isLoading = computed(() => layoutStore.getIsLoading)
+
 // 根据路由meta获取布局模式，默认为admin
 const currentLayoutMode = computed<LayoutMode>(() => {
   const routeLayout = route.meta?.parent as LayoutMode
@@ -17,24 +19,31 @@ const currentLayoutMode = computed<LayoutMode>(() => {
 })
 
 // 同步更新store中的布局模式
-layoutStore.setLayoutMode(currentLayoutMode.value)
+layoutStore.setCurrentLayout(currentLayoutMode.value)
 </script>
 
 <template>
-  <component
-    :is="AdminLayout"
-    v-if="currentLayoutMode === 'admin'"
-  />
-  <component
-    :is="ScreenLayout"
-    v-else-if="currentLayoutMode === 'screen'"
-  />
-  <component
-    :is="FullScreenLayout"
-    v-else-if="currentLayoutMode === 'fullscreen'"
-  />
-  <component
-    :is="AdminLayout"
-    v-else
-  />
+  <template v-if="isLoading">
+    <div class="container center">
+      <Loading />
+    </div>
+  </template>
+  <template v-else>
+    <component
+      :is="AdminLayout"
+      v-if="currentLayoutMode === 'admin'"
+    />
+    <component
+      :is="ScreenLayout"
+      v-else-if="currentLayoutMode === 'screen'"
+    />
+    <component
+      :is="FullScreenLayout"
+      v-else-if="currentLayoutMode === 'fullscreen'"
+    />
+    <component
+      :is="AdminLayout"
+      v-else
+    />
+  </template>
 </template>

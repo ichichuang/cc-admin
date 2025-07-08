@@ -106,7 +106,7 @@ export default tseslint.config(
 
       // Vue 最佳实践
       'vue/multi-word-component-names': [
-        'error',
+        'off',
         {
           ignores: ['index'],
         },
@@ -125,12 +125,6 @@ export default tseslint.config(
       curly: ['error', 'all'],
       '@typescript-eslint/no-explicit-any': 'off',
       'no-undef': 'off', // TypeScript 处理未定义变量
-    },
-  },
-  {
-    files: ['uno.config.ts'],
-    rules: {
-      '@typescript-eslint/naming-convention': 'off',
     },
   }
 )

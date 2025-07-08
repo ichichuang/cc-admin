@@ -22,6 +22,8 @@ const NAMING_RULES = {
     vueComponents: /^[A-Z][a-zA-Z0-9]*\.vue$/,
     // TypeScript/JavaScript文件：kebab-case
     scripts: /^[a-z0-9]+(-[a-z0-9]+)*\.(ts|js)$/,
+    // camelCase 文件名（不含扩展名）
+    camelCase: /^[a-z][a-zA-Z0-9]*\.(ts|js)$/,
     // 其他文件：kebab-case
     others: /^[a-z0-9]+(-[a-z0-9]+)*(\.[a-z0-9]+)*$/,
   },
@@ -80,10 +82,24 @@ function checkFileName(filePath, fileName) {
 
   if (skipFiles.includes(fileName)) return
 
-  // 根据路径判断文件类型
+  // 判断是否在 src/common、src/hooks、src/router、src/stores、src/utils 目录下
+  const isInSpecialCamelCaseDir = /\/src\/(common|hooks|router|stores|utils)\//.test(filePath)
   const isInComponents = filePath.includes('/components/')
   const isInViews = filePath.includes('/views/')
   const isVueFile = ext === '.vue'
+
+  if (isInSpecialCamelCaseDir && ['.ts', '.js'].includes(ext)) {
+    // 这些目录下必须用 camelCase
+    if (!NAMING_RULES.files.camelCase.test(fileName)) {
+      addError(
+        'file-naming',
+        filePath,
+        0,
+        `src/${filePath.split('/src/')[1].split('/')[0]} 目录下文件必须使用 camelCase 命名：${fileName} -> 建议：${toCamelCase(nameWithoutExt)}${ext}`
+      )
+    }
+    return
+  }
 
   if (isVueFile) {
     if (isInComponents) {
@@ -108,7 +124,7 @@ function checkFileName(filePath, fileName) {
       }
     }
   } else if (['.ts', '.js'].includes(ext)) {
-    // TypeScript/JavaScript文件：kebab-case
+    // 其他目录 TypeScript/JavaScript文件：kebab-case
     if (!NAMING_RULES.files.scripts.test(fileName)) {
       addError(
         'file-naming',
@@ -215,6 +231,11 @@ async function scanDirectory(dirPath) {
       const stats = await stat(itemPath)
 
       if (stats.isDirectory()) {
+        const relativePath = itemPath.replace(projectRoot, '').replace(/\\/g, '/')
+
+        // 排除 src/Types 目录（大小写敏感）
+        if (relativePath.includes('/src/Types')) continue
+
         checkDirectoryName(itemPath, item)
         await scanDirectory(itemPath)
       } else {

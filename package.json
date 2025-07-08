@@ -22,7 +22,8 @@
     "code-fix": "pnpm format && pnpm lint",
     "pre-commit": "pnpm code-check",
     "commit": "git-cz",
-    "prepare": "husky"
+    "prepare": "husky",
+    "check-env": "node scripts/check-env.cjs"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,vue}": [
@@ -44,7 +45,6 @@
     }
   },
   "dependencies": {
-    "@unocss/preset-rem-to-px": "^66.3.2",
     "alova": "^3.3.3",
     "crypto-js": "^4.2.0",
     "lodash-es": "^4.17.21",
