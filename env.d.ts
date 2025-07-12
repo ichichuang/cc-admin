@@ -41,6 +41,9 @@ interface ImportMetaEnv {
   /** rootRedirect 重定向路径 */
   readonly VITE_ROOT_REDIRECT: string
 
+  /** loading 组件大小 - 控制 loading 组件的大小 */
+  readonly VITE_LOADING_SIZE: string
+
   /**
    * ==========================================
    * API 接口配置

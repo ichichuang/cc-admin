@@ -5,49 +5,51 @@ export const getDeviceInfo = (): DeviceInfo => {
   const pageWidth = window.innerWidth
   const pageHeight = window.innerHeight
 
-  // 判断是否使用页面尺寸（如在浏览器中/存在滚动条/非全屏）
-  const isSmartPageSize = () => {
-    const delta = Math.abs(screenHeight - pageHeight)
-    return delta > 100 // 工具栏/地址栏影响超过100px则启用 pageSize
+  // 判断是否使用页面尺寸（如存在地址栏、滚动条等影响）
+  const shouldUsePageSize = (): boolean => {
+    return Math.abs(screenHeight - pageHeight) > 100
   }
 
-  const usePageSize = isSmartPageSize()
+  const usePageSize = shouldUsePageSize()
 
   const width = usePageSize ? pageWidth : screenWidth
   const height = usePageSize ? pageHeight : screenHeight
-  const orientation = width >= height ? 'horizontal' : 'vertical'
+  const orientation: 'horizontal' | 'vertical' = width >= height ? 'horizontal' : 'vertical'
 
-  let type: 'PC' | 'Mobile' = 'PC'
-  let system = 'Unknown'
+  const isMobile = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua)
+  const type: 'PC' | 'Mobile' = isMobile ? 'Mobile' : 'PC'
 
-  if (/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua)) {
-    type = 'Mobile'
-  }
-
-  if (/Windows/i.test(ua)) {
-    system = 'Windows'
-  } else if (/Mac OS/i.test(ua)) {
-    system = 'MacOS'
-  } else if (/Android/i.test(ua)) {
-    system = 'Android'
-  } else if (/iPhone|iPad|iPod/i.test(ua)) {
-    system = 'iOS'
-  } else if (/Linux/i.test(ua)) {
-    system = 'Linux'
-  }
-
-  let navHeight = 0
-  let tabHeight = 0
-
-  if (type === 'Mobile') {
-    if (/iPhone|iPad|iPod/i.test(ua)) {
-      navHeight = 44
-      tabHeight = 34
-    } else if (/Android/i.test(ua)) {
-      navHeight = 48
-      tabHeight = 48
+  const system = (() => {
+    if (/Windows/i.test(ua)) {
+      return 'Windows'
     }
-  }
+    if (/Mac OS/i.test(ua)) {
+      return 'MacOS'
+    }
+    if (/Android/i.test(ua)) {
+      return 'Android'
+    }
+    if (/iPhone|iPad|iPod/i.test(ua)) {
+      return 'iOS'
+    }
+    if (/Linux/i.test(ua)) {
+      return 'Linux'
+    }
+    return 'Unknown'
+  })()
+
+  // 不同系统下的导航栏和标签栏高度（移动端）
+  const { navHeight, tabHeight } = (() => {
+    if (type === 'Mobile') {
+      if (/iPhone|iPad|iPod/i.test(ua)) {
+        return { navHeight: 44, tabHeight: 34 }
+      }
+      if (/Android/i.test(ua)) {
+        return { navHeight: 48, tabHeight: 48 }
+      }
+    }
+    return { navHeight: 0, tabHeight: 0 }
+  })()
 
   return {
     type,

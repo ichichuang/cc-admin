@@ -7,7 +7,7 @@ const isDebug = import.meta.env.VITE_DEBUG
 // 创建全局 alova 实例
 export const alovaInstance = createAlova({
   // 连接到本地 cc-server
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001',
+  baseURL: import.meta.env.VITE_API_BASE_URL,
 
   // 使用 fetch 作为请求适配器
   requestAdapter: adapterFetch(),

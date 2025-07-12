@@ -150,6 +150,7 @@ export default defineConfig({
     },
     // 布局快捷方式
     {
+      full: 'w-full h-full',
       container: 'w-full h-full bg-backgroundColor',
       center: 'flex items-center justify-center',
       between: 'flex items-center justify-between',

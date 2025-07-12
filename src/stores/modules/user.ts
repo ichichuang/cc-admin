@@ -41,6 +41,9 @@ export const useUserStore = defineStore('user', {
         )
       })
     },
+    resetToken() {
+      this.token = ''
+    },
     setUserInfo(userInfo: UserInfo) {
       this.userInfo = userInfo
     },

@@ -1,3 +1,5 @@
+import type { RouteConfig } from '@/router/types'
+
 const homeRoutes: RouteConfig[] = [
   {
     path: '/dashboard',

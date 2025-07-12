@@ -1,34 +1,59 @@
 <script setup lang="ts">
 import { toCamelCase } from '@/common'
+import { useLayoutStore } from '@/stores'
+import { computed, onMounted, reactive, ref } from 'vue'
+const layoutStore = useLayoutStore()
+const definitely = computed(() => layoutStore.getDefinitely)
+const loadingSize = import.meta.env.VITE_LOADING_SIZE
+const props = defineProps<{
+  size?: number
+  page?: boolean
+}>()
 
-const props = withDefaults(
-  defineProps<{
-    size?: number
-  }>(),
-  {
-    size: 80,
+const newSize = computed(() => {
+  return props.size ? props.size : definitely.value / Number(loadingSize)
+})
+
+const spinnerStyle = reactive({
+  width: `${newSize.value}px`,
+  height: `${newSize.value}px`,
+  [toCamelCase('circleSize', '--')]: `${newSize.value * 0.24}px`,
+  [toCamelCase('borderSize', '--')]: `${newSize.value / 25}px`,
+})
+
+const loadingRef = ref<HTMLElement | null>(null)
+
+onMounted(() => {
+  // 获取 loadingRef 的宽度高度提取出最短的边长
+  if (loadingRef.value) {
+    const width = loadingRef.value.clientWidth
+    const height = loadingRef.value.clientHeight
+    const min = Math.min(width, height) / Number(loadingSize)
+    if (props.page) {
+      spinnerStyle.width = `${min}px`
+      spinnerStyle.height = `${min}px`
+      spinnerStyle[toCamelCase('circleSize', '--')] = `${min * 0.24}px`
+      spinnerStyle[toCamelCase('borderSize', '--')] = `${min / 25}px`
+    }
   }
-)
-
-// 动态计算
-const spinnerStyle = {
-  width: `${props.size}px`,
-  height: `${props.size}px`,
-  [toCamelCase('circleSize', '--')]: `${props.size * 0.24}px`,
-  [toCamelCase('borderSize', '--')]: `${props.size / 25}px`,
-}
+})
 </script>
 
 <template>
   <div
-    class="overflow-hidden atom-spinner"
-    :style="spinnerStyle"
+    ref="loadingRef"
+    class="full center"
   >
-    <div class="spinner-inner">
-      <div class="spinner-line"></div>
-      <div class="spinner-line"></div>
-      <div class="spinner-line"></div>
-      <div class="spinner-circle">&#9679;</div>
+    <div
+      class="overflow-hidden atom-spinner"
+      :style="spinnerStyle"
+    >
+      <div class="spinner-inner">
+        <div class="spinner-line"></div>
+        <div class="spinner-line"></div>
+        <div class="spinner-line"></div>
+        <div class="spinner-circle">&#9679;</div>
+      </div>
     </div>
   </div>
 </template>

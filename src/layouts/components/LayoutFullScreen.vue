@@ -9,7 +9,7 @@ const showMenu = computed(() => layoutStore.getShowMenu)
 </script>
 
 <template>
-  <div class="container bg-red">
+  <div class="container">
     <!-- 顶部预设菜单（可配置） -->
     <template v-if="showMenu">
       <AppTopMenu />

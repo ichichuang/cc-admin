@@ -1,4 +1,5 @@
 import type { RouteRecordRaw } from 'vue-router'
+import type { BackendRouteConfig, MenuItem, RouteConfig } from '../types'
 
 /**
  * 检查数组是否有交集
@@ -84,6 +85,8 @@ export function processAsyncRoutes(backendRoutes: BackendRouteConfig[]): RouteCo
       meta: {
         ...route.meta,
         backstage: true, // 标识为后端路由
+        title: route.meta?.title ?? '',
+        showLink: route.meta?.showLink ?? true,
       },
     }
 
@@ -104,7 +107,7 @@ export function processAsyncRoutes(backendRoutes: BackendRouteConfig[]): RouteCo
 
     // 递归处理子路由
     if (route.children && route.children.length > 0) {
-      processedRoute.children = processAsyncRoutes(route.children)
+      processedRoute.children = processAsyncRoutes(route.children as BackendRouteConfig[])
     }
 
     return processedRoute
@@ -308,8 +311,8 @@ export function generateMenuTree(routes: RouteConfig[]): MenuItem[] {
       name: name as string,
       title: meta.title,
       icon: meta.icon,
-      showLink: meta.showLink ?? true,
-      rank: meta.rank ?? 999,
+      showLink: meta.showLink === true,
+      rank: typeof meta.rank === 'number' ? meta.rank : 999,
       roles: meta.roles,
       auths: meta.auths,
       children: [],
@@ -337,7 +340,7 @@ export function generateMenuTree(routes: RouteConfig[]): MenuItem[] {
  * 菜单项排序
  */
 function sortMenuItems(menuItems: MenuItem[]): MenuItem[] {
-  return menuItems.sort((a, b) => a.rank - b.rank)
+  return menuItems.sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999))
 }
 
 /**
@@ -603,4 +606,13 @@ function matchPath(actual: string, pattern: string) {
       '$'
   )
   return regex.test(actual)
+}
+
+/**
+ * 记录未授权访问
+ * @param path 路径
+ * @param userRoles 用户角色
+ */
+export function recordUnauthorizedAccess(path: string, userRoles: string[]) {
+  console.warn(`未授权访问记录 - 路径: ${path}, 用户角色: ${userRoles.join(', ')}`)
 }

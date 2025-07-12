@@ -12,18 +12,18 @@
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "build:analyze": "vue-tsc --noEmit && vite build --mode analyze",
-    "report": "npx vite-bundle-analyzer dist/stats.html",
     "preview": "vite preview",
+    "report": "npx vite-bundle-analyzer dist/stats.html",
+    "type-check": "vue-tsc --noEmit",
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
-    "type-check": "vue-tsc --noEmit",
     "naming-check": "node scripts/naming-rules.js",
-    "code-check": "pnpm type-check && pnpm lint && pnpm naming-check",
-    "code-fix": "pnpm format && pnpm lint",
-    "pre-commit": "pnpm code-check",
+    "check": "pnpm type-check && pnpm lint && pnpm naming-check && pnpm env-check",
+    "fix": "pnpm format && pnpm lint",
+    "env-check": "node scripts/check-env.cjs",
+    "pre-commit": "pnpm check",
     "commit": "git-cz",
-    "prepare": "husky",
-    "check-env": "node scripts/check-env.cjs"
+    "prepare": "husky"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,vue}": [

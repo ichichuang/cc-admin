@@ -1,8 +1,8 @@
 /* 尺寸配置 */
 import store from '@/stores'
 import { getDeviceInfo } from '@/utils/deviceInfo'
+import { debounce } from 'lodash-es'
 import { defineStore } from 'pinia'
-import { onBeforeUnmount } from 'vue'
 
 /* 布局配置 */
 // Admin布局配置
@@ -170,35 +170,27 @@ export const useLayoutStore = defineStore('layout', {
     },
 
     init() {
-      this.initDeviceInfo()
+      // 延迟第一次初始化，确保拿到准确尺寸
+      requestAnimationFrame(() => {
+        this.initDeviceInfo()
+      })
+
+      // resize 等事件触发频繁，建议加防抖（debounce）避免连续高频触发影响性能。
+      const handler = debounce(this.initDeviceInfo.bind(this), 200)
 
       const events = [
-        'resize',
-        'orientationchange',
-        'load',
-        'DOMContentLoaded',
-        'pageshow',
-        'pagehide',
-        'visibilitychange',
-        'focus',
-        'blur',
-        'beforeunload',
-        'unload',
-        'scroll',
-        'scrollend',
-        'scrollstart',
+        'resize', // 浏览器窗口尺寸变化
+        'orientationchange', // 横竖屏切换
+        'pageshow', // 页面显示（如从缓存中返回）
+        'visibilitychange', // 标签页激活/隐藏
       ]
 
-      // 统一的 handler（绑定 this）
-      const handler = (this._deviceInfoListener ??= this.initDeviceInfo.bind(this))
-
-      // 添加事件监听
       events.forEach(event => window.addEventListener(event, handler))
 
-      // 清除事件监听
-      onBeforeUnmount(() => {
+      // 返回移除函数，让组件中去处理
+      return () => {
         events.forEach(event => window.removeEventListener(event, handler))
-      })
+      }
     },
   },
 
