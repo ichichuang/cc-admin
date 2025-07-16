@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { routeUtils } from '@/router'
 import { useLayoutStore } from '@/stores'
 import { computed } from 'vue'
 import AppFooter from './AppFooter.vue'
@@ -10,6 +11,9 @@ const layoutStore = useLayoutStore()
 const showHeader = computed(() => layoutStore.getShowHeader)
 const showMenu = computed(() => layoutStore.getShowMenu)
 const showFooter = computed(() => layoutStore.getShowFooter)
+const keepAliveNames = computed(() =>
+  routeUtils.flatRoutes.filter(r => r.meta?.keepAlive && r.name).map(r => r.name as string)
+)
 </script>
 
 <template>
@@ -26,7 +30,11 @@ const showFooter = computed(() => layoutStore.getShowFooter)
 
     <!-- 内容区域 -->
     <main class="content-wrapper">
-      <RouterView />
+      <RouterView v-slot="{ Component }">
+        <KeepAlive :include="keepAliveNames">
+          <component :is="Component" />
+        </KeepAlive>
+      </RouterView>
     </main>
 
     <!-- 底部 -->

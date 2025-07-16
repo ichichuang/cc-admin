@@ -47,6 +47,14 @@ export const useUserStore = defineStore('user', {
     setUserInfo(userInfo: UserInfo) {
       this.userInfo = userInfo
     },
+    resetUserInfo() {
+      this.userInfo = {
+        userId: '',
+        username: '',
+        roles: [],
+        permissions: [],
+      }
+    },
   },
 
   persist: {

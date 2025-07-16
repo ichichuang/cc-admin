@@ -10,10 +10,40 @@
 /// <reference types="vite/client" />
 
 /**
+ * 应用环境类型
+ */
+type AppEnvironment = 'development' | 'production'
+
+/**
+ * 压缩方式类型
+ */
+type CompressionType = 'none' | 'gzip' | 'brotli' | 'both'
+
+/**
+ * 布尔值字符串类型（环境变量中的布尔值以字符串形式存储）
+ */
+type BooleanString = 'true' | 'false'
+
+/**
+ * 数字字符串类型（环境变量中的数字以字符串形式存储）
+ */
+type NumberString = string
+
+/**
+ * URL 字符串类型
+ */
+type UrlString = string
+
+/**
+ * 路径字符串类型
+ */
+type PathString = string
+
+/**
  * 扩展 Vite 的环境变量接口
  * 定义项目中使用的所有自定义环境变量及其类型
  */
-interface ImportMetaEnv {
+declare interface ImportMetaEnv {
   /**
    * ==========================================
    * 应用基础配置
@@ -30,19 +60,19 @@ interface ImportMetaEnv {
   readonly VITE_PINIA_PERSIST_KEY_PREFIX: string
 
   /** 当前运行环境 - 用于区分不同的部署环境 */
-  readonly VITE_APP_ENV: 'development' | 'production'
+  readonly VITE_APP_ENV: AppEnvironment
 
   /** 应用根路径 */
-  readonly VITE_PUBLIC_PATH: string
+  readonly VITE_PUBLIC_PATH: PathString
 
   /** 开发服务器端口 */
-  readonly VITE_PORT: string
+  readonly VITE_PORT: NumberString
 
   /** rootRedirect 重定向路径 */
   readonly VITE_ROOT_REDIRECT: string
 
-  /** loading 组件大小 - 控制 loading 组件的大小 */
-  readonly VITE_LOADING_SIZE: string
+  /** loading 组件大小 - 控制 loading 组件的大小 (屏幕最小宽度 / VITE_LOADING_SIZE) */
+  readonly VITE_LOADING_SIZE: NumberString
 
   /**
    * ==========================================
@@ -51,10 +81,10 @@ interface ImportMetaEnv {
    */
 
   /** API 服务器基础地址 - 所有 API 请求的根路径 */
-  readonly VITE_API_BASE_URL: string
+  readonly VITE_API_BASE_URL: UrlString
 
   /** API 请求超时时间(毫秒) - 防止请求长时间无响应 */
-  readonly VITE_API_TIMEOUT: string
+  readonly VITE_API_TIMEOUT: NumberString
 
   /**
    * ==========================================
@@ -63,16 +93,16 @@ interface ImportMetaEnv {
    */
 
   /** 是否启用开发者工具 - 控制 Vue DevTools 等开发工具的显示 */
-  readonly VITE_DEV_TOOLS: string
+  readonly VITE_DEV_TOOLS: BooleanString
 
   /** 是否启用 Mock 数据 - 用于开发阶段模拟 API 响应 */
-  readonly VITE_MOCK_ENABLE: string
+  readonly VITE_MOCK_ENABLE: BooleanString
 
   /** 是否启用控制台日志 - 控制 console.log 等调试信息的输出 */
-  readonly VITE_CONSOLE_LOG: string
+  readonly VITE_CONSOLE_LOG: BooleanString
 
   /** 是否启用 debug 模式 - 控制调试信息 */
-  readonly VITE_DEBUG: boolean
+  readonly VITE_DEBUG: BooleanString
 
   /**
    * ==========================================
@@ -81,43 +111,61 @@ interface ImportMetaEnv {
    */
 
   /** 生产构建时是否移除 debugger 语句 - 提升生产环境性能 */
-  readonly VITE_DROP_DEBUGGER: string
+  readonly VITE_DROP_DEBUGGER: BooleanString
 
   /** 生产构建时是否移除 console 语句 - 减少生产包大小 */
-  readonly VITE_DROP_CONSOLE: string
-
-  /** 是否启用 Gzip 压缩 - 减少传输文件大小 */
-  readonly VITE_BUILD_GZIP: string
+  readonly VITE_DROP_CONSOLE: BooleanString
 
   /** 是否启用构建分析 - 生成打包分析报告 */
-  readonly VITE_BUILD_ANALYZE: string
+  readonly VITE_BUILD_ANALYZE: BooleanString
 
   /** 是否生成 sourcemap */
-  readonly VITE_BUILD_SOURCEMAP: string
+  readonly VITE_BUILD_SOURCEMAP: BooleanString
 
   /** 压缩方式 none | gzip | brotli | both */
-  readonly VITE_COMPRESSION: string
+  readonly VITE_COMPRESSION: CompressionType
 
   /** 是否启用 legacy 浏览器支持 */
-  readonly VITE_LEGACY: string
+  readonly VITE_LEGACY: BooleanString
 
   /** 是否启用 CDN */
-  readonly VITE_CDN: string
-
-  /**
-   * ==========================================
-   * 其他功能配置
-   * ==========================================
-   */
-
-  /** 是否使用 Mock 服务 - 全局 Mock 开关 */
-  readonly VITE_USE_MOCK: string
+  readonly VITE_CDN: BooleanString
 }
 
 /**
  * 扩展 ImportMeta 接口
  * 为 import.meta.env 提供类型支持
  */
-interface ImportMeta {
+declare interface ImportMeta {
   readonly env: ImportMetaEnv
+}
+
+/**
+ * 类型辅助工具 - 在运行时将字符串转换为对应类型
+ */
+declare namespace EnvUtils {
+  /**
+   * 将布尔值字符串转换为布尔值
+   */
+  function toBool(value: BooleanString): boolean
+
+  /**
+   * 将数字字符串转换为数字
+   */
+  function toNumber(value: NumberString): number
+
+  /**
+   * 获取应用环境
+   */
+  function getAppEnv(): AppEnvironment
+
+  /**
+   * 检查是否为开发环境
+   */
+  function isDev(): boolean
+
+  /**
+   * 检查是否为生产环境
+   */
+  function isProd(): boolean
 }

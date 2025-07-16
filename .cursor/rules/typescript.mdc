@@ -1,0 +1,712 @@
+# CC-Admin Vue3 + TypeScript 规范
+
+## 🎯 基本原则
+
+- **严格类型安全**: 所有组件、函数、API必须提供准确的类型定义
+- **零容忍any**: 避免使用 `any` 类型，优先使用 `unknown` 或具体类型
+- **接口优先**: 使用 `interface` 定义对象结构，`type` 定义联合类型和工具类型
+- **导出公共类型**: 所有公共接口类型必须导出，方便复用
+- **编译零错误**: 确保编译过程中无任何类型错误或警告
+- **类型即文档**: 通过完善的类型定义替代部分文档
+
+## 🧩 Vue 3 组件类型定义
+
+### 组件Props类型
+
+```typescript
+// ✅ 正确：定义组件Props接口
+interface UserCardProps {
+  // 基础属性
+  userId: string
+  userName: string
+  userEmail?: string                    // 可选属性
+  isActive: boolean                     // 布尔值
+  userRole: 'admin' | 'user' | 'guest' // 联合类型
+
+  // 对象属性
+  userProfile: UserProfile
+  userSettings?: Partial<UserSettings>  // 可选的部分类型
+
+  // 数组属性
+  permissions: string[]
+  tags: readonly string[]               // 只读数组
+
+  // 函数属性
+  onUserClick?: (user: User) => void
+  onStatusChange?: (status: UserStatus) => Promise<void>
+
+  // 插槽内容
+  headerSlot?: string | VNode
+  footerSlot?: () => VNode[]
+}
+
+// ✅ 正确：组件定义
+<script setup lang="ts">
+// 使用 withDefaults 定义默认值
+const props = withDefaults(defineProps<UserCardProps>(), {
+  isActive: true,
+  userRole: 'user',
+  userEmail: '',
+  permissions: () => [],
+  tags: () => []
+})
+</script>
+```
+
+### 组件Events类型
+
+```typescript
+// ✅ 正确：定义组件事件类型
+interface UserCardEmits {
+  'user-click': [user: User]                    // 单个参数
+  'status-change': [userId: string, status: UserStatus] // 多个参数
+  'update:active': [isActive: boolean]          // v-model更新事件
+  'data-loaded': []                             // 无参数事件
+}
+
+<script setup lang="ts">
+// 定义事件发射器
+const emit = defineEmits<UserCardEmits>()
+
+// 事件处理函数
+const handleUserClick = (user: User) => {
+  emit('user-click', user)
+}
+
+const handleStatusToggle = () => {
+  const newStatus: UserStatus = props.isActive ? 'inactive' : 'active'
+  emit('status-change', props.userId, newStatus)
+  emit('update:active', !props.isActive)
+}
+</script>
+```
+
+### 组件实例类型
+
+```typescript
+// ✅ 正确：定义组件暴露的方法
+interface UserCardExpose {
+  // DOM元素引用
+  rootElement: HTMLElement
+
+  // 公共方法
+  focus: () => void
+  refresh: () => Promise<void>
+  updateUser: (userData: Partial<User>) => void
+
+  // 响应式数据访问
+  getUserData: () => Readonly<User>
+  isLoading: Readonly<Ref<boolean>>
+}
+
+<script setup lang="ts">
+// 定义模板引用
+const rootRef = ref<HTMLElement>()
+const isLoading = ref(false)
+
+// 定义公共方法
+const focus = () => {
+  rootRef.value?.focus()
+}
+
+const refresh = async () => {
+  isLoading.value = true
+  try {
+    // 刷新逻辑
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// 暴露给父组件
+defineExpose<UserCardExpose>({
+  rootElement: rootRef,
+  focus,
+  refresh,
+  updateUser: (userData) => { /* 更新逻辑 */ },
+  getUserData: () => readonly(user.value),
+  isLoading: readonly(isLoading)
+})
+</script>
+```
+
+## 📦 Composition API 类型规范
+
+### Composable函数类型
+
+```typescript
+// ✅ 正确：定义 Composable 接口
+interface UseUserManagementOptions {
+  autoRefresh?: boolean
+  pollingInterval?: number
+  cacheKey?: string
+}
+
+interface UseUserManagementReturn {
+  // 响应式状态
+  userList: Ref<User[]>
+  isLoading: Ref<boolean>
+  error: Ref<Error | null>
+
+  // 计算属性
+  activeUserCount: ComputedRef<number>
+  hasUsers: ComputedRef<boolean>
+
+  // 方法
+  fetchUsers: () => Promise<User[]>
+  createUser: (userData: CreateUserData) => Promise<User>
+  updateUser: (userId: string, data: UpdateUserData) => Promise<User>
+  deleteUser: (userId: string) => Promise<void>
+
+  // 工具方法
+  clearCache: () => void
+  refresh: () => Promise<void>
+}
+
+// ✅ 正确：实现 Composable
+export function useUserManagement(options: UseUserManagementOptions = {}): UseUserManagementReturn {
+  const userList = ref<User[]>([])
+  const isLoading = ref(false)
+  const error = ref<Error | null>(null)
+
+  // 计算属性必须明确返回类型
+  const activeUserCount = computed(
+    (): number => userList.value.filter(user => user.isActive).length
+  )
+
+  const hasUsers = computed((): boolean => userList.value.length > 0)
+
+  // 异步方法必须定义完整的错误处理
+  const fetchUsers = async (): Promise<User[]> => {
+    isLoading.value = true
+    error.value = null
+
+    try {
+      const response = await userApi.getUserList()
+      userList.value = response
+      return response
+    } catch (err) {
+      error.value = err instanceof Error ? err : new Error('Unknown error')
+      throw error.value
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  return {
+    userList,
+    isLoading,
+    error,
+    activeUserCount,
+    hasUsers,
+    fetchUsers,
+    createUser: async userData => {
+      /* 实现 */
+    },
+    updateUser: async (userId, data) => {
+      /* 实现 */
+    },
+    deleteUser: async userId => {
+      /* 实现 */
+    },
+    clearCache: () => {
+      /* 实现 */
+    },
+    refresh: fetchUsers,
+  }
+}
+```
+
+### 响应式类型约束
+
+```typescript
+// ✅ 正确：响应式数据类型定义
+interface UserState {
+  currentUser: User | null
+  userList: User[]
+  selectedUsers: Set<string>
+  filters: UserFilters
+  pagination: PaginationInfo
+}
+
+// ✅ 正确：使用类型约束的响应式状态
+const userState = reactive<UserState>({
+  currentUser: null,
+  userList: [],
+  selectedUsers: new Set(),
+  filters: {
+    status: 'all',
+    role: 'all',
+    searchText: '',
+  },
+  pagination: {
+    page: 1,
+    pageSize: 20,
+    total: 0,
+  },
+})
+
+// ✅ 正确：类型安全的计算属性
+const filteredUsers = computed((): User[] => {
+  return userState.userList.filter(user => {
+    // 类型安全的过滤逻辑
+    if (userState.filters.status !== 'all' && user.status !== userState.filters.status) {
+      return false
+    }
+    if (userState.filters.role !== 'all' && user.role !== userState.filters.role) {
+      return false
+    }
+    return true
+  })
+})
+```
+
+## 🗂️ Pinia Store 类型规范
+
+### Store状态类型
+
+```typescript
+// ✅ 正确：Store状态接口
+interface UserStoreState {
+  // 用户数据
+  currentUser: User | null
+  userList: User[]
+  userCache: Map<string, User>
+
+  // 状态标志
+  isLoading: boolean
+  isAuthenticated: boolean
+
+  // 配置信息
+  preferences: UserPreferences
+  permissions: string[]
+
+  // 元数据
+  lastSyncTime: Date | null
+  version: string
+}
+
+// ✅ 正确：Store定义
+export const useUserStore = defineStore('user', {
+  state: (): UserStoreState => ({
+    currentUser: null,
+    userList: [],
+    userCache: new Map(),
+    isLoading: false,
+    isAuthenticated: false,
+    preferences: getDefaultPreferences(),
+    permissions: [],
+    lastSyncTime: null,
+    version: '1.0.0',
+  }),
+
+  getters: {
+    // 计算属性必须明确返回类型
+    activeUsers(): User[] {
+      return this.userList.filter(user => user.isActive)
+    },
+
+    hasAdminRole(): boolean {
+      return this.permissions.includes('admin:all')
+    },
+
+    // 带参数的getter
+    getUserById: state => {
+      return (userId: string): User | undefined => {
+        return state.userCache.get(userId) || state.userList.find(user => user.id === userId)
+      }
+    },
+  },
+
+  actions: {
+    // 异步操作必须定义完整的类型签名
+    async fetchUserList(): Promise<User[]> {
+      this.isLoading = true
+
+      try {
+        const users = await userApi.getUserList()
+        this.userList = users
+
+        // 更新缓存
+        users.forEach(user => {
+          this.userCache.set(user.id, user)
+        })
+
+        this.lastSyncTime = new Date()
+        return users
+      } catch (error) {
+        throw new Error(`Failed to fetch users: ${error}`)
+      } finally {
+        this.isLoading = false
+      }
+    },
+
+    async createUser(userData: CreateUserData): Promise<User> {
+      try {
+        const newUser = await userApi.createUser(userData)
+        this.userList.push(newUser)
+        this.userCache.set(newUser.id, newUser)
+        return newUser
+      } catch (error) {
+        throw new Error(`Failed to create user: ${error}`)
+      }
+    },
+  },
+})
+
+// ✅ 正确：Store类型导出
+export type UserStore = ReturnType<typeof useUserStore>
+```
+
+### Store持久化类型
+
+```typescript
+// ✅ 正确：持久化配置类型
+interface UserStorePersistConfig {
+  key: string
+  storage: Storage
+  paths: (keyof UserStoreState)[]
+  serializer: {
+    serialize: (value: any) => string
+    deserialize: (value: string) => any
+  }
+}
+
+// ✅ 正确：带持久化的Store
+export const useUserStore = defineStore(
+  'user',
+  {
+    // ... state, getters, actions
+  },
+  {
+    persist: {
+      key: 'cc-admin-user-store',
+      storage: localStorage,
+      paths: ['currentUser', 'preferences', 'permissions'],
+      serializer: {
+        serialize: JSON.stringify,
+        deserialize: JSON.parse,
+      },
+    } as UserStorePersistConfig,
+  }
+)
+```
+
+## 🌐 API 和 HTTP 类型规范
+
+### API响应类型
+
+```typescript
+// ✅ 正确：通用API响应类型
+interface ApiResponse<T = any> {
+  success: boolean
+  data: T
+  message: string
+  code: number
+  timestamp: string
+}
+
+interface PaginatedResponse<T> extends ApiResponse<T[]> {
+  pagination: {
+    page: number
+    pageSize: number
+    total: number
+    totalPages: number
+  }
+}
+
+interface ErrorResponse extends ApiResponse<null> {
+  errors: Array<{
+    field: string
+    message: string
+    code: string
+  }>
+}
+```
+
+### API方法类型
+
+```typescript
+// ✅ 正确：API模块类型定义
+interface UserApi {
+  // GET方法
+  getUserList(params?: UserListParams): Promise<ApiResponse<User[]>>
+  getUserById(id: string): Promise<ApiResponse<User>>
+
+  // POST方法
+  createUser(data: CreateUserData): Promise<ApiResponse<User>>
+
+  // PUT方法
+  updateUser(id: string, data: UpdateUserData): Promise<ApiResponse<User>>
+
+  // DELETE方法
+  deleteUser(id: string): Promise<ApiResponse<null>>
+
+  // 批量操作
+  batchUpdateUsers(updates: BatchUserUpdate[]): Promise<ApiResponse<User[]>>
+
+  // 文件上传
+  uploadAvatar(userId: string, file: File): Promise<ApiResponse<{ url: string }>>
+}
+
+// ✅ 正确：API实现
+export const userApi: UserApi = {
+  async getUserList(params = {}) {
+    const response = await request.get<ApiResponse<User[]>>('/users', { params })
+    return response
+  },
+
+  async createUser(data) {
+    const response = await request.post<ApiResponse<User>>('/users', data)
+    return response
+  },
+
+  // ... 其他方法实现
+}
+```
+
+## 🔧 工具类型和泛型
+
+### 自定义工具类型
+
+```typescript
+// ✅ 正确：业务相关的工具类型
+type DeepReadonly<T> = {
+  readonly [P in keyof T]: T[P] extends object ? DeepReadonly<T[P]> : T[P]
+}
+
+type RequiredKeys<T, K extends keyof T> = T & Required<Pick<T, K>>
+
+type OptionalKeys<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
+
+// 表单相关类型
+type FormData<T> = {
+  [K in keyof T]: T[K] extends Date ? string : T[K]
+}
+
+type ValidationErrors<T> = Partial<Record<keyof T, string[]>>
+
+// API相关类型
+type ApiEndpoint<TRequest = void, TResponse = any> = TRequest extends void
+  ? () => Promise<ApiResponse<TResponse>>
+  : (data: TRequest) => Promise<ApiResponse<TResponse>>
+```
+
+### 条件类型使用
+
+```typescript
+// ✅ 正确：条件类型在组件中的应用
+type ComponentProps<T extends 'button' | 'link' | 'text'> = T extends 'button'
+  ? ButtonProps
+  : T extends 'link'
+    ? LinkProps
+    : TextProps
+
+interface DynamicComponentProps<T extends 'button' | 'link' | 'text'> {
+  type: T
+  props: ComponentProps<T>
+  children?: VNode[]
+}
+
+// ✅ 正确：使用条件类型的组件
+function DynamicComponent<T extends 'button' | 'link' | 'text'>(props: DynamicComponentProps<T>) {
+  // 类型安全的组件渲染逻辑
+}
+```
+
+## 📝 类型声明和模块扩展
+
+### 环境变量类型
+
+```typescript
+// src/Types/env.d.ts
+interface ImportMetaEnv {
+  readonly VITE_API_BASE_URL: string
+  readonly VITE_APP_TITLE: string
+  readonly VITE_APP_VERSION: string
+  readonly VITE_APP_ENV: 'development' | 'production' | 'test'
+  readonly VITE_PINIA_PERSIST_KEY_PREFIX: string
+  readonly VITE_ROOT_REDIRECT: string
+  readonly VITE_LOADING_SIZE: 'small' | 'default' | 'large'
+  readonly VITE_DEV_TOOLS: boolean
+  readonly VITE_MOCK_ENABLE: boolean
+  readonly VITE_CONSOLE_LOG: boolean
+  readonly VITE_DEBUG: boolean
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv
+}
+```
+
+### 路由类型扩展
+
+```typescript
+// src/Types/router.d.ts
+import 'vue-router'
+
+declare module 'vue-router' {
+  interface RouteMeta {
+    title?: string
+    requiresAuth?: boolean
+    permissions?: string[]
+    layout?: 'admin' | 'screen' | 'fullscreen'
+    hideInMenu?: boolean
+    icon?: string
+    order?: number
+    cache?: boolean
+    affix?: boolean
+  }
+}
+```
+
+### Pinia Store类型扩展
+
+```typescript
+// src/Types/stores.d.ts
+import { Router } from 'vue-router'
+
+declare module 'pinia' {
+  export interface DefineStoreOptionsBase<S, Store> {
+    // 添加路由访问
+    router?: Router
+
+    // 添加持久化配置
+    persist?:
+      | boolean
+      | {
+          key?: string
+          storage?: Storage
+          paths?: (keyof S)[]
+        }
+  }
+}
+```
+
+## 🚫 避免的TypeScript用法
+
+### 错误示例
+
+```typescript
+// ❌ 错误：使用any类型
+const userData: any = {}
+
+// ❌ 错误：未定义返回类型的复杂函数
+function processUser(user) {
+  // 复杂逻辑
+  return transformedUser
+}
+
+// ❌ 错误：未约束的泛型
+function createEntity<T>(data: T) {
+  return { ...data, id: generateId() }
+}
+
+// ❌ 错误：类型断言滥用
+const element = document.getElementById('app') as HTMLElement
+
+// ❌ 错误：忽略Promise错误类型
+async function fetchData() {
+  try {
+    return await api.getData()
+  } catch (error) {
+    console.log(error.message) // error类型未知
+  }
+}
+```
+
+### 正确示例
+
+```typescript
+// ✅ 正确：使用具体类型
+const userData: User = {
+  id: '1',
+  name: 'John',
+  email: 'john@example.com',
+}
+
+// ✅ 正确：明确的函数签名
+function processUser(user: User): ProcessedUser {
+  // 复杂逻辑
+  return transformedUser
+}
+
+// ✅ 正确：约束的泛型
+interface Entity {
+  id: string
+}
+
+function createEntity<T extends Partial<Entity>>(data: T): T & Entity {
+  return { ...data, id: generateId() }
+}
+
+// ✅ 正确：安全的类型检查
+const element = document.getElementById('app')
+if (element instanceof HTMLElement) {
+  // 安全使用element
+}
+
+// ✅ 正确：完整的错误处理
+async function fetchData(): Promise<ApiResponse<Data> | null> {
+  try {
+    return await api.getData()
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('API Error:', error.message)
+    } else {
+      console.error('Unknown error:', error)
+    }
+    return null
+  }
+}
+```
+
+## 📋 类型检查和验证
+
+### 运行时类型验证
+
+```typescript
+// ✅ 正确：类型守卫函数
+function isUser(value: unknown): value is User {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'id' in value &&
+    'name' in value &&
+    'email' in value &&
+    typeof (value as User).id === 'string' &&
+    typeof (value as User).name === 'string' &&
+    typeof (value as User).email === 'string'
+  )
+}
+
+// ✅ 正确：使用类型守卫
+function processUserData(data: unknown): User | null {
+  if (isUser(data)) {
+    return data // 类型安全
+  }
+  return null
+}
+```
+
+### 编译时类型检查
+
+```typescript
+// ✅ 正确：使用类型断言辅助函数
+function assertIsUser(value: unknown): asserts value is User {
+  if (!isUser(value)) {
+    throw new Error('Invalid user data')
+  }
+}
+
+// ✅ 正确：安全的类型断言
+try {
+  assertIsUser(userData)
+  // 此处userData确定是User类型
+  console.log(userData.name)
+} catch (error) {
+  console.error('Type assertion failed:', error)
+}
+```
+
+遵循这些TypeScript规范，确保CC-Admin项目具有完整的类型安全、优秀的开发体验和可维护的代码质量。

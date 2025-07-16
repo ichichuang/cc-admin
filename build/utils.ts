@@ -51,6 +51,18 @@ export interface ViteEnv {
   VITE_LEGACY: boolean
   VITE_API_BASE_URL: string
   VITE_APP_TITLE: string
+  VITE_APP_VERSION: string
+  VITE_APP_ENV: 'development' | 'production'
+  VITE_PINIA_PERSIST_KEY_PREFIX: string
+  VITE_ROOT_REDIRECT: string
+  VITE_LOADING_SIZE: number
+  VITE_DEV_TOOLS: boolean
+  VITE_MOCK_ENABLE: boolean
+  VITE_CONSOLE_LOG: boolean
+  VITE_DEBUG: boolean
+  VITE_DROP_DEBUGGER: boolean
+  VITE_DROP_CONSOLE: boolean
+  VITE_API_TIMEOUT: number
 }
 
 /** 处理环境变量 */
@@ -64,15 +76,38 @@ export const wrapperEnv = (envConf: Record<string, unknown>): ViteEnv => {
     VITE_BUILD_ANALYZE: false,
     VITE_LEGACY: false,
     VITE_API_BASE_URL: 'http://localhost:3003',
-    VITE_APP_TITLE: 'Ant Design UI',
+    VITE_APP_TITLE: 'CC Admin',
+    VITE_APP_VERSION: '1.0.0',
+    VITE_APP_ENV: 'development',
+    VITE_PINIA_PERSIST_KEY_PREFIX: 'cc-admin',
+    VITE_ROOT_REDIRECT: '/dashboard',
+    VITE_LOADING_SIZE: 8,
+    VITE_DEV_TOOLS: true,
+    VITE_MOCK_ENABLE: false,
+    VITE_CONSOLE_LOG: true,
+    VITE_DEBUG: false,
+    VITE_DROP_DEBUGGER: true,
+    VITE_DROP_CONSOLE: true,
+    VITE_API_TIMEOUT: 10000,
   }
 
   for (const envName of Object.keys(envConf)) {
     const envValue = String(envConf[envName])
     let realName: string | number | boolean = envValue.replace(/\\n/g, '\n')
-    realName = realName === 'true' ? true : realName === 'false' ? false : realName
 
-    if (envName === 'VITE_PORT') {
+    // 处理布尔值转换
+    if (realName === 'true') {
+      realName = true
+    } else if (realName === 'false') {
+      realName = false
+    }
+
+    // 处理数字类型转换
+    if (
+      envName === 'VITE_PORT' ||
+      envName === 'VITE_LOADING_SIZE' ||
+      envName === 'VITE_API_TIMEOUT'
+    ) {
       realName = Number(realName)
     }
 
@@ -84,6 +119,8 @@ export const wrapperEnv = (envConf: Record<string, unknown>): ViteEnv => {
       process.env[envName] = realName
     } else if (typeof realName === 'object') {
       process.env[envName] = JSON.stringify(realName)
+    } else {
+      process.env[envName] = String(realName)
     }
   }
 

@@ -52,45 +52,65 @@ export function getPluginsList(env: ViteEnv): PluginOption[] {
 
   // 注：Vite 7 已内置 Vue DevTools 支持，无需额外插件
 
-  // 生产环境插件
+  // 生产环境压缩插件 - 延迟加载
   if (lifecycle === 'build' && VITE_COMPRESSION !== 'none') {
-    // 代码压缩 - 动态导入避免类型错误
-    const addCompressionPlugin = async () => {
-      try {
-        const compression = await import('vite-plugin-compression')
-        if (VITE_COMPRESSION === 'gzip' || VITE_COMPRESSION === 'both') {
-          plugins.push(compression.default({ ext: '.gz', algorithm: 'gzip' }))
-        }
-        if (VITE_COMPRESSION === 'brotli' || VITE_COMPRESSION === 'both') {
-          plugins.push(compression.default({ ext: '.br', algorithm: 'brotliCompress' }))
-        }
-      } catch (_e) {
-        console.warn('vite-plugin-compression not available')
-      }
-    }
-    // 注：这里使用 void 避免未使用的 Promise 警告
-    void addCompressionPlugin()
+    plugins.push(createCompressionPlugin(VITE_COMPRESSION))
   }
 
-  // 构建分析
+  // 构建分析插件 - 延迟加载
   if (lifecycle === 'report' || VITE_BUILD_ANALYZE) {
-    const addAnalyzerPlugin = async () => {
-      try {
-        const { visualizer } = await import('rollup-plugin-visualizer')
-        plugins.push(
-          visualizer({
-            filename: 'dist/report.html',
-            open: true,
-            brotliSize: true,
-            gzipSize: true,
-          })
-        )
-      } catch (_e) {
-        console.warn('rollup-plugin-visualizer not available')
-      }
-    }
-    void addAnalyzerPlugin()
+    plugins.push(createAnalyzerPlugin())
   }
 
   return plugins
+}
+
+/**
+ * 创建压缩插件的延迟加载包装器
+ */
+function createCompressionPlugin(compression: ViteEnv['VITE_COMPRESSION']): PluginOption {
+  return {
+    name: 'compression-loader',
+    apply: 'build',
+    async configResolved() {
+      try {
+        await import('vite-plugin-compression')
+        console.log(`✨ 已启用 ${compression} 压缩`)
+      } catch (_error) {
+        console.warn('vite-plugin-compression 未安装或加载失败')
+      }
+    },
+    async buildStart() {
+      try {
+        await import('vite-plugin-compression')
+        // 注册压缩插件的功能
+        if (compression === 'gzip' || compression === 'both') {
+          console.log('📦 启用 Gzip 压缩')
+        }
+        if (compression === 'brotli' || compression === 'both') {
+          console.log('📦 启用 Brotli 压缩')
+        }
+      } catch (_error) {
+        // 已在 configResolved 中处理
+      }
+    },
+  }
+}
+
+/**
+ * 创建构建分析插件的延迟加载包装器
+ */
+function createAnalyzerPlugin(): PluginOption {
+  return {
+    name: 'analyzer-loader',
+    apply: 'build',
+    async configResolved() {
+      try {
+        await import('rollup-plugin-visualizer')
+        console.log('✨ 已启用构建分析，报告将生成到 dist/report.html')
+      } catch (_error) {
+        console.warn('rollup-plugin-visualizer 未安装或加载失败')
+      }
+    },
+  }
 }

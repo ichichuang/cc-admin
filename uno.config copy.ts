@@ -7,7 +7,6 @@ import {
   presetAttributify,
   presetIcons,
   presetTypography,
-  presetUno,
   transformerDirectives,
   transformerVariantGroup,
 } from 'unocss'
@@ -104,7 +103,6 @@ const routeMetaIcons = getRouteMetaIcons()
 // console.log('routeMetaIcons: ', routeMetaIcons)
 export default defineConfig({
   presets: [
-    presetUno(),
     presetIcons({
       warn: true, // 在开发时警告未找到的图标
       // prefix: ['i-'],

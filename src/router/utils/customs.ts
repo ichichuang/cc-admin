@@ -121,9 +121,6 @@ export function registerRouterGuards(
         next('/403')
         return
       }
-      if (to.meta?.keepAlive && to.name) {
-        permissionStore.cacheOperate({ mode: 'add', name: String(to.name) })
-      }
       const routeExists = router.hasRoute(to.name as string)
       if (to.name && !routeExists && !errorPages.includes(to.path)) {
         next('/404')

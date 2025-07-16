@@ -18,11 +18,7 @@ export const useAppStore = defineStore('app', {
     getTitle: (state: AppState) => state.title,
   },
 
-  actions: {
-    setTitle(title: string) {
-      this.title = title
-    },
-  },
+  actions: {},
 
   persist: {
     key: `${import.meta.env.VITE_PINIA_PERSIST_KEY_PREFIX}-app`,

@@ -1,5 +1,4 @@
 /* 尺寸配置 */
-import type { RouteConfig } from '@/router/types'
 import store from '@/stores'
 import { defineStore } from 'pinia'
 

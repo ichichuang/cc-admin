@@ -9,7 +9,7 @@
     ".prettierrc.json": ".prettierignore,.prettierrc.*",
     "commitlint.config.js": ".gitmessage,.czrc,.cz-config.js",
     "README.md": "CHANGELOG.md,LICENSE,CONTRIBUTING.md",
-    "env.d.ts": "$(capture).env.*,.env",
+    ".env": "$(capture).env.*",
     "index.vue": "components,views,utils,types,README.md"
   },
   "editor.codeActionsOnSave": {
@@ -64,7 +64,7 @@
   "typescript.inlayHints.variableTypes.enabled": true,
   "typescript.preferences.includePackageJsonAutoImports": "auto",
   "[vue]": {
-    "editor.defaultFormatter": "Vue.volar",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "explicit"
     },

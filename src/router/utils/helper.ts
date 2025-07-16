@@ -26,9 +26,7 @@ export const initDynamicRoutes = async (
     }
     const backendRoutes = await getAuthRoutes()
     if (backendRoutes && backendRoutes.length > 0) {
-      const processedRoutes = processAsyncRoutes(
-        backendRoutes as import('@/router/types').BackendRouteConfig[]
-      )
+      const processedRoutes = processAsyncRoutes(backendRoutes as BackendRouteConfig[])
       if (isDebug) {
         console.log('3-处理后的动态路由: ', processedRoutes)
       }

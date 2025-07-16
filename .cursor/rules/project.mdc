@@ -1,0 +1,100 @@
+# CC-Admin 项目背景
+
+这是 CC-Admin 项目的源代码仓库，是一个基于 Vue3+TypeScript+Vite 的企业级后台管理框架。
+
+## 🎯 项目特色
+
+- **现代技术栈**: Vue 3.5+ + TypeScript 5+ + Vite 7+ + UnoCSS
+- **企业级架构**: 完整的后台管理系统解决方案
+- **开发体验优先**: 自动化模块导入、热更新、类型安全
+- **高性能**: Vite构建、按需加载、打包优化
+- **可维护性**: 统一目录结构、代码规范、自动化检查
+- **国际化**: 支持多语言、主题切换、响应式设计
+
+## 🏗️ 核心架构
+
+- **状态管理**: Pinia + pinia-plugin-persistedstate
+- **路由系统**: Vue Router 4+
+- **HTTP客户端**: Alova (现代化的请求库)
+- **样式方案**: UnoCSS (原子化CSS + Tailwind兼容)
+- **包管理**: pnpm (性能优先、磁盘友好)
+- **代码质量**: ESLint 9+ + Prettier + TypeScript ESLint
+
+## 📁 统一目录架构
+
+采用 `index.ts + modules/` 模式，实现自动化模块导入：
+
+```
+src/
+├── api/           # API管理 (自动导入)
+├── stores/        # 状态管理 (Pinia)
+├── router/        # 路由管理 (自动导入)
+├── hooks/         # 组合式函数
+├── common/        # 公共模块 (自动导入)
+├── layouts/       # 布局组件 (admin/screen/fullscreen)
+├── views/         # 页面组件
+├── components/    # 通用组件
+└── utils/         # 工具函数
+```
+
+## 🎨 设计系统
+
+- **主题系统**: 深色/浅色模式 + 5种功能色系
+- **尺寸系统**: 三种预设 + 动态布局尺寸
+- **响应式**: 移动端适配 + 多分辨率支持
+- **无障碍**: WCAG 2.1 AA级别标准
+
+# 编码规范
+
+## Vue 3 开发规范
+
+- **组件设计**: 使用 Composition API + `<script setup>` 语法糖
+- **响应式**: 优先使用 `ref`、`reactive`、`computed`、`watch`
+- **生命周期**: 使用组合式生命周期钩子
+- **组件通信**: Props down, Events up + provide/inject
+- **类型安全**: 所有Props、Events、Refs必须定义TypeScript类型
+
+## TypeScript 集成
+
+- **严格模式**: 启用完整的 TypeScript 严格检查
+- **类型导入**: 使用 `import type` 导入纯类型
+- **接口优先**: 业务数据类型必须定义接口
+- **泛型使用**: 合理使用泛型提高代码复用性
+- **类型安全**: 避免 `any`，优先使用 `unknown`
+
+## 性能最佳实践
+
+- **按需导入**: 组件、工具函数、图标按需导入
+- **代码分割**: 路由级别的懒加载
+- **构建优化**: Tree-shaking、压缩、CDN
+- **运行时优化**: 合理使用 v-memo、KeepAlive
+- **状态持久化**: 基于 Pinia 的智能缓存策略
+
+## 开发体验
+
+- **自动化**: 模块自动导入、类型自动生成、格式化自动修复
+- **热更新**: 页面状态保持的快速热重载
+- **错误提示**: 友好的开发时错误信息和类型提示
+- **调试工具**: Vue DevTools + Pinia DevTools
+- **文档集成**: 自动生成的API文档和组件文档
+
+## 企业级特性
+
+- **权限系统**: 基于角色的访问控制 (RBAC)
+- **多租户**: 支持多租户架构
+- **监控日志**: 完整的前端监控和错误追踪
+- **部署方案**: 支持容器化部署和CI/CD
+- **安全性**: XSS防护、CSRF保护、内容安全策略
+
+## 代码质量保障
+
+- **静态检查**: ESLint + TypeScript + Vue官方规则
+- **格式化**: Prettier统一代码风格
+- **提交规范**: Conventional Commits + commitlint
+- **命名检查**: 自动化文件和变量命名规范检查
+- **性能监控**: 构建大小分析和运行时性能追踪
+
+- 保持向下兼容，避免 breaking change
+- 组件名使用大驼峰（PascalCase）
+- 属性名使用小驼峰（camelCase）
+- 合理使用 React.memo、useMemo 和 useCallback 优化性能

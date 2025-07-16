@@ -138,6 +138,8 @@ declare interface RouteUtils {
   menuTree: MenuItem[]
   /** 面包屑映射 */
   breadcrumbMap: Map<string, string[]>
+  /** 需要缓存的页面 name 列表 */
+  keepAliveNames: string[]
 }
 
 /**

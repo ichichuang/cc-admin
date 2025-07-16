@@ -1,154 +1,346 @@
 #!/usr/bin/env node
-
 /* eslint-disable */
 
 const fs = require('fs')
+const path = require('path')
 
-/**
- * 环境变量配置检查脚本
- *
- * 此脚本用于检查环境变量配置文件的一致性：
- * 1. 检查 .env 中的变量是否在 env.d.ts 中有类型定义
- * 2. 检查环境特定文件中的变量是否在 .env 中存在
- * 3. 检查是否有重复的变量定义
- */
-
-// 颜色输出
+/* -------------------- 彩色输出 -------------------- */
 const colors = {
   red: '\x1b[31m',
   green: '\x1b[32m',
   yellow: '\x1b[33m',
   blue: '\x1b[34m',
+  magenta: '\x1b[35m',
+  cyan: '\x1b[36m',
   reset: '\x1b[0m',
 }
+const log = (msg, color = 'reset') => console.log(`${colors[color]}${msg}${colors.reset}`)
 
-function log(message, color = 'reset') {
-  console.log(`${colors[color]}${message}${colors.reset}`)
+/* -------------------- 环境变量验证规则 -------------------- */
+const validationRules = {
+  // 必需的环境变量（所有环境都必须有）
+  required: ['VITE_APP_TITLE', 'VITE_API_BASE_URL', 'VITE_PINIA_PERSIST_KEY_PREFIX'],
+
+  // 已废弃的环境变量（检查时忽略）
+  deprecated: [
+    'VITE_BUILD_GZIP', // 已废弃，使用 VITE_COMPRESSION 替代
+  ],
+
+  // 类型验证规则
+  types: {
+    VITE_PORT: 'number',
+    VITE_LOADING_SIZE: 'number',
+    VITE_API_TIMEOUT: 'number',
+    VITE_DEV_TOOLS: 'boolean',
+    VITE_MOCK_ENABLE: 'boolean',
+    VITE_CONSOLE_LOG: 'boolean',
+    VITE_DEBUG: 'boolean',
+    VITE_DROP_DEBUGGER: 'boolean',
+    VITE_DROP_CONSOLE: 'boolean',
+    VITE_BUILD_ANALYZE: 'boolean',
+    VITE_BUILD_SOURCEMAP: 'boolean',
+    VITE_LEGACY: 'boolean',
+    VITE_CDN: 'boolean',
+    VITE_APP_ENV: 'enum:development,production',
+    VITE_COMPRESSION: 'enum:none,gzip,brotli,both',
+  },
+
+  // 格式验证规则
+  formats: {
+    VITE_API_BASE_URL: 'url',
+    VITE_PUBLIC_PATH: 'path',
+    VITE_ROOT_REDIRECT: 'route',
+  },
+
+  // 值范围验证
+  ranges: {
+    VITE_PORT: { min: 1024, max: 65535 },
+    VITE_LOADING_SIZE: { min: 1, max: 20 },
+    VITE_API_TIMEOUT: { min: 1000, max: 60000 },
+  },
 }
 
-// 解析环境变量文件
-function parseEnvFile(filePath) {
-  if (!fs.existsSync(filePath)) {
-    return {}
-  }
+/* -------------------- 值验证器 -------------------- */
+const validators = {
+  number: value => {
+    const num = Number(value)
+    return !isNaN(num) && isFinite(num)
+  },
 
-  const content = fs.readFileSync(filePath, 'utf8')
-  const variables = {}
+  boolean: value => {
+    return value === 'true' || value === 'false'
+  },
 
-  content.split('\n').forEach(line => {
-    line = line.trim()
-    if (line && !line.startsWith('#') && line.includes('=')) {
-      const [key, ...valueParts] = line.split('=')
-      variables[key.trim()] = valueParts.join('=').trim()
+  enum: (value, options) => {
+    return options.split(',').includes(value)
+  },
+
+  url: value => {
+    try {
+      new URL(value)
+      return true
+    } catch {
+      return false
     }
-  })
+  },
 
-  return variables
+  path: value => {
+    return typeof value === 'string' && value.length > 0
+  },
+
+  route: value => {
+    return typeof value === 'string' && value.length > 0
+  },
 }
 
-// 解析 TypeScript 类型定义文件
-function parseEnvTypes(filePath) {
-  if (!fs.existsSync(filePath)) {
-    return []
-  }
+/* -------------------- 读取 .env 文件 -------------------- */
+const parseEnvFile = filePath => {
+  if (!fs.existsSync(filePath)) return {}
+  return fs
+    .readFileSync(filePath, 'utf8')
+    .split('\n')
+    .map(l => l.trim())
+    .filter(l => l && !l.startsWith('#') && l.includes('='))
+    .reduce((acc, line) => {
+      const [k, ...v] = line.split('=')
+      acc[k.trim()] = v.join('=').trim()
+      return acc
+    }, {})
+}
 
+/* -------------------- 读取 env.d.ts 类型 -------------------- */
+const parseEnvTypes = filePath => {
+  if (!fs.existsSync(filePath)) return []
   const content = fs.readFileSync(filePath, 'utf8')
-  const variables = []
-
-  // 匹配 readonly VITE_XXX: 类型 模式（包括联合类型）
   const regex = /readonly\s+(VITE_\w+):\s*[^;\n]+/g
+  const vars = []
   let match
-
-  while ((match = regex.exec(content)) !== null) {
-    variables.push(match[1])
-  }
-
-  return variables
+  while ((match = regex.exec(content))) vars.push(match[1])
+  return vars
 }
 
-// 主检查函数
-function checkEnvConfig() {
-  log('🔍 开始检查环境变量配置...', 'blue')
+/* -------------------- 验证环境变量值 -------------------- */
+const validateValue = (name, value) => {
+  const errors = []
 
-  const baseVars = parseEnvFile('.env')
-  const devVars = parseEnvFile('.env.development')
-  const prodVars = parseEnvFile('.env.production')
-  const typeVars = parseEnvTypes('env.d.ts')
+  // 类型验证
+  if (validationRules.types[name]) {
+    const typeRule = validationRules.types[name]
+    const [type, options] = typeRule.includes(':') ? typeRule.split(':') : [typeRule, null]
+
+    if (!validators[type](value, options)) {
+      if (type === 'enum') {
+        errors.push(`值 "${value}" 不在允许的选项中: ${options}`)
+      } else {
+        errors.push(`值 "${value}" 不是有效的 ${type} 类型`)
+      }
+    }
+  }
+
+  // 格式验证
+  if (validationRules.formats[name]) {
+    const format = validationRules.formats[name]
+    if (!validators[format](value)) {
+      errors.push(`值 "${value}" 不符合 ${format} 格式要求`)
+    }
+  }
+
+  // 范围验证
+  if (validationRules.ranges[name] && validators.number(value)) {
+    const { min, max } = validationRules.ranges[name]
+    const num = Number(value)
+    if (num < min || num > max) {
+      errors.push(`值 ${value} 超出允许范围 ${min}-${max}`)
+    }
+  }
+
+  return errors
+}
+
+/* -------------------- 主函数 -------------------- */
+function checkEnvConfig() {
+  log('🔍  开始检查环境变量配置...', 'blue')
+
+  /* 读取文件 */
+  const root = process.cwd()
+  const baseVars = parseEnvFile(path.join(root, '.env'))
+  const devVars = parseEnvFile(path.join(root, '.env.development'))
+  const prodVars = parseEnvFile(path.join(root, '.env.production'))
+  const typeVars = parseEnvTypes(path.join(root, 'src/Types/env.d.ts'))
+
+  /* 当前环境 */
+  const currentEnv = process.env.NODE_ENV === 'production' ? 'production' : 'development'
+  const currentVars = currentEnv === 'production' ? prodVars : devVars
+  log(`\n🌐  当前环境: ${currentEnv}`, 'blue')
 
   let hasError = false
+  let hasWarning = false
 
-  // 检查 .env 中的变量是否在 env.d.ts 中有类型定义
-  log('\n📋 检查类型定义完整性...', 'blue')
-  const baseVarNames = Object.keys(baseVars).filter(key => key.startsWith('VITE_'))
+  /* ---------- 1. 类型定义完整性 ---------- */
+  log('\n📋  检查类型定义完整性...', 'blue')
+  const allVarNames = [
+    ...new Set([...Object.keys(baseVars), ...Object.keys(devVars), ...Object.keys(prodVars)]),
+  ].filter(k => k.startsWith('VITE_'))
 
-  baseVarNames.forEach(varName => {
-    if (!typeVars.includes(varName)) {
-      log(`❌ 缺少类型定义: ${varName}`, 'red')
+  // 过滤掉已废弃的变量
+  const activeVarNames = allVarNames.filter(name => !validationRules.deprecated.includes(name))
+  const deprecatedVarsFound = allVarNames.filter(name => validationRules.deprecated.includes(name))
+
+  // 检查已废弃变量并给出警告
+  if (deprecatedVarsFound.length > 0) {
+    log('\n⚠️  发现已废弃的环境变量:', 'yellow')
+    deprecatedVarsFound.forEach(name => {
+      log(`   ${name} - 建议移除或使用新的替代变量`, 'yellow')
+    })
+  }
+
+  // 检查活跃变量的类型定义
+  activeVarNames.forEach(name => {
+    if (!typeVars.includes(name)) {
+      log(`❌  缺少类型定义: ${name}`, 'red')
       hasError = true
     } else {
-      log(`✅ 类型定义完整: ${varName}`, 'green')
+      log(`✅  已声明类型: ${name}`, 'green')
     }
   })
 
-  // 检查环境特定文件中的变量是否在 .env 中存在
-  log('\n🔧 检查开发环境配置...', 'blue')
-  Object.keys(devVars)
-    .filter(key => key.startsWith('VITE_'))
-    .forEach(varName => {
-      if (!Object.prototype.hasOwnProperty.call(baseVars, varName)) {
-        log(`❌ 开发环境中有未定义的变量: ${varName}`, 'red')
-        hasError = true
-      } else {
-        log(`✅ 开发环境配置正确: ${varName}`, 'green')
-      }
+  /* ---------- 2. 必需变量检查 ---------- */
+  log('\n🎯  检查必需变量...', 'blue')
+  validationRules.required.forEach(name => {
+    const val = currentVars[name] ?? baseVars[name]
+    if (!val) {
+      log(`❌  缺少必需变量: ${name}`, 'red')
+      hasError = true
+    } else {
+      log(`✅  必需变量已设置: ${name}`, 'green')
+    }
+  })
+
+  /* ---------- 3. 运行环境缺失变量 ---------- */
+  log('\n🚦  校验当前运行环境所有变量...', 'blue')
+  activeVarNames.forEach(name => {
+    const val = currentVars[name] ?? baseVars[name]
+    if (val === undefined) {
+      log(`❌  运行时缺失变量: ${name}`, 'red')
+      hasError = true
+    }
+  })
+
+  /* ---------- 4. 值格式和类型验证 ---------- */
+  log('\n🔬  检查环境变量值的格式和类型...', 'blue')
+  const allCurrentVars = { ...baseVars, ...currentVars }
+
+  Object.entries(allCurrentVars).forEach(([name, value]) => {
+    // 跳过非VITE变量和已废弃变量
+    if (!name.startsWith('VITE_') || validationRules.deprecated.includes(name)) return
+
+    const errors = validateValue(name, value)
+    if (errors.length > 0) {
+      log(`❌  ${name}: ${errors.join(', ')}`, 'red')
+      hasError = true
+    } else if (
+      validationRules.types[name] ||
+      validationRules.formats[name] ||
+      validationRules.ranges[name]
+    ) {
+      log(`✅  ${name}: "${value}" 格式正确`, 'green')
+    }
+  })
+
+  /* ---------- 5. env.d.ts 多余定义 ---------- */
+  log('\n🧐  检查 env.d.ts 是否有多余定义...', 'blue')
+  const extraTypes = typeVars.filter(name => !activeVarNames.includes(name))
+  if (extraTypes.length) {
+    extraTypes.forEach(n => {
+      log(`❌  类型定义但未在任何 .env* 中出现: ${n}`, 'red')
+      hasError = true
     })
-
-  log('\n🚀 检查生产环境配置...', 'blue')
-  Object.keys(prodVars)
-    .filter(key => key.startsWith('VITE_'))
-    .forEach(varName => {
-      if (!Object.prototype.hasOwnProperty.call(baseVars, varName)) {
-        log(`❌ 生产环境中有未定义的变量: ${varName}`, 'red')
-        hasError = true
-      } else {
-        log(`✅ 生产环境配置正确: ${varName}`, 'green')
-      }
-    })
-
-  // 检查重复定义（分层管理中的正常现象）
-  log('\n🔄 检查重复定义...', 'blue')
-  const allVars = [...Object.keys(baseVars), ...Object.keys(devVars), ...Object.keys(prodVars)]
-  const duplicates = allVars.filter((item, index) => allVars.indexOf(item) !== index)
-
-  if (duplicates.length > 0) {
-    log(`⚠️  发现重复定义（分层管理正常现象）: ${duplicates.length} 个变量`, 'yellow')
-    log('   这是分层环境变量管理的正常现象，环境特定文件会覆盖基础配置', 'yellow')
   } else {
-    log('✅ 没有重复定义', 'green')
+    log('✅  没有多余类型定义', 'green')
   }
 
-  // 统计信息
-  log('\n📊 配置统计:', 'blue')
-  log(`- .env: ${Object.keys(baseVars).filter(key => key.startsWith('VITE_')).length} 个变量`)
-  log(
-    `- .env.development: ${Object.keys(devVars).filter(key => key.startsWith('VITE_')).length} 个变量`
+  /* ---------- 6. 重复定义提示 ---------- */
+  log('\n🔄  检查重复定义...', 'blue')
+  const duplicates = activeVarNames.filter(
+    n => (baseVars[n] && devVars[n]) || (baseVars[n] && prodVars[n])
   )
-  log(
-    `- .env.production: ${Object.keys(prodVars).filter(key => key.startsWith('VITE_')).length} 个变量`
-  )
-  log(`- env.d.ts: ${typeVars.length} 个类型定义`)
-
-  if (hasError) {
-    log('\n❌ 检查完成，发现问题！', 'red')
-    process.exit(1)
+  if (duplicates.length) {
+    log(`⚠️   发现重复定义 ${duplicates.length} 个 (环境覆盖属正常)`, 'yellow')
+    duplicates.forEach(name => {
+      const sources = []
+      if (baseVars[name]) sources.push('.env')
+      if (devVars[name]) sources.push('.env.development')
+      if (prodVars[name]) sources.push('.env.production')
+      log(`   ${name}: ${sources.join(' + ')}`, 'yellow')
+    })
+    hasWarning = true
   } else {
-    log('\n✅ 检查完成，配置一致！', 'green')
+    log('✅  无重复定义', 'green')
+  }
+
+  /* ---------- 7. 安全性检查 ---------- */
+  log('\n🔒  安全性检查...', 'blue')
+  // const sensitivePatterns = ['password', 'secret', 'key', 'token']
+  const sensitivePatterns = ['password', 'secret', 'token']
+  const securityIssues = []
+
+  Object.entries({ ...baseVars, ...devVars, ...prodVars }).forEach(([name, value]) => {
+    if (!name.startsWith('VITE_')) return
+
+    // 检查是否包含敏感信息
+    const nameLower = name.toLowerCase()
+    const hasSensitive = sensitivePatterns.some(pattern => nameLower.includes(pattern))
+
+    if (hasSensitive && value && value.length > 0) {
+      const status = validationRules.deprecated.includes(name) ? '(已废弃)' : ''
+      securityIssues.push(`${name}${status}: 可能包含敏感信息`)
+    }
+  })
+
+  if (securityIssues.length > 0) {
+    securityIssues.forEach(issue => log(`⚠️   ${issue}`, 'yellow'))
+    hasWarning = true
+  } else {
+    log('✅  未发现明显的安全问题', 'green')
+  }
+
+  /* ---------- 8. 统计 ---------- */
+  log('\n📊  配置统计:', 'blue')
+  const countVite = obj => Object.keys(obj).filter(k => k.startsWith('VITE_')).length
+  const countActive = obj =>
+    Object.keys(obj).filter(k => k.startsWith('VITE_') && !validationRules.deprecated.includes(k))
+      .length
+  const countDeprecated = obj =>
+    Object.keys(obj).filter(k => validationRules.deprecated.includes(k)).length
+
+  log(
+    `- .env: ${countVite(baseVars)} 个变量 (活跃: ${countActive(baseVars)}, 废弃: ${countDeprecated(baseVars)})`
+  )
+  log(
+    `- .env.development: ${countVite(devVars)} 个变量 (活跃: ${countActive(devVars)}, 废弃: ${countDeprecated(devVars)})`
+  )
+  log(
+    `- .env.production: ${countVite(prodVars)} 个变量 (活跃: ${countActive(prodVars)}, 废弃: ${countDeprecated(prodVars)})`
+  )
+  log(`- env.d.ts 定义: ${typeVars.length} 个类型`)
+  log(
+    `- 当前环境生效: ${countVite(allCurrentVars)} 个变量 (活跃: ${countActive(allCurrentVars)}, 废弃: ${countDeprecated(allCurrentVars)})`
+  )
+
+  /* ---------- 结束 ---------- */
+  if (hasError) {
+    log('\n❌  检查完成，发现错误！请修复后重试。', 'red')
+    process.exit(1)
+  } else if (hasWarning) {
+    log('\n⚠️   检查完成，有警告但可以继续运行。', 'yellow')
+  } else {
+    log('\n✅  检查完成，一切正常！', 'green')
   }
 }
 
-// 运行检查
+/* -------------------- 执行 -------------------- */
 if (require.main === module) {
   checkEnvConfig()
 }
 
-module.exports = { checkEnvConfig }
+module.exports = { checkEnvConfig, validationRules, validators }

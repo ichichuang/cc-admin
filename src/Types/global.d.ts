@@ -1,17 +1,3 @@
-declare interface ImportMeta {
-  VITE_APP_NAME: string
-  VITE_STORE_KEY: string
-  VITE_COMPRESS: boolean
-  VITE_PWA: boolean
-  VITE_ROUTER_HISTORY: string
-  VITE_MOCKJS_FLAG: boolean
-  VITE_PORT: number
-  VITE_BASE: string
-  VITE_API_URL: string
-  VITE_DEVTOOLS: boolean
-  glob: any
-}
-
 declare interface Window {
   $message: any
 }

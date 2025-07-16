@@ -1,0 +1,319 @@
+# CC-Admin 项目文档规范
+
+## 📘 基本要求
+
+- **语言**: 优先使用中文，重要API文档提供英文版本
+- **结构**: 遵循统一的文档结构和层次
+- **版本**: 新功能需要声明可用的版本号
+- **格式**: 使用Markdown格式，支持代码高亮和图表
+
+## 📂 文档结构标准
+
+### ✅ 标准目录结构
+
+```
+docs/
+├── README.md              # 项目主文档
+├── CHANGELOG.md           # 版本变更日志
+├── development/           # 开发文档
+│   ├── setup.md          # 环境搭建
+│   ├── architecture.md   # 架构说明
+│   └── coding-guide.md   # 编码指南
+├── deployment/            # 部署文档
+│   ├── production.md     # 生产环境部署
+│   └── docker.md         # Docker部署
+├── api/                   # API文档
+│   ├── modules/          # 模块API
+│   └── types.md          # 类型定义
+└── examples/              # 示例文档
+    ├── components/       # 组件示例
+    └── pages/           # 页面示例
+```
+
+### 🧩 文档模板结构
+
+每个文档应包含：
+
+- **概述**: 简要说明功能/模块作用
+- **快速开始**: 最简使用示例
+- **详细说明**: 完整的功能描述
+- **API参考**: 接口/参数说明
+- **示例代码**: 实际使用案例
+- **注意事项**: 重要提醒和限制
+
+## 📝 内容编写规范
+
+### 语言风格
+
+- 使用**简洁专业**的语言，避免口语化
+- 技术术语保持一致性
+- 提供**完整清晰**的代码示例
+
+### Vue 3 + TypeScript 示例规范
+
+```typescript
+// ✅ 正确的组件示例
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import type { UserInfo } from '@/types/user'
+
+interface Props {
+  users: UserInfo[]
+  loading?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  loading: false
+})
+
+const emit = defineEmits<{
+  select: [user: UserInfo]
+  refresh: []
+}>()
+</script>
+
+<template>
+  <div class="user-list">
+    <UserCard
+      v-for="user in props.users"
+      :key="user.id"
+      :user="user"
+      @click="emit('select', user)"
+    />
+  </div>
+</template>
+```
+
+### API 文档表格格式
+
+| 参数       | 类型         | 默认值  | 说明         | 版本  |
+| ---------- | ------------ | ------- | ------------ | ----- |
+| `users`    | `UserInfo[]` | `[]`    | 用户列表数据 | 1.0.0 |
+| `loading`  | `boolean`    | `false` | 加载状态     | 1.0.0 |
+| `pageSize` | `number`     | `10`    | 每页显示数量 | 1.2.0 |
+
+### 事件文档格式
+
+| 事件名    | 参数               | 说明           | 版本  |
+| --------- | ------------------ | -------------- | ----- |
+| `select`  | `(user: UserInfo)` | 选择用户时触发 | 1.0.0 |
+| `refresh` | `()`               | 刷新列表时触发 | 1.1.0 |
+
+### Store 文档格式
+
+```typescript
+// ✅ Store 使用示例
+import { useUserStore } from '@/stores'
+
+const userStore = useUserStore()
+
+// State
+userStore.currentUser
+userStore.userList
+
+// Getters
+userStore.isAuthenticated
+userStore.userCount
+
+// Actions
+await userStore.login(credentials)
+await userStore.fetchUsers()
+userStore.logout()
+```
+
+## 📋 Changelog 规范
+
+### 版本格式
+
+使用语义化版本号：`MAJOR.MINOR.PATCH`
+
+### 变更类型与Emoji
+
+- 🆕 **新特性**: 新增功能或API
+- 🐞 **Bug修复**: 修复已知问题
+- 💄 **样式更新**: UI/UX改进，UnoCSS更新
+- 🔥 **重大更新**: 破坏性变更或重要特性
+- 📖 **文档**: 文档更新或改进
+- ⚡️ **性能**: 性能优化和改进
+- 🛠 **重构**: 代码重构，不影响功能
+- 🗑 **废弃**: 标记废弃的API或功能
+- 🔧 **工具**: 开发工具或构建流程改进
+- 🌐 **国际化**: 多语言支持改进
+
+### Changelog 示例
+
+```markdown
+## [1.2.0] - 2024-01-15
+
+### 🆕 新特性
+
+- 新增用户角色管理模块
+- 支持暗色主题切换
+- 添加数据导出功能
+
+### 🐞 Bug修复
+
+- 修复表格分页显示错误
+- 解决路由切换时状态丢失问题
+
+### 💄 样式更新
+
+- 优化移动端适配
+- 更新按钮样式和交互效果
+
+### ⚡️ 性能优化
+
+- 优化组件懒加载机制
+- 减少打包体积15%
+```
+
+## 🎨 格式与排版
+
+### Markdown 规范
+
+- **标题**: 使用 `#` 层级标题，最多4级
+- **代码**: 使用 ` ``` ` 代码块，指定语言高亮
+- **链接**: 使用相对路径链接项目内文档
+- **图片**: 统一放在 `docs/images/` 目录
+- **表格**: 使用标准Markdown表格格式
+
+### 代码示例规范
+
+```vue
+<!-- ✅ 完整的组件示例 -->
+<script setup lang="ts">
+// 导入语句
+import { computed } from 'vue'
+import { useUserStore } from '@/stores'
+
+// 类型定义
+interface User {
+  id: number
+  name: string
+  email: string
+}
+
+// 组合式API使用
+const userStore = useUserStore()
+const users = computed(() => userStore.userList)
+</script>
+
+<template>
+  <div class="p-4 bg-white rounded-lg shadow">
+    <h2 class="text-xl font-bold mb-4">用户列表</h2>
+    <div
+      v-for="user in users"
+      :key="user.id"
+      class="p-2"
+    >
+      {{ user.name }}
+    </div>
+  </div>
+</template>
+```
+
+## 🔧 自动化文档
+
+### 注释规范
+
+```typescript
+/**
+ * 用户信息接口
+ * @description 包含用户的基本信息和权限数据
+ * @version 1.0.0
+ * @author CC-Admin Team
+ */
+interface UserInfo {
+  /** 用户唯一标识 */
+  id: number
+  /** 用户姓名 */
+  name: string
+  /** 邮箱地址 */
+  email: string
+  /** 用户角色列表 */
+  roles: string[]
+  /** 创建时间 */
+  createdAt: string
+  /** 最后登录时间 */
+  lastLoginAt?: string
+}
+```
+
+### 组件文档注释
+
+```vue
+<script setup lang="ts">
+/**
+ * 用户卡片组件
+ * @description 展示用户基本信息的卡片组件
+ * @example
+ * <UserCard :user="userInfo" @click="handleClick" />
+ */
+
+interface Props {
+  /** 用户信息对象 */
+  user: UserInfo
+  /** 是否显示操作按钮 */
+  showActions?: boolean
+}
+</script>
+```
+
+## 📚 项目特定规范
+
+### CC-Admin 架构文档
+
+- **技术栈**: Vue 3.5+, TypeScript 5+, Vite 7+, UnoCSS, Pinia
+- **目录结构**: 详细说明 `index.ts + modules/` 模式
+- **状态管理**: Pinia store 的使用方式和最佳实践
+- **样式系统**: UnoCSS 配置和主题系统说明
+- **路由管理**: Vue Router 配置和权限控制
+
+### 模块文档要求
+
+每个功能模块需要包含：
+
+1. **模块概述**: 功能描述和使用场景
+2. **API接口**: 完整的接口文档
+3. **类型定义**: TypeScript 类型说明
+4. **使用示例**: 实际使用代码
+5. **最佳实践**: 推荐的使用方式
+
+## 🎯 文档质量标准
+
+### 强制要求
+
+1. **完整性**: 所有公共API必须有文档
+2. **准确性**: 示例代码必须可运行
+3. **时效性**: 版本更新时同步更新文档
+4. **一致性**: 遵循统一的格式和术语
+
+### 质量检查清单
+
+- [ ] 语法正确，无错别字
+- [ ] 代码示例完整可运行
+- [ ] API 参数和返回值准确
+- [ ] 版本信息正确标注
+- [ ] 链接有效，图片正常显示
+- [ ] 符合项目文档规范
+
+## 🚀 文档维护
+
+### 更新流程
+
+1. 功能开发完成后立即更新相关文档
+2. 提交 PR 时必须包含文档更新
+3. 版本发布前检查文档完整性
+4. 定期审查和优化文档结构
+
+### 协作规范
+
+- 文档更改需要 Code Review
+- 重要文档更新需要团队讨论
+- 保持文档版本与代码版本同步
+- 及时处理文档相关的反馈和问题
+
+- 对复杂功能提供详细说明
+- 加入 TypeScript 定义
+- 提供常见问题解答
+- 更新文档时同步更新中英文版本

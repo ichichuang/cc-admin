@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { routeUtils } from '@/router'
 import { useLayoutStore } from '@/stores'
 import { computed } from 'vue'
 import AppBreadcrumb from './AppBreadcrumb.vue'
@@ -7,13 +8,15 @@ import AppHeader from './AppHeader.vue'
 import AppSidebar from './AppSidebar.vue'
 
 const layoutStore = useLayoutStore()
-
 const showHeader = computed(() => layoutStore.getShowHeader)
 const showMenu = computed(() => layoutStore.getShowMenu)
 const showSidebar = computed(() => layoutStore.getShowSidebar)
 const showBreadcrumb = computed(() => layoutStore.getShowBreadcrumb)
 const showFooter = computed(() => layoutStore.getShowFooter)
 const showTabs = computed(() => layoutStore.getShowTabs)
+const keepAliveNames = computed(() =>
+  routeUtils.flatRoutes.filter(r => r.meta?.keepAlive && r.name).map(r => r.name as string)
+)
 
 // 侧边栏折叠
 const sidebarCollapsed = computed(() => layoutStore.sidebarCollapsed)
@@ -62,7 +65,11 @@ const sidebarClass = computed(() => [
           <div>标签页</div>
         </template>
         <div class="content-container">
-          <RouterView />
+          <RouterView v-slot="{ Component }">
+            <KeepAlive :include="keepAliveNames">
+              <component :is="Component" />
+            </KeepAlive>
+          </RouterView>
         </div>
       </main>
 

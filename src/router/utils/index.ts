@@ -1,5 +1,4 @@
 import type { RouteRecordRaw } from 'vue-router'
-import type { BackendRouteConfig, MenuItem, RouteConfig } from '../types'
 
 /**
  * 检查数组是否有交集
@@ -457,6 +456,25 @@ export function transformToVueRoutes(routes: RouteConfig[]): RouteRecordRaw[] {
 }
 
 /**
+ * 根据路由配置自动生成需要缓存的页面 name 列表
+ */
+export function getKeepAliveNames(routes: RouteConfig[]): string[] {
+  const keepAliveNames: string[] = []
+  function traverse(routeList: RouteConfig[]) {
+    routeList.forEach(route => {
+      if (route.meta?.keepAlive && route.name) {
+        keepAliveNames.push(route.name)
+      }
+      if (route.children && route.children.length > 0) {
+        traverse(route.children)
+      }
+    })
+  }
+  traverse(routes)
+  return keepAliveNames
+}
+
+/**
  * 创建路由工具集
  * 提供完整的路由处理工具
  */
@@ -467,6 +485,7 @@ export function createRouteUtils(routes: RouteConfig[]): RouteUtils {
     flatRoutes: flattenRoutes(sortedRoutes),
     menuTree: generateMenuTree(sortedRoutes),
     breadcrumbMap: generateBreadcrumbMap(sortedRoutes),
+    keepAliveNames: getKeepAliveNames(sortedRoutes),
   }
 }
 

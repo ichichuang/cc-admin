@@ -1,0 +1,348 @@
+# CC-Admin Vue3 项目命名规范
+
+CC-Admin 要求使用**完整名称**而非缩写，确保代码的可读性和维护性。
+
+## 📁 文件命名规范
+
+### Vue 文件命名
+
+- **页面文件**: 使用 `kebab-case`，如 `user-profile.vue`、`order-management.vue`
+- **组件文件**: 使用 `PascalCase`，如 `UserCard.vue`、`DataTable.vue`
+- **布局文件**: 使用 `PascalCase`，如 `LayoutAdmin.vue`、`LayoutFullScreen.vue`
+
+### TypeScript/JavaScript 文件命名
+
+- **工具函数**: 使用 `camelCase`，如 `userService.ts`、`dateUtils.ts`
+- **类型定义**: 使用 `camelCase`，如 `userTypes.ts`、`apiTypes.ts`
+- **常量文件**: 使用 `camelCase`，如 `apiConfig.ts`、`routeConstants.ts`
+- **Composable**: 使用 `camelCase`，如 `useUserStore.ts`、`useTheme.ts`
+
+### 目录命名
+
+- **所有目录**: 使用 `kebab-case`，如 `user-management/`、`order-system/`
+- **特殊目录**: 保持框架约定，如 `views/`、`components/`、`stores/`
+
+## 🎯 Vue 3 组件命名
+
+### 组件定义
+
+```vue
+<!-- ✅ 正确：组件文件名 UserProfileCard.vue -->
+<script setup lang="ts">
+// 组件内部逻辑使用 camelCase
+const userName = ref('')
+const isUserActive = ref(false)
+</script>
+```
+
+### 组件使用
+
+```vue
+<template>
+  <!-- ✅ 正确：组件使用 PascalCase -->
+  <UserProfileCard :user-name="userName" />
+
+  <!-- ✅ 正确：HTML属性使用 kebab-case -->
+  <DataTable
+    :data-source="userList"
+    :loading-state="isLoading"
+    @row-click="handleRowClick"
+  />
+</template>
+```
+
+## 🔧 Composition API 命名
+
+### Composable 函数
+
+- **命名**: 使用 `use` 前缀 + `PascalCase`
+- **文件**: 使用 `camelCase.ts`
+
+```typescript
+// ✅ 文件: useUserManagement.ts
+export function useUserManagement() {
+  const userList = ref<User[]>([])
+  const isLoading = ref(false)
+
+  const fetchUserList = async () => {
+    // 实现逻辑
+  }
+
+  return {
+    userList,
+    isLoading,
+    fetchUserList,
+  }
+}
+```
+
+### 响应式数据命名
+
+```typescript
+// ✅ 正确的响应式数据命名
+const userName = ref('') // 单个数据用单数
+const userList = ref<User[]>([]) // 数组数据用复数
+const isUserLoggedIn = ref(false) // 布尔值用 is/has/can 前缀
+const hasPermission = computed(() => user.value?.role === 'admin')
+const canEditUser = computed(() => hasPermission.value && !isReadonly.value)
+```
+
+### 事件处理函数
+
+```typescript
+// ✅ 正确：使用 handle 前缀
+const handleUserLogin = () => {
+  /* 登录逻辑 */
+}
+const handleButtonClick = () => {
+  /* 点击逻辑 */
+}
+const handleFormSubmit = async () => {
+  /* 提交逻辑 */
+}
+
+// ✅ 正确：异步操作使用动词开头
+const fetchUserData = async () => {
+  /* 获取数据 */
+}
+const saveUserProfile = async () => {
+  /* 保存数据 */
+}
+const deleteUserRecord = async () => {
+  /* 删除数据 */
+}
+```
+
+## 📦 Props 和 Events 命名
+
+### Props 定义
+
+```typescript
+// ✅ 正确：Props 接口使用 PascalCase
+interface UserCardProps {
+  userName: string // 属性使用 camelCase
+  isActive?: boolean // 可选属性
+  userRole: 'admin' | 'user' // 联合类型
+  onUserClick?: (user: User) => void // 事件回调
+}
+
+// ✅ 正确：默认值使用 default 前缀
+const props = withDefaults(defineProps<UserCardProps>(), {
+  isActive: true, // 默认值
+  userRole: 'user',
+})
+```
+
+### Events 定义
+
+```typescript
+// ✅ 正确：事件使用 on 前缀
+const emit = defineEmits<{
+  'user-click': [user: User] // 事件名使用 kebab-case
+  'status-change': [status: string]
+  'data-update': [data: any[]]
+}>()
+
+// ✅ 正确：触发事件
+const handleUserClick = (user: User) => {
+  emit('user-click', user)
+}
+```
+
+## 🗂️ Store 和 API 命名
+
+### Pinia Store 命名
+
+```typescript
+// ✅ 文件: userStore.ts
+export const useUserStore = defineStore('user', {
+  state: () => ({
+    userList: [] as User[],
+    currentUser: null as User | null,
+    isLoading: false,
+  }),
+
+  getters: {
+    activeUserList: state => state.userList.filter(u => u.isActive),
+    hasCurrentUser: state => !!state.currentUser,
+  },
+
+  actions: {
+    async fetchUserList() {
+      /* 获取用户列表 */
+    },
+    async createUser(userData: CreateUserData) {
+      /* 创建用户 */
+    },
+    async updateUser(userId: string, data: UpdateUserData) {
+      /* 更新用户 */
+    },
+  },
+})
+```
+
+### API 模块命名
+
+```typescript
+// ✅ 文件: userApi.ts
+export const userApi = {
+  // 获取数据：get/fetch 前缀
+  getUserList: () => request.get<User[]>('/users'),
+  getUserById: (id: string) => request.get<User>(`/users/${id}`),
+
+  // 创建数据：create 前缀
+  createUser: (data: CreateUserData) => request.post<User>('/users', data),
+
+  // 更新数据：update 前缀
+  updateUser: (id: string, data: UpdateUserData) => request.put<User>(`/users/${id}`, data),
+
+  // 删除数据：delete 前缀
+  deleteUser: (id: string) => request.delete(`/users/${id}`),
+}
+```
+
+## 📝 常量和枚举命名
+
+### 常量命名
+
+```typescript
+// ✅ 正确：常量使用 SCREAMING_SNAKE_CASE
+export const API_BASE_URL = 'https://api.example.com'
+export const MAX_RETRY_COUNT = 3
+export const DEFAULT_PAGE_SIZE = 20
+export const LOCAL_STORAGE_KEYS = {
+  USER_TOKEN: 'cc_admin_user_token',
+  THEME_SETTING: 'cc_admin_theme',
+  LANGUAGE_SETTING: 'cc_admin_language',
+} as const
+```
+
+### 类型和接口命名
+
+```typescript
+// ✅ 正确：接口和类型使用 PascalCase
+interface UserProfile {
+  userId: string // 属性使用 camelCase
+  userName: string
+  userEmail: string
+  isActive: boolean
+  createdAt: Date
+  updatedAt: Date
+}
+
+// ✅ 正确：类型别名
+type ApiResponse<T> = {
+  statusCode: number
+  isSuccess: boolean
+  responseData: T
+  errorMessage?: string
+}
+
+// ✅ 正确：联合类型
+type UserRole = 'admin' | 'moderator' | 'user'
+type ThemeMode = 'light' | 'dark' | 'auto'
+```
+
+## 🔄 路由命名
+
+### 路由配置
+
+```typescript
+// ✅ 正确：路由命名
+export const userRoutes = [
+  {
+    path: '/user-management', // URL 使用 kebab-case
+    name: 'UserManagement', // 路由名使用 PascalCase
+    component: () => import('@/views/user-management/index.vue'),
+    meta: {
+      title: '用户管理',
+      requiresAuth: true,
+      permissions: ['user:read'],
+    },
+  },
+  {
+    path: '/user-profile/:userId',
+    name: 'UserProfile',
+    component: () => import('@/views/user-profile/index.vue'),
+    meta: {
+      title: '用户详情',
+      requiresAuth: true,
+    },
+  },
+]
+```
+
+## 🎨 样式相关命名
+
+### CSS 类名 (UnoCSS)
+
+```vue
+<template>
+  <!-- ✅ 正确：使用 UnoCSS 原子类 -->
+  <div class="flex items-center justify-between p-4 bg-white dark:bg-gray-800">
+    <h1 class="text-xl font-bold text-gray-900 dark:text-white">用户管理</h1>
+  </div>
+
+  <!-- ✅ 正确：自定义类名使用 kebab-case -->
+  <div class="user-card-container">
+    <UserCard class="user-card-item" />
+  </div>
+</template>
+```
+
+### CSS 变量命名
+
+```scss
+// ✅ 正确：CSS 变量使用 kebab-case
+:root {
+  --primary-color: #3b82f6;
+  --secondary-color: #64748b;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --error-color: #ef4444;
+
+  --border-radius-sm: 0.25rem;
+  --border-radius-md: 0.375rem;
+  --border-radius-lg: 0.5rem;
+
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 0.75rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+}
+```
+
+## ✅ 命名检查规则
+
+项目通过 `scripts/naming-rules.js` 自动检查以下规则：
+
+1. **文件命名**: 确保 Vue 组件使用 PascalCase，页面使用 kebab-case
+2. **目录命名**: 确保所有目录使用 kebab-case
+3. **导出命名**: 确保导出的函数和变量符合命名规范
+4. **类型命名**: 确保接口和类型使用 PascalCase
+5. **常量命名**: 确保常量使用 SCREAMING_SNAKE_CASE
+
+## 🚫 避免的命名方式
+
+```typescript
+// ❌ 错误示例
+const u = ref('') // 过于简短
+const userData123 = ref('') // 数字后缀无意义
+const user_name = ref('') // 下划线命名（非常量）
+const UserName = ref('') // 变量不应使用 PascalCase
+const handleClick = () => {} // 事件处理器应具体描述
+const data = ref([]) // 过于通用的命名
+const temp = computed(() => {}) // 临时变量应有具体含义
+
+// ❌ 错误的组件命名
+const Header = defineComponent({}) // 单词组件名，易与 HTML 元素冲突
+const UI = defineComponent({}) // 缩写不清晰
+const Comp1 = defineComponent({}) // 数字后缀无意义
+```
+
+遵循这些命名规范，确保 CC-Admin 项目代码的一致性、可读性和可维护性。
+
+- No period at the end of the **Description**.
+- API order is arranged in alphabetical order, and can be put together under special circumstances (such as: xs sm md).
+
+ref: [#25066](mdc:https:/github.com/ant-design/ant-design/issues/25066)
