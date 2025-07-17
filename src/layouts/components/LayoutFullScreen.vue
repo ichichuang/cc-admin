@@ -15,7 +15,9 @@ const keepAliveNames = computed(() =>
   <div class="container">
     <!-- 顶部预设菜单（可配置） -->
     <template v-if="showMenu">
-      <AppTopMenu />
+      <section class="absolute t-gap r-gap bg-theme">
+        <AppTopMenu />
+      </section>
     </template>
 
     <!-- 内容区域 -->

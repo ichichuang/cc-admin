@@ -6,10 +6,10 @@ import AppBreadcrumb from './AppBreadcrumb.vue'
 import AppFooter from './AppFooter.vue'
 import AppHeader from './AppHeader.vue'
 import AppSidebar from './AppSidebar.vue'
+import AppTabs from './AppTabs.vue'
 
 const layoutStore = useLayoutStore()
 const showHeader = computed(() => layoutStore.getShowHeader)
-const showMenu = computed(() => layoutStore.getShowMenu)
 const showSidebar = computed(() => layoutStore.getShowSidebar)
 const showBreadcrumb = computed(() => layoutStore.getShowBreadcrumb)
 const showFooter = computed(() => layoutStore.getShowFooter)
@@ -34,49 +34,54 @@ const sidebarClass = computed(() => [
 
 <template>
   <div class="container">
-    <!-- 侧边栏 -->
-    <template v-if="showSidebar">
-      <div
-        class="w-sidebarWidth h-100% bg-themeColor"
-        :class="sidebarClass"
-      >
-        <AppSidebar />
-      </div>
+    <!-- 头部 -->
+    <template v-if="showHeader">
+      <header class="h-headerHeight">
+        <AppHeader />
+      </header>
     </template>
 
-    <!-- 主内容区域 -->
-    <div class="w100% h100% bg-themeColors">
-      <!-- 头部 -->
-      <template v-if="showHeader">
-        <header class="w-full">
-          <div class=""></div>
-          <AppHeader :show-menu="showMenu" />
-        </header>
+    <!-- 内容区域 -->
+    <main class="h-contentsHeight between">
+      <!-- 侧边栏 -->
+      <template v-if="showSidebar">
+        <div
+          class="w-sidebarWidth h100%"
+          :class="sidebarClass"
+        >
+          <AppSidebar />
+        </div>
       </template>
-
-      <!-- 面包屑 -->
-      <template v-if="showBreadcrumb">
-        <AppBreadcrumb />
-      </template>
-
-      <!-- 内容区域 -->
-      <main class="content-wrapper">
-        <template v-if="showTabs">
-          <div>标签页</div>
+      <div class="wfull hfull">
+        <!-- 面包屑 -->
+        <template v-if="showBreadcrumb">
+          <section class="wfull h-breadcrumbHeight">
+            <AppBreadcrumb />
+          </section>
         </template>
-        <div class="content-container">
+
+        <!-- 标签页 -->
+        <template v-if="showTabs">
+          <section class="h-tabsHeight">
+            <AppTabs />
+          </section>
+        </template>
+
+        <div class="wfull h-contentHeight">
           <RouterView v-slot="{ Component }">
             <KeepAlive :include="keepAliveNames">
               <component :is="Component" />
             </KeepAlive>
           </RouterView>
         </div>
-      </main>
+      </div>
+    </main>
 
-      <!-- 底部 -->
-      <template v-if="showFooter">
+    <!-- 底部 -->
+    <template v-if="showFooter">
+      <footer class="h-footerHeight">
         <AppFooter />
-      </template>
-    </div>
+      </footer>
+    </template>
   </div>
 </template>

@@ -1,5 +1,3 @@
-import type { RouteConfig } from '@/router/types'
-
 const errorRoutes: RouteConfig[] = [
   {
     path: '/404',

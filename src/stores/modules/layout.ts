@@ -5,8 +5,8 @@ import { debounce } from 'lodash-es'
 import { defineStore } from 'pinia'
 
 /* 布局配置 */
-// Admin布局配置
-interface AdminLayoutConfig {
+// 布局配置
+interface LayoutConfig {
   showHeader: boolean
   showMenu: boolean
   showSidebar: boolean
@@ -14,7 +14,7 @@ interface AdminLayoutConfig {
   showFooter: boolean
   showTabs: boolean
 }
-const adminLayoutConfig: AdminLayoutConfig = {
+const layoutConfig: LayoutConfig = {
   showHeader: true,
   showMenu: true,
   showSidebar: true,
@@ -23,38 +23,11 @@ const adminLayoutConfig: AdminLayoutConfig = {
   showTabs: true,
 }
 
-// Screen布局配置
-interface ScreenLayoutConfig {
-  showHeader: boolean
-  showMenu: boolean
-  showFooter: boolean
-}
-const screenLayoutConfig: ScreenLayoutConfig = {
-  showHeader: true,
-  showMenu: true,
-  showFooter: true,
-}
-
-// Fullscreen布局配置
-interface FullscreenLayoutConfig {
-  showMenu: boolean
-}
-const fullscreenLayoutConfig: FullscreenLayoutConfig = {
-  showMenu: false,
-}
-
-// 所有布局配置
-interface LayoutConfigs {
-  admin: AdminLayoutConfig
-  screen: ScreenLayoutConfig
-  fullscreen: FullscreenLayoutConfig
-}
-
 interface LayoutState {
   // 当前布局模式
   currentLayout: LayoutMode
   // 布局配置
-  layoutConfigs: LayoutConfigs
+  layoutConfig: LayoutConfig
   // 侧边栏折叠状态
   sidebarCollapsed: boolean
   // 移动端侧边栏可见状态
@@ -74,11 +47,7 @@ export const useLayoutStore = defineStore('layout', {
   state: (): LayoutState => ({
     currentLayout: 'admin',
 
-    layoutConfigs: {
-      admin: adminLayoutConfig,
-      screen: screenLayoutConfig,
-      fullscreen: fullscreenLayoutConfig,
-    },
+    layoutConfig: layoutConfig,
     sidebarCollapsed: false,
     mobileSidebarVisible: false,
 
@@ -93,17 +62,17 @@ export const useLayoutStore = defineStore('layout', {
     getCurrentLayout: (state: LayoutState) => state.currentLayout,
 
     // 是否展示头部
-    getShowHeader: (state: LayoutState) => state.layoutConfigs.admin.showHeader,
+    getShowHeader: (state: LayoutState) => state.layoutConfig.showHeader,
     // 是否展示顶部菜单
-    getShowMenu: (state: LayoutState) => state.layoutConfigs.admin.showMenu,
+    getShowMenu: (state: LayoutState) => state.layoutConfig.showMenu,
     // 是否展示侧边栏
-    getShowSidebar: (state: LayoutState) => state.layoutConfigs.admin.showSidebar,
+    getShowSidebar: (state: LayoutState) => state.layoutConfig.showSidebar,
     // 是否展示面包屑
-    getShowBreadcrumb: (state: LayoutState) => state.layoutConfigs.admin.showBreadcrumb,
+    getShowBreadcrumb: (state: LayoutState) => state.layoutConfig.showBreadcrumb,
     // 是否展示底部
-    getShowFooter: (state: LayoutState) => state.layoutConfigs.admin.showFooter,
+    getShowFooter: (state: LayoutState) => state.layoutConfig.showFooter,
     // 是否展示标签页
-    getShowTabs: (state: LayoutState) => state.layoutConfigs.admin.showTabs,
+    getShowTabs: (state: LayoutState) => state.layoutConfig.showTabs,
 
     // 是否折叠侧边栏
     getSidebarCollapsed: (state: LayoutState) => state.sidebarCollapsed,
@@ -146,6 +115,38 @@ export const useLayoutStore = defineStore('layout', {
       this.currentLayout = layout
     },
 
+    /* 布局显示状态设置 */
+    // 设置头部显示状态
+    setShowHeader(show: boolean) {
+      this.layoutConfig.showHeader = show
+      this.notifySizeStoreUpdate()
+    },
+    // 设置菜单显示状态
+    setShowMenu(show: boolean) {
+      this.layoutConfig.showMenu = show
+      this.notifySizeStoreUpdate()
+    },
+    // 设置侧边栏显示状态
+    setShowSidebar(show: boolean) {
+      this.layoutConfig.showSidebar = show
+      this.notifySizeStoreUpdate()
+    },
+    // 设置面包屑显示状态
+    setShowBreadcrumb(show: boolean) {
+      this.layoutConfig.showBreadcrumb = show
+      this.notifySizeStoreUpdate()
+    },
+    // 设置底部显示状态
+    setShowFooter(show: boolean) {
+      this.layoutConfig.showFooter = show
+      this.notifySizeStoreUpdate()
+    },
+    // 设置标签页显示状态
+    setShowTabs(show: boolean) {
+      this.layoutConfig.showTabs = show
+      this.notifySizeStoreUpdate()
+    },
+
     // 设置侧边栏折叠状态
     setSidebarCollapsed(collapsed: boolean) {
       this.sidebarCollapsed = collapsed
@@ -167,6 +168,22 @@ export const useLayoutStore = defineStore('layout', {
     // 初始化设备信息
     initDeviceInfo() {
       this.deviceInfo = getDeviceInfo()
+      // 设备信息更新后，通知 size store 重新计算内容高度
+      this.notifySizeStoreUpdate()
+    },
+
+    // 通知 size store 更新内容高度
+    notifySizeStoreUpdate() {
+      // 使用 nextTick 确保在下一个事件循环中执行，避免循环依赖
+      setTimeout(async () => {
+        try {
+          const { useSizeStoreWithOut } = await import('@/stores/modules/size')
+          const sizeStore = useSizeStoreWithOut()
+          sizeStore.updateContentHeight()
+        } catch (error) {
+          console.warn('Failed to update size store:', error)
+        }
+      }, 0)
     },
 
     init() {

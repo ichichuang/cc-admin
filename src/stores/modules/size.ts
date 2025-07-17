@@ -1,6 +1,6 @@
 /* 尺寸配置 */
 import { toCamelCase } from '@/common/modules/function'
-import store from '@/stores'
+import store, { useLayoutStoreWithOut } from '@/stores'
 import { defineStore } from 'pinia'
 
 /* 尺寸模式类型 宽松尺寸 > 舒适尺寸 > 紧凑尺寸 */
@@ -32,6 +32,10 @@ interface LayoutSizes {
   footerHeight: number
   // 标签页高度
   tabsHeight: number
+  // 内容区域高度(不包含头部、面包屑、标签页、底部)
+  contentHeight: number
+  // 内容区域高度(不包含头部、底部)
+  contentsHeight: number
 }
 
 // 间距具体定义
@@ -91,8 +95,10 @@ const compactSizes: SizeVariables = {
     sidebarCollapsedWidth: 50,
     headerHeight: 50,
     breadcrumbHeight: 32,
-    footerHeight: 50,
+    footerHeight: 30,
     tabsHeight: 32,
+    contentHeight: 0,
+    contentsHeight: 0,
   },
   gapOptions: [
     { label: 'xs', value: 2 },
@@ -110,8 +116,10 @@ const comfortableSizes: SizeVariables = {
     sidebarCollapsedWidth: 60,
     headerHeight: 60,
     breadcrumbHeight: 40,
-    footerHeight: 60,
+    footerHeight: 40,
     tabsHeight: 40,
+    contentHeight: 0,
+    contentsHeight: 0,
   },
   gapOptions: [
     { label: 'xs', value: 4 },
@@ -129,8 +137,10 @@ const looseSizes: SizeVariables = {
     sidebarCollapsedWidth: 70,
     headerHeight: 70,
     breadcrumbHeight: 48,
-    footerHeight: 70,
+    footerHeight: 30,
     tabsHeight: 48,
+    contentHeight: 0,
+    contentsHeight: 0,
   },
   gapOptions: [
     { label: 'xs', value: 6 },
@@ -200,6 +210,10 @@ export const useSizeStore = defineStore('size', {
     getFooterHeight: state => state.sizes.layout.footerHeight,
     // 获取标签页高度
     getTabsHeight: state => state.sizes.layout.tabsHeight,
+    // 获取内容区域高度
+    getContentHeight: state => state.sizes.layout.contentHeight,
+    // 获取内容区域高度(不包含头部、底部)
+    getContentsHeight: state => state.sizes.layout.contentsHeight,
 
     /* 尺寸变量配置相关 gap */
     // 获取间距尺寸
@@ -230,6 +244,58 @@ export const useSizeStore = defineStore('size', {
   },
 
   actions: {
+    /* 内容高度计算 */
+    // 计算内容区域高度
+    calculateContentHeight() {
+      const layoutStore = useLayoutStoreWithOut()
+      const screenHeight = layoutStore.getHeight
+
+      let contentOccupiedHeight = 0 // contentHeight 占用的高度
+      let contentsOccupiedHeight = 0 // contentsHeight 占用的高度
+
+      // 如果显示头部
+      if (layoutStore.getShowHeader) {
+        contentOccupiedHeight += this.sizes.layout.headerHeight
+        contentsOccupiedHeight += this.sizes.layout.headerHeight
+      }
+
+      // 如果显示标签页
+      if (layoutStore.getShowTabs) {
+        contentOccupiedHeight += this.sizes.layout.tabsHeight
+        // contentsHeight 包含标签页，所以不加入 contentsOccupiedHeight
+      }
+
+      // 如果显示底部
+      if (layoutStore.getShowFooter) {
+        contentOccupiedHeight += this.sizes.layout.footerHeight
+        contentsOccupiedHeight += this.sizes.layout.footerHeight
+      }
+
+      // 如果显示面包屑
+      if (layoutStore.getShowBreadcrumb) {
+        contentOccupiedHeight += this.sizes.layout.breadcrumbHeight
+        // contentsHeight 包含面包屑，所以不加入 contentsOccupiedHeight
+      }
+
+      // 计算两种内容高度
+      this.sizes.layout.contentHeight = screenHeight - contentOccupiedHeight
+      this.sizes.layout.contentsHeight = screenHeight - contentsOccupiedHeight
+    },
+
+    // 更新内容高度（供外部调用）
+    updateContentHeight() {
+      this.calculateContentHeight()
+      // 更新 CSS 变量
+      document.documentElement.style.setProperty(
+        toCamelCase('contentHeight', '--'),
+        this.sizes.layout.contentHeight + 'px'
+      )
+      document.documentElement.style.setProperty(
+        toCamelCase('contentsHeight', '--'),
+        this.sizes.layout.contentsHeight + 'px'
+      )
+    },
+
     /* 尺寸模式相关 */
     // 设置尺寸模式
     setSize(size: SizeOption) {
@@ -292,6 +358,9 @@ export const useSizeStore = defineStore('size', {
     },
 
     setCssVariables() {
+      // 重新计算内容高度
+      this.calculateContentHeight()
+
       const cssVariables: Record<string, string> = {
         // 布局尺寸变量
         [toCamelCase('sidebarWidth', '--')]: this.getSidebarWidth + 'px',
@@ -300,6 +369,8 @@ export const useSizeStore = defineStore('size', {
         [toCamelCase('breadcrumbHeight', '--')]: this.getBreadcrumbHeight + 'px',
         [toCamelCase('footerHeight', '--')]: this.getFooterHeight + 'px',
         [toCamelCase('tabsHeight', '--')]: this.getTabsHeight + 'px',
+        [toCamelCase('contentHeight', '--')]: this.sizes.layout.contentHeight + 'px',
+        [toCamelCase('contentsHeight', '--')]: this.sizes.layout.contentsHeight + 'px',
 
         // 间距变量
         [toCamelCase('gap', '--')]: this.getGapValue + 'px',

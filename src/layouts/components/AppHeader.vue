@@ -1,4 +1,8 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import AppTopMenu from './AppTopMenu.vue'
+</script>
 <template>
-  <div>头部</div>
+  <div>
+    <AppTopMenu />
+  </div>
 </template>
