@@ -1,10 +1,11 @@
+import { t } from '@/locales'
 const errorRoutes: RouteConfig[] = [
   {
     path: '/404',
     name: '404',
     component: () => import('@/views/notfound/not-found-page.vue'),
     meta: {
-      title: '页面未找到',
+      title: t('router.error.notFound'),
       showLink: false,
       parent: 'fullscreen',
     },
@@ -14,7 +15,7 @@ const errorRoutes: RouteConfig[] = [
     name: '403',
     component: () => import('@/views/notfound/forbidden-page.vue'),
     meta: {
-      title: '访问被拒绝',
+      title: t('router.error.forbidden'),
       showLink: false,
       parent: 'fullscreen',
     },
@@ -24,7 +25,7 @@ const errorRoutes: RouteConfig[] = [
     name: '500',
     component: () => import('@/views/notfound/server-error-page.vue'),
     meta: {
-      title: '服务器错误',
+      title: t('router.error.serverError'),
       showLink: false,
       parent: 'fullscreen',
     },

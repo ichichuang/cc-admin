@@ -1,182 +1,69 @@
-/* 颜色配置 (https://aicolors.co/) */
-import { applyOpacityToColor, getSystemColorMode, toCamelCase } from '@/common'
+import { getSystemColorMode, toCamelCase } from '@/common'
 import store from '@/stores'
 import { defineStore } from 'pinia'
 
-/* 主题模式类型 */
-type Mode = 'light' | 'dark' | 'auto'
+/* 主题模式选项类型 */
+export type Mode = 'light' | 'dark' | 'auto'
 interface ModeOptions {
   label: string
   value: Mode
 }
 
-const modeOptions: ModeOptions[] = [
-  { label: '亮色主题', value: 'light' },
-  { label: '暗色主题', value: 'dark' },
-  { label: '自动跟随系统主题', value: 'auto' },
-]
-
 /* 颜色定义 */
-// 功能色具体定义
-interface FunctionalColor {
+interface FunctionalColors {
   color: string // 主色
   hover: string // 悬停色
   active: string // 激活色
   disabled: string // 禁用色
   light: string // 浅色背景
 }
-
-// 背景色具体定义
-interface BackgroundColorOptions {
-  label: string // 背景色标签
-  color: string // 背景色
-  highlight: string // 背景高亮色
-  text: string // 背景色文字颜色：用于当设置背景色为文字颜色时，上层的文字颜色
-  textMuted: string // 背景色文字颜色置灰色：用于注释类的浅色文字颜色
+interface FunctionalColor {
+  primary: FunctionalColors // 主色
+  success: FunctionalColors // 成功色
+  warning: FunctionalColors // 警告色
+  error: FunctionalColors // 错误色
+  info: FunctionalColors // 信息色
 }
-
-const lightBackgroundOptions: BackgroundColorOptions[] = [
-  {
-    label: '白色背景',
-    color: '#ffffff',
-    highlight: '#fafafa',
-    text: '#000000',
-    textMuted: '#1a1a1a',
-  },
-  {
-    label: '浅灰色背景',
-    color: '#f5f5f5',
-    highlight: '#e5e5e5',
-    text: '#1a1a1a',
-    textMuted: '#1a1a1a',
-  },
-  {
-    label: '中灰色背景',
-    color: '#f0f2f5',
-    highlight: '#e0e0e0',
-    text: '#1f1f1f',
-    textMuted: '#1f1f1f',
-  },
-  {
-    label: '浅灰色背景',
-    color: '#f5f5f5',
-    highlight: '#e5e5e5',
-    text: '#222222',
-    textMuted: '#000000',
-  },
-]
-
-const darkBackgroundOptions: BackgroundColorOptions[] = [
-  {
-    label: '深黑色背景',
-    color: '#141414',
-    highlight: '#1f1f1f',
-    text: '#ffffff',
-    textMuted: '#f4f4f4',
-  },
-  {
-    label: '深灰色背景',
-    color: '#1f1f1f',
-    highlight: '#1a1a1a',
-    text: '#f4f4f4',
-    textMuted: '#f8f8f8',
-  },
-  {
-    label: '中灰色背景',
-    color: '#1a1a1a',
-    highlight: '#151515',
-    text: '#f8f8f8',
-    textMuted: '#e6e6e6',
-  },
-  {
-    label: '浅灰色背景',
-    color: '#262626',
-    highlight: '#212121',
-    text: '#e6e6e6',
-    textMuted: '#d9d9d9',
-  },
-]
-
-// 主题色具体定义
-interface ThemeColor {
-  label: string // 主题色标签
-  color: string // 主题色
-  text: string // 主题色文字颜色：用于当设置主题颜色为背景色时，上层的文字颜色
-}
-
-const lightThemeOptions: ThemeColor[] = [
-  { label: '蓝色主题', color: '#1890ff', text: '#ffffff' },
-  { label: '绿色主题', color: '#52c41a', text: '#ffffff' },
-  { label: '黄色主题', color: '#faad14', text: '#ffffff' },
-  { label: '红色主题', color: '#f5222d', text: '#ffffff' },
-  { label: '紫色主题', color: '#722ed1', text: '#ffffff' },
-  { label: '粉色主题', color: '#eb2f96', text: '#ffffff' },
-  { label: '橙色主题', color: '#fa541c', text: '#ffffff' },
-  { label: '棕色主题', color: '#a67c52', text: '#ffffff' },
-  { label: '灰色主题', color: '#858585', text: '#ffffff' },
-]
-
-const darkThemeOptions: ThemeColor[] = [
-  { label: '蓝色主题', color: '#1890ff', text: '#ffffff' },
-  { label: '绿色主题', color: '#52c41a', text: '#ffffff' },
-  { label: '黄色主题', color: '#faad14', text: '#ffffff' },
-  { label: '红色主题', color: '#f5222d', text: '#ffffff' },
-  { label: '紫色主题', color: '#722ed1', text: '#ffffff' },
-  { label: '粉色主题', color: '#eb2f96', text: '#ffffff' },
-  { label: '橙色主题', color: '#fa541c', text: '#ffffff' },
-  { label: '棕色主题', color: '#a67c52', text: '#ffffff' },
-  { label: '灰色主题', color: '#858585', text: '#ffffff' },
-]
-
-// 颜色变量
-interface ColorVariables {
+export interface ThemeColors {
+  // 主题色
+  primary100: string // 主色深色调 - 用于主要按钮、导航栏、重要操作元素
+  primary200: string // 主色中色调 - 用于悬停状态、次要强调、链接颜色
+  primary300: string // 主色浅色调 - 用于背景渐变、轻微强调、选中状态背景
+  // 强调色
+  accent100: string // 强调色主色调 - 用于重要信息提示、数据突出显示
+  accent200: string // 强调色深色调 - 用于强调元素的深色变体、阴影效果
+  // 文本色
+  text100: string // 主文本色 - 用于标题、重要文字、主要内容文本
+  text200: string // 次文本色 - 用于描述文字、辅助信息、次要内容
+  // 背景色
+  bg100: string // 主背景色 - 用于页面主背景、卡片背景、模态框背景
+  bg200: string // 次背景色 - 用于区域分割、输入框背景、次要面板
+  bg300: string // 边界背景色 - 用于分割线、禁用状态、边框颜色
   // 功能色
-  primary: FunctionalColor // 主色
-  success: FunctionalColor // 成功色
-  warning: FunctionalColor // 警告色
-  error: FunctionalColor // 错误色
-  info: FunctionalColor // 信息色
-
-  // 主题颜色（与primary.color相同）
-  theme: string
-  // 主题颜色的高亮文字颜色：用于当设置主题颜色为背景色时，上层的文字颜色
-  themeText: string
-
-  // 主题色选项
-  themeOptions: ThemeColor[]
-
-  // 文字颜色：用于默认文字颜色
-  text: string
-  // 文字颜色置灰色：用于注释类的浅色文字颜色
-  textMuted: string
-
-  // 背景颜色：默认容器背景颜色
-  background: string
-  // 背景高亮色：与背景颜色相似，但是用于需要在背景色上层放的类似卡片容器的背景颜色
-  backgroundHighlight: string
-
-  // 背景色选项
-  backgroundOptions: BackgroundColorOptions[]
+  functionalColors: FunctionalColor // 功能色
+}
+export interface ThemeColor {
+  label: string // 主题色标签
+  value: string // 主题色值
+  themeColors: ThemeColors // 主题色具体颜色配置
 }
 
-interface ColorState {
-  /* 主题模式配置 */
-  mode: Mode
-  modeOptions: ModeOptions[]
+/* 预设 */
+// 主题模式选项类型
+const modeOptions: ModeOptions[] = [
+  { label: '亮色主题', value: 'light' },
+  { label: '暗色主题', value: 'dark' },
+  { label: '自动跟随系统主题', value: 'auto' },
+]
 
-  /* 配色方案颜色配置 */
-  colors: ColorVariables
-}
-
-/* colors 预设 */
-// 浅色主题预设
-const lightColors: ColorVariables = {
+// 颜色定义
+const functionalColors: FunctionalColor = {
   primary: {
-    color: '#1890ff',
-    hover: '#40a9ff',
-    active: '#096dd9',
-    disabled: '#d9d9d9',
-    light: '#e6f7ff',
+    color: '#5a9cf8',
+    hover: '#88b9f9',
+    active: '#78aff9',
+    disabled: '#cccccc',
+    light: '#ffffff',
   },
 
   success: {
@@ -210,453 +97,452 @@ const lightColors: ColorVariables = {
     disabled: '#d9d9d9',
     light: '#e6f7ff',
   },
-
-  theme: '#1890ff',
-  themeText: '#ffffff',
-  themeOptions: lightThemeOptions,
-
-  text: '#000000d9',
-  textMuted: '#00000073',
-
-  background: '#ffffff',
-  backgroundHighlight: '#fafafa',
-
-  backgroundOptions: lightBackgroundOptions,
 }
-
-// 深色主题预设
-const darkColors: ColorVariables = {
-  primary: {
-    color: '#2563eb',
-    hover: '#598EF3',
-    active: '#096dd9',
-    disabled: '#434343',
-    light: '#111b26',
+const lightThemeOptions: ThemeColor[] = [
+  {
+    label: '蓝调点缀',
+    value: 'blue',
+    themeColors: {
+      primary100: '#3F51B5',
+      primary200: '#757de8',
+      primary300: '#dedeff',
+      accent100: '#2196F3',
+      accent200: '#003f8f',
+      text100: '#333333',
+      text200: '#5c5c5c',
+      bg100: '#FFFFFF',
+      bg200: '#f5f5f5',
+      bg300: '#cccccc',
+      functionalColors,
+    },
   },
-
-  success: {
-    color: '#52c41a',
-    hover: '#73d13d',
-    active: '#389e0d',
-    disabled: '#434343',
-    light: '#162312',
+  {
+    label: '乡村山间小屋',
+    value: 'country',
+    themeColors: {
+      primary100: '#8B5D33',
+      primary200: '#be8a5e',
+      primary300: '#ffedbc',
+      accent100: '#BFBFBF',
+      accent200: '#616161',
+      text100: '#333333',
+      text200: '#5c5c5c',
+      bg100: '#E5E5E5',
+      bg200: '#dbdbdb',
+      bg300: '#b3b3b3',
+      functionalColors,
+    },
   },
-
-  warning: {
-    color: '#faad14',
-    hover: '#ffc53d',
-    active: '#d48806',
-    disabled: '#434343',
-    light: '#2b2111',
+  {
+    label: '森林绿意',
+    value: 'forest',
+    themeColors: {
+      primary100: '#4CAF50',
+      primary200: '#2a9235',
+      primary300: '#0a490a',
+      accent100: '#FFC107',
+      accent200: '#916400',
+      text100: '#333333',
+      text200: '#5c5c5c',
+      bg100: '#e6fbe3',
+      bg200: '#dcf1d9',
+      bg300: '#b4c8b1',
+      functionalColors,
+    },
   },
-
-  error: {
-    color: '#f5222d',
-    hover: '#ff4d4f',
-    active: '#cf1322',
-    disabled: '#434343',
-    light: '#2a1215',
+  {
+    label: '绿松石',
+    value: 'turquoise',
+    themeColors: {
+      primary100: '#26A69A',
+      primary200: '#408d86',
+      primary300: '#cdfaf6',
+      accent100: '#80CBC4',
+      accent200: '#43A49B',
+      text100: '#263339',
+      text200: '#728f9e',
+      bg100: '#E0F2F1',
+      bg200: '#D0EBEA',
+      bg300: '#FFFFFF',
+      functionalColors,
+    },
   },
-
-  info: {
-    color: '#1890ff',
-    hover: '#40a9ff',
-    active: '#096dd9',
-    disabled: '#434343',
-    light: '#111b26',
+]
+const darkThemeOptions: ThemeColor[] = [
+  {
+    label: '紫色深邃',
+    value: 'purple',
+    themeColors: {
+      primary100: '#6A00FF',
+      primary200: '#a64aff',
+      primary300: '#ffb1ff',
+      accent100: '#00E5FF',
+      accent200: '#00829b',
+      text100: '#FFFFFF',
+      text200: '#e0e0e0',
+      bg100: '#1A1A1A',
+      bg200: '#292929',
+      bg300: '#404040',
+      functionalColors,
+    },
   },
+  {
+    label: '电动城市之夜',
+    value: 'electric',
+    themeColors: {
+      primary100: '#0085ff',
+      primary200: '#69b4ff',
+      primary300: '#e0ffff',
+      accent100: '#006fff',
+      accent200: '#e1ffff',
+      text100: '#FFFFFF',
+      text200: '#9e9e9e',
+      bg100: '#1E1E1E',
+      bg200: '#2d2d2d',
+      bg300: '#454545',
+      functionalColors,
+    },
+  },
+  {
+    label: '深色砖和芥末',
+    value: 'brick',
+    themeColors: {
+      primary100: '#FFC857',
+      primary200: '#deab3a',
+      primary300: '#936a00',
+      accent100: '#D90429',
+      accent200: '#ffbfaf',
+      text100: '#FFFFFF',
+      text200: '#e0e0e0',
+      bg100: '#2B2B2B',
+      bg200: '#3b3b3b',
+      bg300: '#545454',
+      functionalColors,
+    },
+  },
+  {
+    label: '暗绿色的森林',
+    value: 'green',
+    themeColors: {
+      primary100: '#8F9779',
+      primary200: '#656B53',
+      primary300: '#FFFFFF',
+      accent100: '#B5C99E',
+      accent200: '#80A15A',
+      text100: '#FFFFFF',
+      text200: '#b2b2b2',
+      bg100: '#4B5320',
+      bg200: '#474F1E',
+      bg300: '#626C2A',
+      functionalColors,
+    },
+  },
+  {
+    label: '深绿',
+    value: 'deepGreen',
+    themeColors: {
+      primary100: '#1DB954',
+      primary200: '#14823B',
+      primary300: '#A6F1C0',
+      accent100: '#FFD700',
+      accent200: '#B39600',
+      text100: '#FFFFFF',
+      text200: '#d4d5c8',
+      bg100: '#0B4F30',
+      bg200: '#0A4B2E',
+      bg300: '#0E673E',
+      functionalColors,
+    },
+  },
+]
 
-  theme: '#2563eb',
-  themeText: '#ffffff',
-  themeOptions: darkThemeOptions,
+interface ColorState {
+  // 颜色模式
+  mode: Mode
 
-  text: '#ffffffd9',
-  textMuted: '#ffffff73',
+  modeOptions: ModeOptions[]
+  darkMode: boolean
 
-  background: '#141414',
-  backgroundHighlight: '#1f1f1f',
+  // 浅色模式主题
+  lightThemeValue: ThemeColor['value']
+  // 深色模式主题
+  darkThemeValue: ThemeColor['value']
 
-  backgroundOptions: darkBackgroundOptions,
+  // 监听系统主题变化
+  mediaQueryListener?: ((e: MediaQueryListEvent) => void) | null
+  mediaQuery?: MediaQueryList | null
 }
 
 /* 颜色store */
 export const useColorStore = defineStore('color', {
   state: (): ColorState => ({
-    // 主题模式
     mode: 'light',
-    // 主题模式选项
     modeOptions,
+    darkMode: false,
 
-    // 配色方案颜色配置（默认浅色主题）
-    colors: lightColors,
+    lightThemeValue: lightThemeOptions[0].value,
+    darkThemeValue: darkThemeOptions[0].value,
+
+    mediaQuery: null,
+    mediaQueryListener: null,
   }),
 
   getters: {
-    /* 主题模式相关 */
     // 获取当前主题模式：mode 如果当前 mode 为 auto 则获取系统颜色模式动态计算
+    getModeOptions: state => state.modeOptions,
     getMode: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode()
-      }
       return state.mode
     },
-    // 获取主题模式选项
-    getModeOptions: state => state.modeOptions,
-    // 获取当前是否是 dark 主题
-    isDark: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark'
-      }
-      return state.mode === 'dark'
+    getModeLabel: state => {
+      const modeOptions = state.modeOptions
+      const mode = modeOptions.find(item => item.value === state.mode) as ModeOptions
+      return mode.label
     },
-    // 获取当前是否是 light 主题
+    isDark: state => state.darkMode,
     isLight: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'light'
-      }
-      return state.mode === 'light'
+      const isLight =
+        state.mode === 'auto' ? getSystemColorMode() === 'light' : state.mode === 'light'
+      return isLight
     },
-    // 获取当前是否是 auto 主题
     isAuto: state => state.mode === 'auto',
 
-    /* 配色方案颜色配置相关 */
-    getThemeOptions: state => state.colors.themeOptions,
-    getBackgroundOptions: state => state.colors.backgroundOptions,
-
-    /* 配色方案颜色配置相关 */
-    getPrimary: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark'
-          ? darkColors.primary.color
-          : lightColors.primary.color
-      }
-      return state.colors.primary.color
+    // 获取主题色选项及选中值
+    getThemeOptions: state => {
+      const isDark = state.darkMode
+      return isDark ? darkThemeOptions : lightThemeOptions
     },
-    getPrimaryHover: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark'
-          ? darkColors.primary.hover
-          : lightColors.primary.hover
-      }
-      return state.colors.primary.hover
+    getThemeValue: state => {
+      const isDark = state.darkMode
+      return isDark ? state.darkThemeValue : state.lightThemeValue
     },
-    getPrimaryActive: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark'
-          ? darkColors.primary.active
-          : lightColors.primary.active
-      }
-      return state.colors.primary.active
+    getThemeLabel: state => {
+      const isDark = state.darkMode
+      const themeValue = isDark ? state.darkThemeValue : state.lightThemeValue
+      const themeOptions = isDark ? darkThemeOptions : lightThemeOptions
+      const themeColor = themeOptions.find(item => item.value === themeValue) as ThemeColor
+      return themeColor.label
     },
-    getPrimaryDisabled: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark'
-          ? darkColors.primary.disabled
-          : lightColors.primary.disabled
-      }
-      return state.colors.primary.disabled
-    },
-    getPrimaryLight: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark'
-          ? darkColors.primary.light
-          : lightColors.primary.light
-      }
-      return state.colors.primary.light
-    },
-    getSuccess: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark'
-          ? darkColors.success.color
-          : lightColors.success.color
-      }
-      return state.colors.success.color
-    },
-    getSuccessHover: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark'
-          ? darkColors.success.hover
-          : lightColors.success.hover
-      }
-      return state.colors.success.hover
-    },
-    getSuccessActive: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark'
-          ? darkColors.success.active
-          : lightColors.success.active
-      }
-      return state.colors.success.active
-    },
-    getSuccessDisabled: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark'
-          ? darkColors.success.disabled
-          : lightColors.success.disabled
-      }
-      return state.colors.success.disabled
-    },
-    getSuccessLight: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark'
-          ? darkColors.success.light
-          : lightColors.success.light
-      }
-      return state.colors.success.light
-    },
-    getWarning: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark'
-          ? darkColors.warning.color
-          : lightColors.warning.color
-      }
-      return state.colors.warning.color
-    },
-    getWarningHover: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark'
-          ? darkColors.warning.hover
-          : lightColors.warning.hover
-      }
-      return state.colors.warning.hover
-    },
-    getWarningActive: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark'
-          ? darkColors.warning.active
-          : lightColors.warning.active
-      }
-      return state.colors.warning.active
-    },
-    getWarningDisabled: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark'
-          ? darkColors.warning.disabled
-          : lightColors.warning.disabled
-      }
-      return state.colors.warning.disabled
-    },
-    getWarningLight: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark'
-          ? darkColors.warning.light
-          : lightColors.warning.light
-      }
-      return state.colors.warning.light
-    },
-    getError: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark' ? darkColors.error.color : lightColors.error.color
-      }
-      return state.colors.error.color
-    },
-    getErrorHover: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark' ? darkColors.error.hover : lightColors.error.hover
-      }
-      return state.colors.error.hover
-    },
-    getErrorActive: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark' ? darkColors.error.active : lightColors.error.active
-      }
-      return state.colors.error.active
-    },
-    getErrorDisabled: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark'
-          ? darkColors.error.disabled
-          : lightColors.error.disabled
-      }
-      return state.colors.error.disabled
-    },
-    getErrorLight: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark' ? darkColors.error.light : lightColors.error.light
-      }
-      return state.colors.error.light
-    },
-    getInfo: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark' ? darkColors.info.color : lightColors.info.color
-      }
-      return state.colors.info.color
-    },
-    getInfoHover: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark' ? darkColors.info.hover : lightColors.info.hover
-      }
-      return state.colors.info.hover
-    },
-    getInfoActive: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark' ? darkColors.info.active : lightColors.info.active
-      }
-      return state.colors.info.active
-    },
-    getInfoDisabled: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark'
-          ? darkColors.info.disabled
-          : lightColors.info.disabled
-      }
-      return state.colors.info.disabled
-    },
-    getInfoLight: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark' ? darkColors.info.light : lightColors.info.light
-      }
-      return state.colors.info.light
+    getThemeColors: state => () => {
+      const isDark = state.darkMode
+      const themeValue = isDark ? state.darkThemeValue : state.lightThemeValue
+      const themeOptions = isDark ? darkThemeOptions : lightThemeOptions
+      const themeColor = themeOptions.find(item => item.value === themeValue) as ThemeColor
+      return themeColor.themeColors
     },
 
-    getTheme: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark' ? darkColors.theme : lightColors.theme
-      }
-      return state.colors.theme
+    // 获取主题色
+    getPrimary100: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.primary100
     },
-    getThemes: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark' ? lightColors.theme : darkColors.theme
-      } else {
-        const isDark = state.mode === 'dark'
-        return isDark ? lightColors.theme : darkColors.theme
-      }
+    getPrimary200: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.primary200
     },
-    // 获取主题色透明度 opacity 0-100
-    getThemeOpacity: state => {
-      return (opacity: number): string => {
-        const themeColor =
-          state.mode === 'auto'
-            ? getSystemColorMode() === 'dark'
-              ? darkColors.theme
-              : lightColors.theme
-            : state.colors.theme
-        return applyOpacityToColor(themeColor, opacity)
-      }
+    getPrimary300: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.primary300
     },
-    getThemeOpacitys: state => {
-      const isDark = state.mode === 'dark'
-      return (opacity: number): string => {
-        const themeColor =
-          state.mode === 'auto'
-            ? getSystemColorMode() === 'dark'
-              ? lightColors.theme
-              : darkColors.theme
-            : isDark
-              ? lightColors.theme
-              : darkColors.theme
-        return applyOpacityToColor(themeColor, opacity)
-      }
+
+    // 获取强调色
+    getAccent100: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.accent100
     },
-    getThemeText: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark' ? darkColors.themeText : lightColors.themeText
-      }
-      return state.colors.themeText
+    getAccent200: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.accent200
     },
-    getThemeTexts: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark' ? lightColors.themeText : darkColors.themeText
-      }
-      const isDark = state.mode === 'dark'
-      return isDark ? lightColors.themeText : darkColors.themeText
+
+    // 获取文本色
+    getText100: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.text100
     },
-    getText: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark' ? darkColors.text : lightColors.text
-      }
-      return state.colors.text
+    getText200: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.text200
     },
-    getTexts: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark' ? lightColors.text : darkColors.text
-      }
-      const isDark = state.mode === 'dark'
-      return isDark ? lightColors.text : darkColors.text
+
+    // 获取背景色
+    getBg100: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.bg100
     },
-    getTextMuted: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark' ? darkColors.textMuted : lightColors.textMuted
-      }
-      return state.colors.textMuted
+    getBg200: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.bg200
     },
-    getTextMuteds: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark' ? lightColors.textMuted : darkColors.textMuted
-      }
-      const isDark = state.mode === 'dark'
-      return isDark ? lightColors.textMuted : darkColors.textMuted
+    getBg300: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.bg300
     },
-    getBackground: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark' ? darkColors.background : lightColors.background
-      }
-      return state.colors.background
+
+    // 获取功能色
+    getFunctionalColors: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors
     },
-    getBackgrounds: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark' ? lightColors.background : darkColors.background
-      }
-      const isDark = state.mode === 'dark'
-      return isDark ? lightColors.background : darkColors.background
+    // color
+    getPrimaryColor: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors.primary.color
     },
-    getBackgroundHighlight: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark'
-          ? darkColors.backgroundHighlight
-          : lightColors.backgroundHighlight
-      }
-      return state.colors.backgroundHighlight
+    getSuccessColor: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors.success.color
     },
-    getBackgroundHighlights: state => {
-      if (state.mode === 'auto') {
-        return getSystemColorMode() === 'dark'
-          ? lightColors.backgroundHighlight
-          : darkColors.backgroundHighlight
-      }
-      const isDark = state.mode === 'dark'
-      return isDark ? lightColors.backgroundHighlight : darkColors.backgroundHighlight
+    getWarningColor: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors.warning.color
+    },
+    getErrorColor: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors.error.color
+    },
+    getInfoColor: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors.info.color
+    },
+    // hover
+    getPrimaryHoverColor: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors.primary.hover
+    },
+    getSuccessHoverColor: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors.success.hover
+    },
+    getWarningHoverColor: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors.warning.hover
+    },
+    getErrorHoverColor: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors.error.hover
+    },
+    getInfoHoverColor: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors.info.hover
+    },
+    // active
+    getPrimaryActiveColor: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors.primary.active
+    },
+    getSuccessActiveColor: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors.success.active
+    },
+    getWarningActiveColor: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors.warning.active
+    },
+    getErrorActiveColor: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors.error.active
+    },
+    getInfoActiveColor: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors.info.active
+    },
+    // disabled
+    getPrimaryDisabledColor: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors.primary.disabled
+    },
+    getSuccessDisabledColor: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors.success.disabled
+    },
+    getWarningDisabledColor: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors.warning.disabled
+    },
+    getErrorDisabledColor: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors.error.disabled
+    },
+    getInfoDisabledColor: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors.info.disabled
+    },
+    // light
+    getPrimaryLightColor: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors.primary.light
+    },
+    getSuccessLightColor: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors.success.light
+    },
+    getWarningLightColor: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors.warning.light
+    },
+    getErrorLightColor: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors.error.light
+    },
+    getInfoLightColor: function () {
+      const themeColors: ThemeColors = this.getThemeColors()
+      return themeColors.functionalColors.info.light
     },
   },
 
   actions: {
-    /* 主题模式相关 */
+    // 自动跟随系统主题
+    setupAutoModeListener() {
+      this.mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+
+      // 创建监听器函数
+      this.mediaQueryListener = (_e: MediaQueryListEvent) => {
+        this.darkMode = _e.matches
+        this.setTheme(this.getThemeValue)
+      }
+
+      // 添加监听器
+      this.mediaQuery.addEventListener('change', this.mediaQueryListener)
+    },
+
+    // 清理监听器
+    cleanupMediaQueryListener() {
+      if (this.mediaQuery && this.mediaQueryListener) {
+        this.mediaQuery.removeEventListener('change', this.mediaQueryListener)
+        this.mediaQuery = null
+        this.mediaQueryListener = null
+      }
+    },
+
     // 设置主题模式
     setMode(mode: Mode) {
+      this.cleanupMediaQueryListener()
+
       this.mode = mode
+      this.darkMode = mode === 'auto' ? getSystemColorMode() === 'dark' : mode === 'dark'
 
-      // 根据实际的主题模式设置颜色配置
-      const actualMode = mode === 'auto' ? getSystemColorMode() : mode
-      this.colors = actualMode === 'dark' ? { ...darkColors } : { ...lightColors }
+      if (mode === 'auto') {
+        this.setupAutoModeListener()
+      }
 
+      // 设置完模式后重新设置 CSS 变量
       this.setCssVariables()
     },
 
     // 切换主题模式（在 light 和 dark 之间切换）
     toggleMode() {
-      const newMode = this.mode === 'light' ? 'dark' : 'light'
+      const isDark = this.darkMode
+      const newMode = isDark ? 'light' : 'dark'
       this.setMode(newMode)
     },
 
-    /* 配色方案颜色配置相关 */
     // 修改主题色
-    setTheme(theme: ThemeColor['label']) {
-      const themeColor = this.colors.themeOptions.find(item => item.label === theme)
-      if (themeColor) {
-        this.colors.theme = themeColor.color
-        this.colors.themeText = themeColor.text
-      }
-      this.setCssVariables()
-    },
-    // 修改背景色
-    setBackground(background: BackgroundColorOptions['label']) {
-      const backgroundColor = this.colors.backgroundOptions.find(item => item.label === background)
-      if (backgroundColor) {
-        this.colors.background = backgroundColor.color
-        this.colors.backgroundHighlight = backgroundColor.highlight
-        this.colors.text = backgroundColor.text
-        this.colors.textMuted = backgroundColor.textMuted
+    setTheme(theme: ThemeColor['value']) {
+      const isDark = this.darkMode
+      if (isDark) {
+        this.darkThemeValue = theme
+      } else {
+        this.lightThemeValue = theme
       }
       this.setCssVariables()
     },
@@ -664,50 +550,51 @@ export const useColorStore = defineStore('color', {
     /* 将颜色变量都存储到 css 变量中 用于全局样式 */
     setCssVariables() {
       const cssVariables: Record<string, string> = {
-        [toCamelCase('primaryColor', '--')]: this.getPrimary,
-        [toCamelCase('primaryHoverColor', '--')]: this.getPrimaryHover,
-        [toCamelCase('primaryActiveColor', '--')]: this.getPrimaryActive,
-        [toCamelCase('primaryDisabledColor', '--')]: this.getPrimaryDisabled,
-        [toCamelCase('primaryLightColor', '--')]: this.getPrimaryLight,
+        [toCamelCase('primaryColor', '--')]: this.getPrimaryColor,
+        [toCamelCase('successColor', '--')]: this.getSuccessColor,
+        [toCamelCase('warningColor', '--')]: this.getWarningColor,
+        [toCamelCase('errorColor', '--')]: this.getErrorColor,
+        [toCamelCase('infoColor', '--')]: this.getInfoColor,
 
-        [toCamelCase('successColor', '--')]: this.getSuccess,
-        [toCamelCase('successHoverColor', '--')]: this.getSuccessHover,
-        [toCamelCase('successActiveColor', '--')]: this.getSuccessActive,
-        [toCamelCase('successDisabledColor', '--')]: this.getSuccessDisabled,
-        [toCamelCase('successLightColor', '--')]: this.getSuccessLight,
+        [toCamelCase('primaryHoverColor', '--')]: this.getPrimaryHoverColor,
+        [toCamelCase('successHoverColor', '--')]: this.getSuccessHoverColor,
+        [toCamelCase('warningHoverColor', '--')]: this.getWarningHoverColor,
+        [toCamelCase('errorHoverColor', '--')]: this.getErrorHoverColor,
+        [toCamelCase('infoHoverColor', '--')]: this.getInfoHoverColor,
 
-        [toCamelCase('infoColor', '--')]: this.getInfo,
-        [toCamelCase('infoHoverColor', '--')]: this.getInfoHover,
-        [toCamelCase('infoActiveColor', '--')]: this.getInfoActive,
-        [toCamelCase('infoDisabledColor', '--')]: this.getInfoDisabled,
-        [toCamelCase('infoLightColor', '--')]: this.getInfoLight,
+        [toCamelCase('primaryActiveColor', '--')]: this.getPrimaryActiveColor,
+        [toCamelCase('successActiveColor', '--')]: this.getSuccessActiveColor,
+        [toCamelCase('warningActiveColor', '--')]: this.getWarningActiveColor,
+        [toCamelCase('errorActiveColor', '--')]: this.getErrorActiveColor,
+        [toCamelCase('infoActiveColor', '--')]: this.getInfoActiveColor,
 
-        [toCamelCase('warningColor', '--')]: this.getWarning,
-        [toCamelCase('warningHoverColor', '--')]: this.getWarningHover,
-        [toCamelCase('warningActiveColor', '--')]: this.getWarningActive,
-        [toCamelCase('warningDisabledColor', '--')]: this.getWarningDisabled,
-        [toCamelCase('warningLightColor', '--')]: this.getWarningLight,
+        [toCamelCase('primaryDisabledColor', '--')]: this.getPrimaryDisabledColor,
+        [toCamelCase('successDisabledColor', '--')]: this.getSuccessDisabledColor,
+        [toCamelCase('warningDisabledColor', '--')]: this.getWarningDisabledColor,
+        [toCamelCase('errorDisabledColor', '--')]: this.getErrorDisabledColor,
+        [toCamelCase('infoDisabledColor', '--')]: this.getInfoDisabledColor,
 
-        [toCamelCase('errorColor', '--')]: this.getError,
-        [toCamelCase('errorHoverColor', '--')]: this.getErrorHover,
-        [toCamelCase('errorActiveColor', '--')]: this.getErrorActive,
-        [toCamelCase('errorDisabledColor', '--')]: this.getErrorDisabled,
-        [toCamelCase('errorLightColor', '--')]: this.getErrorLight,
+        [toCamelCase('primaryLightColor', '--')]: this.getPrimaryLightColor,
+        [toCamelCase('successLightColor', '--')]: this.getSuccessLightColor,
+        [toCamelCase('warningLightColor', '--')]: this.getWarningLightColor,
+        [toCamelCase('errorLightColor', '--')]: this.getErrorLightColor,
+        [toCamelCase('infoLightColor', '--')]: this.getInfoLightColor,
 
-        [toCamelCase('themeColor', '--')]: this.getTheme,
-        [toCamelCase('themeColors', '--')]: this.getThemes,
-        [toCamelCase('themeTextColor', '--')]: this.getThemeText,
-        [toCamelCase('themeTextColors', '--')]: this.getThemeTexts,
+        [toCamelCase('primary100', '--')]: this.getPrimary100,
+        [toCamelCase('primary200', '--')]: this.getPrimary200,
+        [toCamelCase('primary300', '--')]: this.getPrimary300,
 
-        [toCamelCase('textColor', '--')]: this.getText,
-        [toCamelCase('textColors', '--')]: this.getTexts,
-        [toCamelCase('textMutedColor', '--')]: this.getTextMuted,
-        [toCamelCase('textMutedColors', '--')]: this.getTextMuteds,
-        [toCamelCase('backgroundColor', '--')]: this.getBackground,
-        [toCamelCase('backgroundColors', '--')]: this.getBackgrounds,
-        [toCamelCase('backgroundHighlightColor', '--')]: this.getBackgroundHighlight,
-        [toCamelCase('backgroundHighlightColors', '--')]: this.getBackgroundHighlights,
+        [toCamelCase('accent100', '--')]: this.getAccent100,
+        [toCamelCase('accent200', '--')]: this.getAccent200,
+
+        [toCamelCase('text100', '--')]: this.getText100,
+        [toCamelCase('text200', '--')]: this.getText200,
+
+        [toCamelCase('bg100', '--')]: this.getBg100,
+        [toCamelCase('bg200', '--')]: this.getBg200,
+        [toCamelCase('bg300', '--')]: this.getBg300,
       }
+
       Object.entries(cssVariables).forEach(([key, value]) => {
         document.documentElement.style.setProperty(key, value)
       })
@@ -715,27 +602,7 @@ export const useColorStore = defineStore('color', {
 
     /* 初始化方法 */
     init() {
-      this.setTheme(this.colors.themeOptions[0].label)
-      this.setBackground(this.colors.backgroundOptions[0].label)
-
-      // 监听系统主题变化（如果是auto模式）
-      if (this.mode === 'auto') {
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-
-        // 设置初始主题
-        this.colors = mediaQuery.matches ? { ...darkColors } : { ...lightColors }
-        this.setCssVariables()
-
-        // 监听主题变化
-        const handleThemeChange = (e: MediaQueryListEvent) => {
-          if (this.mode === 'auto') {
-            this.colors = e.matches ? { ...darkColors } : { ...lightColors }
-            this.setCssVariables()
-          }
-        }
-
-        mediaQuery.addEventListener('change', handleThemeChange)
-      }
+      this.setMode(this.mode)
     },
   },
 

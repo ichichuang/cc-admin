@@ -1,5 +1,5 @@
 <script setup lang="ts"></script>
 <template>
-  <div>标签页</div>
+  <div class="full bg-theme-colors color-theme-text-colors">标签页</div>
 </template>
 <style lang="scss" scope></style>

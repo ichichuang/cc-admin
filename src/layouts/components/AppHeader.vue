@@ -2,7 +2,7 @@
 import AppTopMenu from './AppTopMenu.vue'
 </script>
 <template>
-  <div>
+  <div class="full bg-theme color-theme-text-color">
     <AppTopMenu />
   </div>
 </template>

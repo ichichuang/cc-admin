@@ -2,6 +2,20 @@ declare interface Window {
   $message: any
 }
 
+// Vue I18n 全局类型声明
+import type { ComposerTranslation } from 'vue-i18n'
+
+declare module '@vue/runtime-core' {
+  interface ComponentCustomProperties {
+    $t: ComposerTranslation
+    $te: (key: string) => boolean
+    $d: (value: number | Date, key?: string, locale?: string) => string
+    $n: (value: number, key?: string, locale?: string) => string
+    $tm: (key: string) => any
+    $rt: (message: string) => string
+  }
+}
+
 declare type Nullable<T> = T | null
 
 declare type ElRef<T extends HTMLElement = HTMLDivElement> = Nullable<T>

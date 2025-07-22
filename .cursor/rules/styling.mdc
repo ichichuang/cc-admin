@@ -50,28 +50,75 @@ export default defineConfig({
 // uno.config.ts theme 配置
 theme: {
   colors: {
-    // 与 Pinia stores/color.ts 保持同步
-    primary: 'var(--cc-primary)',
-    success: 'var(--cc-success)',
-    warning: 'var(--cc-warning)',
-    error: 'var(--cc-error)',
-    info: 'var(--cc-info)',
+    // 功能色系统 - 与 stores/color.ts 完全同步
+    primaryColor: 'var(--primary-color)',
+    successColor: 'var(--success-color)',
+    warningColor: 'var(--warning-color)',
+    errorColor: 'var(--error-color)',
+    infoColor: 'var(--info-color)',
 
-    // 深色主题适配
-    dark: {
-      bg: 'var(--cc-dark-bg)',
-      surface: 'var(--cc-dark-surface)',
-      border: 'var(--cc-dark-border)'
-    }
+    // 功能色状态变体
+    primaryHoverColor: 'var(--primary-hover-color)',
+    successHoverColor: 'var(--success-hover-color)',
+    warningHoverColor: 'var(--warning-hover-color)',
+    errorHoverColor: 'var(--error-hover-color)',
+    infoHoverColor: 'var(--info-hover-color)',
+
+    primaryActiveColor: 'var(--primary-active-color)',
+    successActiveColor: 'var(--success-active-color)',
+    warningActiveColor: 'var(--warning-active-color)',
+    errorActiveColor: 'var(--error-active-color)',
+    infoActiveColor: 'var(--info-active-color)',
+
+    primaryDisabledColor: 'var(--primary-disabled-color)',
+    successDisabledColor: 'var(--success-disabled-color)',
+    warningDisabledColor: 'var(--warning-disabled-color)',
+    errorDisabledColor: 'var(--error-disabled-color)',
+    infoDisabledColor: 'var(--info-disabled-color)',
+
+    primaryLightColor: 'var(--primary-light-color)',
+    successLightColor: 'var(--success-light-color)',
+    warningLightColor: 'var(--warning-light-color)',
+    errorLightColor: 'var(--error-light-color)',
+    infoLightColor: 'var(--info-light-color)',
+
+    // 主题色系统
+    primary100: 'var(--primary100)', // 主色深色调
+    primary200: 'var(--primary200)', // 主色中色调
+    primary300: 'var(--primary300)', // 主色浅色调
+
+    // 强调色系统
+    accent100: 'var(--accent100)', // 强调色主色调
+    accent200: 'var(--accent200)', // 强调色深色调
+
+    // 文本色系统
+    text100: 'var(--text100)', // 主文本色
+    text200: 'var(--text200)', // 次文本色
+
+    // 背景色系统
+    bg100: 'var(--bg100)', // 主背景色
+    bg200: 'var(--bg200)', // 次背景色
+    bg300: 'var(--bg300)', // 边界背景色
   },
 
   // 尺寸系统（与 stores/size.ts 同步）
-  spacing: {
-    xs: 'var(--cc-spacing-xs)',
-    sm: 'var(--cc-spacing-sm)',
-    md: 'var(--cc-spacing-md)',
-    lg: 'var(--cc-spacing-lg)',
-    xl: 'var(--cc-spacing-xl)'
+  sizes: {
+    // 布局尺寸
+    sidebarWidth: 'var(--sidebar-width)',
+    sidebarCollapsedWidth: 'var(--sidebar-collapsed-width)',
+    headerHeight: 'var(--header-height)',
+    breadcrumbHeight: 'var(--breadcrumb-height)',
+    footerHeight: 'var(--footer-height)',
+    tabsHeight: 'var(--tabs-height)',
+    contentHeight: 'var(--content-height)',
+    contentsHeight: 'var(--contents-height)',
+
+    // 间距系统
+    gap: 'var(--gap)', // 标准间距
+    gaps: 'var(--gaps)', // 小间距（gap的一半）
+
+    // 圆角系统
+    rounded: 'var(--rounded)', // 动态圆角
   }
 }
 ```
@@ -83,16 +130,14 @@ theme: {
 ```vue
 <template>
   <!-- ✅ 正确：使用原子化类名 -->
-  <div class="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm">
-    <h1 class="text-xl font-semibold text-gray-900">标题</h1>
-    <button class="px-4 py-2 bg-primary text-white rounded hover:bg-primary/80 transition-colors">
-      操作按钮
-    </button>
+  <div class="flex items-center justify-between p-gap bg-bg100 rounded shadow-sm">
+    <h1 class="text-title text-text100">标题</h1>
+    <button class="btn-primary">操作按钮</button>
   </div>
 
   <!-- ✅ 正确：响应式设计 -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-    <div class="p-4 bg-white rounded-lg">卡片内容</div>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gap">
+    <div class="card">卡片内容</div>
   </div>
 
   <!-- ✅ 正确：状态变体 -->
@@ -102,11 +147,67 @@ theme: {
   >
     <span
       v-if="isLoading"
-      class="inline-block animate-spin mr-2"
+      class="inline-block animate-spin mr-gaps"
       >⏳</span
     >
     提交
   </button>
+</template>
+```
+
+### 主题色系统使用
+
+```vue
+<template>
+  <!-- ✅ 正确：使用功能色系统 -->
+  <div class="bg-primaryColor text-primaryLightColor hover:bg-primaryHoverColor">主色按钮</div>
+
+  <!-- ✅ 正确：使用主题色层级 -->
+  <header class="bg-primary100 text-text100">
+    <nav class="bg-primary200">导航</nav>
+  </header>
+
+  <!-- ✅ 正确：使用背景色系统 -->
+  <main class="bg-bg100">
+    <section class="bg-bg200 border border-bg300">
+      <p class="text-text100">主要文本</p>
+      <small class="text-text200">次要文本</small>
+    </section>
+  </main>
+
+  <!-- ✅ 正确：状态色使用 -->
+  <div class="bg-successColor text-successLightColor">成功状态</div>
+  <div class="bg-warningColor text-warningLightColor">警告状态</div>
+  <div class="bg-errorColor text-errorLightColor">错误状态</div>
+  <div class="bg-infoColor text-infoLightColor">信息状态</div>
+</template>
+```
+
+### 尺寸系统使用
+
+```vue
+<template>
+  <!-- ✅ 正确：使用布局尺寸 -->
+  <aside class="w-sidebarWidth bg-bg200">
+    <!-- 侧边栏内容 -->
+  </aside>
+
+  <header class="h-headerHeight bg-primary100">
+    <!-- 头部内容 -->
+  </header>
+
+  <!-- ✅ 正确：使用间距系统 -->
+  <div class="p-gap m-gaps">
+    <div class="space-y-gaps">
+      <p>段落1</p>
+      <p>段落2</p>
+    </div>
+  </div>
+
+  <!-- ✅ 正确：使用圆角系统 -->
+  <div class="rounded bg-bg200 border border-bg300">
+    <button class="rounded bg-primaryColor text-primaryLightColor">按钮</button>
+  </div>
 </template>
 ```
 
@@ -115,15 +216,15 @@ theme: {
 ```vue
 <template>
   <!-- ✅ 正确：使用变体组合 -->
-  <div class="hover:(bg-gray-100 shadow-md) focus:(outline-none ring-2 ring-primary)">
+  <div class="hover:(bg-bg200 shadow-md) focus:(outline-none ring-2 ring-primaryColor)">
     可交互元素
   </div>
 
   <!-- ✅ 正确：深色模式变体 -->
-  <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">自适应主题的内容</div>
+  <div class="bg-bg100 text-text100 dark:(bg-bg200 text-text200)">自适应主题的内容</div>
 
   <!-- ✅ 正确：响应式变体组合 -->
-  <div class="text-(sm gray-600) md:text-(base gray-900) lg:text-(lg gray-800)">响应式文本</div>
+  <div class="text-(sm text200) md:text-(base text100) lg:text-(lg text100)">响应式文本</div>
 </template>
 ```
 
@@ -134,10 +235,10 @@ theme: {
   <!-- ✅ 正确：使用属性化语法（复杂样式时推荐） -->
   <div
     flex="~ col items-center justify-center"
-    p="x-6 y-4"
-    bg="white dark:gray-800"
-    border="~ rounded-lg gray-200 dark:gray-700"
-    text="center lg gray-900 dark:white"
+    p="x-gap y-gaps"
+    bg="bg100"
+    border="~ rounded bg300"
+    text="center lg text100"
   >
     属性化样式内容
   </div>
@@ -145,11 +246,9 @@ theme: {
   <!-- ✅ 正确：动态属性化 -->
   <div
     :class="[
-      'transition-all duration-300',
-      isActive ? 'bg-primary text-white' : 'bg-gray-100 text-gray-700',
+      'transition-slow',
+      isActive ? 'bg-primaryColor text-primaryLightColor' : 'bg-bg200 text-text100',
     ]"
-    :bg="isActive ? 'primary' : 'gray-100'"
-    :text="isActive ? 'white' : 'gray-700'"
   >
     动态样式
   </div>
@@ -158,64 +257,45 @@ theme: {
 
 ## 🎭 主题系统集成
 
-### CSS变量绑定
+### 动态主题切换
 
 ```vue
 <template>
-  <!-- ✅ 正确：使用主题变量 -->
-  <div class="bg-[var(--cc-primary)] text-[var(--cc-primary-contrast)]">主题色背景</div>
+  <!-- ✅ 正确：响应主题变化的组件 -->
+  <div class="bg-bg100 text-text100 transition-slow">
+    <header class="bg-primary100 text-primaryLightColor">
+      <h1 class="text-title">主题自适应标题</h1>
+    </header>
 
-  <!-- ✅ 正确：动态主题切换 -->
-  <div
-    class="transition-colors duration-300"
-    :style="{
-      backgroundColor: 'var(--cc-surface)',
-      color: 'var(--cc-text-primary)',
-      borderColor: 'var(--cc-border)',
-    }"
-  >
-    动态主题内容
+    <main class="bg-bg200 p-gap">
+      <div class="card">
+        <p class="text-body text-text100">主要内容</p>
+        <small class="text-caption text-text200">次要信息</small>
+      </div>
+    </main>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useColorStore } from '@/stores/color'
+import { useColorStore, useSizeStore } from '@/stores'
 
+// ✅ 正确：响应主题和尺寸变化
 const colorStore = useColorStore()
+const sizeStore = useSizeStore()
 
-// ✅ 正确：响应主题变化
-watch(
-  () => colorStore.currentTheme,
-  newTheme => {
-    // 主题切换时的额外逻辑
-  },
-  { immediate: true }
-)
+// 主题模式切换
+const toggleTheme = () => {
+  colorStore.toggleMode()
+}
+
+// 切换尺寸模式
+const toggleSize = () => {
+  const sizes = ['compact', 'comfortable', 'loose'] as const
+  const currentIndex = sizes.indexOf(sizeStore.size)
+  const nextIndex = (currentIndex + 1) % sizes.length
+  sizeStore.setSize(sizes[nextIndex])
+}
 </script>
-```
-
-### 深色模式支持
-
-```vue
-<template>
-  <!-- ✅ 正确：深色模式适配 -->
-  <div class="bg-white dark:bg-gray-900">
-    <header class="border-b border-gray-200 dark:border-gray-700">
-      <h1 class="text-gray-900 dark:text-white">标题</h1>
-    </header>
-
-    <main class="p-6">
-      <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-        <p class="text-gray-600 dark:text-gray-300">内容文字</p>
-      </div>
-    </main>
-  </div>
-
-  <!-- ✅ 正确：图标深色模式 -->
-  <button class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-    <i class="i-tabler-settings w-5 h-5"></i>
-  </button>
-</template>
 ```
 
 ## 📱 响应式设计
@@ -232,10 +312,10 @@ watch(
     md:w-1/3
     lg:w-1/4
     xl:w-1/5
-    p-2
-    sm:p-3
-    md:p-4
-    lg:p-6
+    p-gaps
+    sm:p-gap
+    md:p-gap
+    lg:p-gap
   "
   >
     响应式卡片
@@ -246,48 +326,14 @@ watch(
     class="
     flex flex-col
     sm:flex-row
-    gap-4
-    sm:gap-6
-    lg:gap-8
+    gap-gaps
+    sm:gap-gap
+    lg:gap-gap
   "
   >
-    <aside class="w-full sm:w-64 lg:w-80">侧边栏</aside>
+    <aside class="w-full sm:w-sidebarWidth lg:w-sidebarWidth">侧边栏</aside>
     <main class="flex-1 min-w-0">主内容</main>
   </div>
-</template>
-```
-
-### 移动端优化
-
-```vue
-<template>
-  <!-- ✅ 正确：触摸友好的交互 -->
-  <button
-    class="
-    min-h-[44px] min-w-[44px]  /* 最小触摸区域 */
-    px-4 py-2
-    text-base sm:text-sm       /* 移动端较大字体 */
-    rounded-lg
-    active:scale-95           /* 触摸反馈 */
-    transition-transform
-  "
-  >
-    移动端按钮
-  </button>
-
-  <!-- ✅ 正确：移动端导航 -->
-  <nav
-    class="
-    fixed bottom-0 left-0 right-0  /* 移动端底部导航 */
-    sm:static sm:bottom-auto       /* 桌面端静态定位 */
-    bg-white dark:bg-gray-900
-    border-t border-gray-200 dark:border-gray-700
-    sm:border-t-0 sm:border-r
-    z-50
-  "
-  >
-    <!-- 导航内容 -->
-  </nav>
 </template>
 ```
 
@@ -299,30 +345,32 @@ watch(
 <!-- UserCard.vue -->
 <template>
   <div class="user-card">
-    <!-- 内容 -->
+    <img
+      class="user-card-avatar"
+      :src="avatar"
+      :alt="name"
+    />
+    <h3 class="user-card-title">{{ name }}</h3>
+    <p class="user-card-description">{{ description }}</p>
   </div>
 </template>
 
 <style>
 /* ✅ 正确：使用 @apply 组合工具类 */
 .user-card {
-  @apply bg-white dark:bg-gray-800
-    rounded-lg shadow-sm
-    p-6 border border-gray-200 dark:border-gray-700
-    hover:shadow-md transition-shadow duration-200;
+  @apply card hover:shadow-xl transition-slow;
 }
 
-/* ✅ 正确：组件内部样式 */
 .user-card-avatar {
-  @apply w-12 h-12 rounded-full object-cover;
+  @apply w-12 h-12 rounded-full object-cover mb-gaps;
 }
 
 .user-card-title {
-  @apply text-lg font-semibold text-gray-900 dark:text-white mb-2;
+  @apply text-title text-text100 mb-gaps;
 }
 
 .user-card-description {
-  @apply text-sm text-gray-600 dark:text-gray-300 line-clamp-2;
+  @apply text-body text-text200 line-clamp-2;
 }
 </style>
 ```
@@ -351,7 +399,7 @@ watch(
 <style>
 /* ✅ 正确：表格样式系统 */
 .data-table-container {
-  @apply overflow-x-auto bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700;
+  @apply overflow-x-auto bg-bg100 rounded border border-bg300;
 }
 
 .data-table {
@@ -359,126 +407,87 @@ watch(
 }
 
 .data-table-header {
-  @apply bg-gray-50 dark:bg-gray-700;
+  @apply bg-bg200;
 }
 
 .data-table-header-cell {
-  @apply px-6 py-3 text-left text-xs font-medium
-    text-gray-500 dark:text-gray-300 uppercase tracking-wider
-    border-b border-gray-200 dark:border-gray-600;
+  @apply px-gap py-gaps text-left text-xs font-medium
+    text-text200 uppercase tracking-wider
+    border-b border-bg300;
 }
 
 .data-table-row {
-  @apply border-b border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700/50;
+  @apply border-b border-bg300 hover:bg-bg200/50 transition-fast;
 }
 
 .data-table-cell {
-  @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100;
+  @apply px-gap py-gaps whitespace-nowrap text-sm text-text100;
 }
 </style>
 ```
 
-## 🔧 自定义工具类
+## 🔧 自定义工具类和快捷方式
 
 ### 快捷方式定义
 
 ```typescript
 // uno.config.ts shortcuts
-shortcuts: {
+shortcuts: [
+  {
+    // 基础边框
+    border: 'border-1 border-solid border-bg300',
+    'border-primary': 'border-1 border-solid border-primaryColor',
+    'border-success': 'border-1 border-solid border-successColor',
+    'border-warning': 'border-1 border-solid border-warningColor',
+    'border-error': 'border-1 border-solid border-errorColor',
+    'border-info': 'border-1 border-solid border-infoColor',
+
+    // 圆角
+    rounded: 'rounded-rounded',
+  },
+
   // 布局快捷方式
-  'flex-center': 'flex items-center justify-center',
-  'flex-between': 'flex items-center justify-between',
-  'flex-col-center': 'flex flex-col items-center justify-center',
+  {
+    full: 'w-full h-full',
+    container: 'w-full h-full bg-bg100 color-text100',
+    center: 'flex items-center justify-center',
+    between: 'flex items-center justify-between',
+    'center-col': 'flex flex-col items-center justify-center',
+  },
 
-  // 按钮样式
-  'btn-base': 'inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2',
-  'btn-primary': 'btn-base bg-primary text-white hover:bg-primary/90 focus:ring-primary',
-  'btn-secondary': 'btn-base bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500',
+  // 文本快捷方式
+  {
+    'text-title': 'text-xl font-bold text-text100',
+    'text-subtitle': 'text-lg font-medium text-text100',
+    'text-body': 'text-base text-text100',
+    'text-caption': 'text-sm text-text200',
+    'text-muted': 'text-sm text-text200',
+  },
 
-  // 卡片样式
-  'card-base': 'bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700',
-  'card-hover': 'card-base hover:shadow-md transition-shadow duration-200',
+  // 按钮快捷方式
+  {
+    btn: 'inline-flex center px-gap py-gaps mx-gaps rounded transition-slow focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer',
+    'btn-primary':
+      'btn bg-primaryColor color-primaryLightColor hover:bg-primaryHoverColor focus:ring-primaryColor active:bg-primaryActiveColor disabled:bg-primaryDisabledColor',
+    'btn-success':
+      'btn bg-successColor color-successLightColor hover:bg-successHoverColor focus:ring-successColor active:bg-successActiveColor disabled:bg-successDisabledColor',
+    'btn-outline-primary':
+      'btn border border-primaryColor text-primaryColor bg-transparent hover:bg-primaryLightColor focus:ring-primaryColor',
+  },
 
-  // 输入框样式
-  'input-base': 'w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
+  // 卡片快捷方式
+  {
+    card: 'bg-bg100 border border-bg300 rounded p-gap hover:shadow-lg shadow-bg300/20 transition-slow',
+    'card-hover': 'card hover:shadow-xl hover:border-bg200',
+    'card-active': 'card border-primary200 shadow-lg shadow-primary300/30',
+  },
 
-  // 文本样式
-  'text-title': 'text-xl font-semibold text-gray-900 dark:text-white',
-  'text-subtitle': 'text-lg font-medium text-gray-700 dark:text-gray-300',
-  'text-body': 'text-base text-gray-600 dark:text-gray-400',
-  'text-caption': 'text-sm text-gray-500 dark:text-gray-500'
-}
-```
-
-### 自定义规则
-
-```typescript
-// uno.config.ts rules
-rules: [
-  // 安全区域适配
-  ['pt-safe', { 'padding-top': 'env(safe-area-inset-top)' }],
-  ['pb-safe', { 'padding-bottom': 'env(safe-area-inset-bottom)' }],
-  ['pl-safe', { 'padding-left': 'env(safe-area-inset-left)' }],
-  ['pr-safe', { 'padding-right': 'env(safe-area-inset-right)' }],
-
-  // 文本截断
-  [
-    /^line-clamp-(\d+)$/,
-    ([, num]) => ({
-      overflow: 'hidden',
-      display: '-webkit-box',
-      '-webkit-box-orient': 'vertical',
-      '-webkit-line-clamp': num,
-    }),
-  ],
-
-  // 滚动条样式
-  [
-    'scrollbar-thin',
-    {
-      'scrollbar-width': 'thin',
-      'scrollbar-color': 'var(--cc-border) transparent',
-    },
-  ],
-  [
-    'scrollbar-none',
-    {
-      'scrollbar-width': 'none',
-      '-ms-overflow-style': 'none',
-      '&::-webkit-scrollbar': { display: 'none' },
-    },
-  ],
+  // 输入框快捷方式
+  {
+    'input-base':
+      'w-full px-gap py-gaps border border-bg300 rounded bg-bg100 text-text100 placeholder:text-text200 focus:outline-none focus:ring-2 focus:ring-primaryColor focus:border-primaryColor transition-slow',
+  },
 ]
-```
-
-## 🎯 图标系统
-
-### Iconify 图标使用
-
-```vue
-<template>
-  <!-- ✅ 正确：使用图标工具类 -->
-  <button class="flex items-center gap-2">
-    <i class="i-tabler-plus w-4 h-4"></i>
-    添加用户
-  </button>
-
-  <!-- ✅ 正确：图标尺寸变体 -->
-  <div class="flex items-center gap-3">
-    <i class="i-tabler-user w-3 h-3"></i>
-    <!-- 小尺寸 -->
-    <i class="i-tabler-user w-4 h-4"></i>
-    <!-- 默认尺寸 -->
-    <i class="i-tabler-user w-5 h-5"></i>
-    <!-- 中等尺寸 -->
-    <i class="i-tabler-user w-6 h-6"></i>
-    <!-- 大尺寸 -->
-  </div>
-
-  <!-- ✅ 正确：图标颜色和状态 -->
-  <i class="i-tabler-heart w-5 h-5 text-red-500 hover:text-red-600"></i>
-  <i class="i-tabler-star w-5 h-5 text-yellow-400 hover:text-yellow-500"></i>
-</template>
 ```
 
 ## ⚠️ 样式规范约束
@@ -493,19 +502,14 @@ rules: [
   <!-- ❌ 错误：硬编码颜色（应使用主题变量） -->
   <div class="bg-[#3b82f6]">硬编码颜色</div>
 
-  <!-- ❌ 错误：非语义化类名 -->
-  <div class="w-[123px] h-[456px] ml-[37px]">任意值滥用</div>
+  <!-- ❌ 错误：不使用主题系统 -->
+  <div class="bg-gray-100 text-gray-900">非主题色</div>
 
   <!-- ❌ 错误：重复的复杂样式组合 -->
   <div
     class="flex items-center justify-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
   >
     重复样式1
-  </div>
-  <div
-    class="flex items-center justify-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-  >
-    重复样式2
   </div>
 </template>
 ```
@@ -514,12 +518,15 @@ rules: [
 
 ```vue
 <template>
-  <!-- ✅ 正确：使用CSS变量 -->
-  <div class="text-[var(--cc-primary)]">主题色文字</div>
+  <!-- ✅ 正确：使用主题变量 -->
+  <div class="bg-primaryColor text-primaryLightColor">主题色背景</div>
 
   <!-- ✅ 正确：使用快捷方式 -->
   <button class="btn-primary">操作按钮1</button>
   <button class="btn-primary">操作按钮2</button>
+
+  <!-- ✅ 正确：使用主题系统 -->
+  <div class="bg-bg100 text-text100 border border-bg300">主题自适应内容</div>
 
   <!-- ✅ 正确：合理的任意值使用 -->
   <div class="w-[calc(100%-2rem)] max-w-[1200px]">响应式容器</div>
@@ -536,11 +543,34 @@ export default defineConfig({
   // 只扫描实际使用的文件
   content: ['./src/**/*.{vue,js,ts,jsx,tsx}', './index.html'],
 
-  // 排除不需要的预设功能
-  presets: [
-    presetUno({
-      // 只启用需要的功能
-    }),
+  // 安全列表 - 确保主题相关类名被包含
+  safelist: [
+    // 功能色相关
+    'text-primaryColor',
+    'bg-primaryColor',
+    'border-primaryColor',
+    'text-successColor',
+    'bg-successColor',
+    'border-successColor',
+    'text-warningColor',
+    'bg-warningColor',
+    'border-warningColor',
+    'text-errorColor',
+    'bg-errorColor',
+    'border-errorColor',
+    'text-infoColor',
+    'bg-infoColor',
+    'border-infoColor',
+
+    // 主题色相关
+    'bg-primary100',
+    'bg-primary200',
+    'bg-primary300',
+    'text-text100',
+    'text-text200',
+    'bg-bg100',
+    'bg-bg200',
+    'bg-bg300',
   ],
 
   // 生产环境优化
@@ -554,11 +584,21 @@ export default defineConfig({
 <script setup lang="ts">
 // ✅ 正确：样式计算缓存
 const buttonClass = computed(() => [
-  'btn-base',
-  props.variant === 'primary' ? 'btn-primary' : 'btn-secondary',
-  props.size === 'large' ? 'text-lg px-6 py-3' : 'text-sm px-4 py-2',
-  props.disabled && 'opacity-50 cursor-not-allowed',
+  'btn',
+  props.variant === 'primary' ? 'btn-primary' : 'btn-default',
+  props.size === 'large' ? 'px-gap py-gap' : 'px-gaps py-gaps',
+  props.disabled && 'disabled',
 ])
+
+// ✅ 正确：主题响应式计算
+const themeClass = computed(() => {
+  const colorStore = useColorStore()
+  return {
+    'bg-bg100': true,
+    'text-text100': true,
+    dark: colorStore.isDark,
+  }
+})
 </script>
 
 <template>
@@ -566,13 +606,18 @@ const buttonClass = computed(() => [
   <button :class="buttonClass">
     {{ props.label }}
   </button>
+
+  <div :class="themeClass">主题响应内容</div>
 </template>
 ```
 
-遵循这些UnoCSS样式规范，确保CC-Admin项目具有一致的视觉效果、优秀的性能表现和良好的维护性。
+## 📚 最佳实践总结
 
-- 确保焦点状态有明显的视觉提示
-- 提供足够的色彩对比度
-- 不依赖颜色来传达信息
-- 支持用户放大页面至 200% 时的正常布局
-- 避免使用会导致闪烁的动画
+1. **优先使用主题系统**: 始终使用 `bg-bg100`、`text-text100` 等主题变量，而非硬编码颜色
+2. **合理使用快捷方式**: 使用 `btn-primary`、`card`、`input-base` 等预定义快捷方式
+3. **响应式设计**: 移动优先，合理使用断点系统
+4. **状态管理**: 充分利用 hover、focus、active、disabled 等状态变体
+5. **性能优化**: 使用计算属性缓存样式计算，避免重复渲染
+6. **可维护性**: 保持样式的模块化和一致性，便于主题切换和维护
+
+遵循这些UnoCSS样式规范，确保CC-Admin项目具有一致的视觉效果、优秀的性能表现和良好的维护性。

@@ -1,11 +1,10 @@
 const isDebug = import.meta.env.VITE_DEBUG && false
 // Router 统一管理入口
-import type { RouteConfig } from '@/router/types'
 import { createDynamicRouteManager, createRouteUtils, sortRoutes } from '@/router/utils'
 import { registerRouterGuards } from '@/router/utils/customs'
 import { autoImportModulesSync } from '@/utils/moduleLoader'
 import type { RouteRecordRaw } from 'vue-router'
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import {
   getCurrentRouteInfo,
   initDynamicRoutes,
@@ -19,9 +18,9 @@ const routeModules = import.meta.glob('./modules/**/*.ts', { eager: true })
 const importedRoutes = autoImportModulesSync<RouteConfig[]>(routeModules)
 
 // 将所有路由模块合并为一个数组并排序
-const staticRoutes: import('@/router/types').RouteConfig[] = (
-  Object.values(importedRoutes).flat() as any[]
-).filter((r): r is import('@/router/types').RouteConfig => r && typeof r.path === 'string')
+const staticRoutes: RouteConfig[] = (Object.values(importedRoutes).flat() as any[]).filter(
+  (r): r is RouteConfig => r && typeof r.path === 'string'
+)
 const sortedStaticRoutes = sortRoutes(staticRoutes)
 
 if (isDebug) {
@@ -52,7 +51,9 @@ const initialRoutes: RouteRecordRaw[] = allStaticRoutesWithRedirect.map(
 
 // 创建路由实例
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  // hash 模式
+  // history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: initialRoutes,
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {

@@ -21,8 +21,6 @@ interface ThemeConfig {
   breakpoints: Record<string, string>
   colors: Record<string, any>
   sizes: Record<string, string>
-  spacing: Record<string, string>
-  borderRadius: Record<string, string>
 }
 
 /**
@@ -152,10 +150,13 @@ function getTsFiles(dir: string): string[] {
 /**
  * 创建通用的像素值规则生成器
  * 优化：减少代码重复，提高性能
+ *
+ * 注意：这些规则生成的像素值会被 postcss-pxtorem 处理
+ * 除非在 selectorBlackList 中被排除
  */
 function createPixelRules() {
   const properties = [
-    // 尺寸相关
+    // 尺寸相关 - 会被转换为 rem（适合内容相关尺寸）
     ['w', 'width'],
     ['h', 'height'],
     ['min-w', 'min-width'],
@@ -163,34 +164,34 @@ function createPixelRules() {
     ['max-w', 'max-width'],
     ['max-h', 'max-height'],
 
-    // 字体相关
+    // 字体相关 - 会被转换为 rem（适合响应式文本）
     ['fs', 'font-size'],
     ['lh', 'line-height'],
 
-    // 内边距
+    // 内边距 - 会被转换为 rem（适合响应式间距）
     ['p', 'padding'],
     ['pt', 'padding-top'],
     ['pr', 'padding-right'],
     ['pb', 'padding-bottom'],
     ['pl', 'padding-left'],
 
-    // 外边距
+    // 外边距 - 会被转换为 rem（适合响应式间距）
     ['m', 'margin'],
     ['mt', 'margin-top'],
     ['mr', 'margin-right'],
     ['mb', 'margin-bottom'],
     ['ml', 'margin-left'],
 
-    // 位置
+    // 位置 - 保持像素值（通过黑名单排除转换）
     ['t', 'top'],
     ['r', 'right'],
     ['b', 'bottom'],
     ['l', 'left'],
 
-    // 间距
+    // 间距 - 会被转换为 rem（适合响应式布局）
     ['gap', 'gap'],
 
-    // 边框
+    // 边框 - 通过 propList 排除，保持像素值
     ['borderw', 'border-width'],
     ['rounded', 'border-radius'],
   ] as const
@@ -225,6 +226,9 @@ function createPixelRules() {
 /**
  * 创建主题变量映射规则
  * 优化：支持动态主题变量
+ *
+ * 注意：CSS 变量不会被 postcss-pxtorem 处理，
+ * 这些规则与 rem 适配系统完美兼容
  */
 function createThemeVariableRules() {
   const properties = [
@@ -294,109 +298,65 @@ const themeConfig: ThemeConfig = {
   colors: {
     // 透明色
     tm: 'transparent',
+    // 继承色
     inherit: 'inherit',
-    current: 'currentColor',
 
-    // 功能色系 - 与 color.ts 保持一致
-    primary: {
-      DEFAULT: 'var(--primary-color)',
-      hover: 'var(--primary-hover-color)',
-      active: 'var(--primary-active-color)',
-      disabled: 'var(--primary-disabled-color)',
-      light: 'var(--primary-light-color)',
-    },
-    success: {
-      DEFAULT: 'var(--success-color)',
-      hover: 'var(--success-hover-color)',
-      active: 'var(--success-active-color)',
-      disabled: 'var(--success-disabled-color)',
-      light: 'var(--success-light-color)',
-    },
-    info: {
-      DEFAULT: 'var(--info-color)',
-      hover: 'var(--info-hover-color)',
-      active: 'var(--info-active-color)',
-      disabled: 'var(--info-disabled-color)',
-      light: 'var(--info-light-color)',
-    },
-    warning: {
-      DEFAULT: 'var(--warning-color)',
-      hover: 'var(--warning-hover-color)',
-      active: 'var(--warning-active-color)',
-      disabled: 'var(--warning-disabled-color)',
-      light: 'var(--warning-light-color)',
-    },
-    error: {
-      DEFAULT: 'var(--error-color)',
-      hover: 'var(--error-hover-color)',
-      active: 'var(--error-active-color)',
-      disabled: 'var(--error-disabled-color)',
-      light: 'var(--error-light-color)',
-    },
+    // 功能色系统 - 与 color.ts 保持完全一致
+    primaryColor: 'var(--primary-color)',
+    successColor: 'var(--success-color)',
+    warningColor: 'var(--warning-color)',
+    errorColor: 'var(--error-color)',
+    infoColor: 'var(--info-color)',
 
-    // 主题色 - 与 color.ts 保持一致
-    theme: {
-      DEFAULT: 'var(--theme-color)',
-      contrast: 'var(--theme-colors)',
-    },
+    // 功能色 - 悬停状态
+    primaryHoverColor: 'var(--primary-hover-color)',
+    successHoverColor: 'var(--success-hover-color)',
+    warningHoverColor: 'var(--warning-hover-color)',
+    errorHoverColor: 'var(--error-hover-color)',
+    infoHoverColor: 'var(--info-hover-color)',
 
-    // 文字色 - 与 color.ts 保持一致
-    text: {
-      DEFAULT: 'var(--text-color)',
-      contrast: 'var(--text-colors)',
-      muted: 'var(--text-muted-color)',
-      'muted-contrast': 'var(--text-muted-colors)',
-    },
+    // 功能色 - 激活状态
+    primaryActiveColor: 'var(--primary-active-color)',
+    successActiveColor: 'var(--success-active-color)',
+    warningActiveColor: 'var(--warning-active-color)',
+    errorActiveColor: 'var(--error-active-color)',
+    infoActiveColor: 'var(--info-active-color)',
 
-    // 主题文字色
-    'theme-text': {
-      DEFAULT: 'var(--theme-text-color)',
-      contrast: 'var(--theme-text-colors)',
-    },
+    // 功能色 - 禁用状态
+    primaryDisabledColor: 'var(--primary-disabled-color)',
+    successDisabledColor: 'var(--success-disabled-color)',
+    warningDisabledColor: 'var(--warning-disabled-color)',
+    errorDisabledColor: 'var(--error-disabled-color)',
+    infoDisabledColor: 'var(--info-disabled-color)',
 
-    // 背景色 - 与 color.ts 保持一致
-    bg: {
-      DEFAULT: 'var(--background-color)',
-      contrast: 'var(--background-colors)',
-      highlight: 'var(--background-highlight-color)',
-      'highlight-contrast': 'var(--background-highlight-colors)',
-    },
+    // 功能色 - 浅色背景
+    primaryLightColor: 'var(--primary-light-color)',
+    successLightColor: 'var(--success-light-color)',
+    warningLightColor: 'var(--warning-light-color)',
+    errorLightColor: 'var(--error-light-color)',
+    infoLightColor: 'var(--info-light-color)',
 
-    // 简化别名
-    themeColor: 'var(--theme-color)',
-    themeColors: 'var(--theme-colors)',
-    themeTextColor: 'var(--theme-text-color)',
-    themeTextColors: 'var(--theme-text-colors)',
-    textColor: 'var(--text-color)',
-    textColors: 'var(--text-colors)',
-    textMutedColor: 'var(--text-muted-color)',
-    textMutedColors: 'var(--text-muted-colors)',
-    backgroundColor: 'var(--background-color)',
-    backgroundColors: 'var(--background-colors)',
-    backgroundHighlightColor: 'var(--background-highlight-color)',
-    backgroundHighlightColors: 'var(--background-highlight-colors)',
+    // 主题色系统
+    primary100: 'var(--primary100)',
+    primary200: 'var(--primary200)',
+    primary300: 'var(--primary300)',
+
+    // 强调色系统
+    accent100: 'var(--accent100)',
+    accent200: 'var(--accent200)',
+
+    // 文本色系统
+    text100: 'var(--text100)',
+    text200: 'var(--text200)',
+
+    // 背景色系统
+    bg100: 'var(--bg100)',
+    bg200: 'var(--bg200)',
+    bg300: 'var(--bg300)',
   },
 
-  // 尺寸系统 - 与 size.ts 保持一致
   sizes: {
-    // 布局尺寸
-    'sidebar-width': 'var(--sidebar-width)',
-    'sidebar-collapsed-width': 'var(--sidebar-collapsed-width)',
-    'header-height': 'var(--header-height)',
-    'breadcrumb-height': 'var(--breadcrumb-height)',
-    'footer-height': 'var(--footer-height)',
-    'tabs-height': 'var(--tabs-height)',
-    'content-height': 'var(--content-height)',
-    'contents-height': 'var(--contents-height)',
-
-    // 间距尺寸
-    gap: 'var(--gap)',
-    gaps: 'var(--gaps)',
-
-    // 圆角尺寸
-    rounded: 'var(--rounded)',
-
-    // 简化别名
+    // 布局尺寸 - 与 size.ts 保持完全一致
     sidebarWidth: 'var(--sidebar-width)',
     sidebarCollapsedWidth: 'var(--sidebar-collapsed-width)',
     headerHeight: 'var(--header-height)',
@@ -405,17 +365,12 @@ const themeConfig: ThemeConfig = {
     tabsHeight: 'var(--tabs-height)',
     contentHeight: 'var(--content-height)',
     contentsHeight: 'var(--contents-height)',
-  },
 
-  // 间距系统
-  spacing: {
+    // 间距系统
     gap: 'var(--gap)',
-    gaps: 'var(--gaps)',
-  },
+    gaps: 'var(--gaps)', // gap的一半，用于更精细的间距控制
 
-  // 圆角系统
-  borderRadius: {
-    DEFAULT: 'var(--rounded)',
+    // 圆角系统
     rounded: 'var(--rounded)',
   },
 }
@@ -592,17 +547,14 @@ export default defineConfig({
 
   // 快捷方式配置
   shortcuts: [
-    // 边框快捷方式
     {
       // 基础边框
-      border: 'border-1 border-solid border-textColor',
-      'border-theme': 'border-1 border-solid border-themeColor',
-
-      // 边框样式
-      'border-solid': 'border-1 border-solid border-themeColor',
-      'border-dashed': 'border-1 border-dashed border-themeColor',
-      'border-dotted': 'border-1 border-dotted border-themeColor',
-      'border-double': 'border-1 border-double border-themeColor',
+      border: 'border-1 border-solid border-bg300',
+      'border-primary': 'border-1 border-solid border-primaryColor',
+      'border-success': 'border-1 border-solid border-successColor',
+      'border-warning': 'border-1 border-solid border-warningColor',
+      'border-error': 'border-1 border-solid border-errorColor',
+      'border-info': 'border-1 border-solid border-infoColor',
 
       // 圆角
       rounded: 'rounded-rounded',
@@ -612,7 +564,7 @@ export default defineConfig({
     {
       // 基础布局
       full: 'w-full h-full',
-      container: 'w-full h-full bg-backgroundColor',
+      container: 'w-full h-full bg-bg100 color-text100',
       screen: 'min-h-screen',
 
       // Flex 布局
@@ -623,6 +575,7 @@ export default defineConfig({
       end: 'flex items-center justify-end',
       'center-col': 'flex flex-col items-center justify-center',
       'between-col': 'flex flex-col justify-between',
+      'evenly-col': 'flex flex-col justify-evenly',
       'around-col': 'flex flex-col justify-around',
       'start-col': 'flex flex-col justify-start',
       'end-col': 'flex flex-col justify-end',
@@ -637,7 +590,6 @@ export default defineConfig({
       'text-ellipsis': 'truncate overflow-hidden whitespace-nowrap',
       'text-ellipsis-2': 'line-clamp-2',
       'text-ellipsis-3': 'line-clamp-3',
-
       // 多行文本省略
       'text-clamp-1': 'line-clamp-1',
       'text-clamp-2': 'line-clamp-2',
@@ -646,32 +598,84 @@ export default defineConfig({
       'text-clamp-5': 'line-clamp-5',
       'text-clamp-6': 'line-clamp-6',
 
-      // 文本样式
-      'text-title': 'text-xl font-bold text-textColor',
-      'text-subtitle': 'text-lg font-medium text-textColor',
-      'text-body': 'text-base text-textColor',
-      'text-caption': 'text-sm text-textMutedColor',
+      // 文本样式 - 使用新的文本色系统
+      'text-title': 'text-xl font-bold text-text100',
+      'text-subtitle': 'text-lg font-medium text-text100',
+      'text-body': 'text-base text-text100',
+      'text-caption': 'text-sm text-text200',
+      'text-muted': 'text-sm text-text200',
     },
 
-    // 按钮快捷方式
+    // 按钮快捷方式 - 使用完整的功能色系统
     {
-      btn: 'inline-flex items-center justify-center px-4 py-2 rounded text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2',
+      // 基础按钮样式
+      btn: 'inline-flex center px-gap py-gaps mx-gaps rounded transition-slow focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer',
+
+      // 默认按钮
+      'btn-default':
+        'btn bg-bg200 text-text100 border border-bg300 hover:bg-bg300 focus:ring-primary100',
+
+      // 功能色按钮 - 主要
       'btn-primary':
-        'btn bg-primary-DEFAULT text-white hover:bg-primary-hover focus:ring-primary-DEFAULT',
-      'btn-secondary':
-        'btn bg-backgroundColor text-textColor border border-textColor hover:bg-backgroundHighlightColor',
+        'btn bg-primaryColor color-primaryLightColor hover:bg-primaryHoverColor focus:ring-primaryColor active:bg-primaryActiveColor disabled:bg-primaryDisabledColor',
       'btn-success':
-        'btn bg-success-DEFAULT text-white hover:bg-success-hover focus:ring-success-DEFAULT',
+        'btn bg-successColor color-successLightColor hover:bg-successHoverColor focus:ring-successColor active:bg-successActiveColor disabled:bg-successDisabledColor',
       'btn-warning':
-        'btn bg-warning-DEFAULT text-white hover:bg-warning-hover focus:ring-warning-DEFAULT',
-      'btn-error': 'btn bg-error-DEFAULT text-white hover:bg-error-hover focus:ring-error-DEFAULT',
+        'btn bg-warningColor color-warningLightColor hover:bg-warningHoverColor focus:ring-warningColor active:bg-warningActiveColor disabled:bg-warningDisabledColor',
+      'btn-error':
+        'btn bg-errorColor color-errorLightColor hover:bg-errorHoverColor focus:ring-errorColor active:bg-errorActiveColor disabled:bg-errorDisabledColor',
+      'btn-info':
+        'btn bg-infoColor color-infoLightColor hover:bg-infoHoverColor focus:ring-infoColor active:bg-infoActiveColor disabled:bg-infoDisabledColor',
+
+      // 轮廓按钮
+      'btn-outline-primary':
+        'btn border border-primaryColor text-primaryColor bg-transparent hover:bg-primaryLightColor focus:ring-primaryColor',
+      'btn-outline-success':
+        'btn border border-successColor text-successColor bg-transparent hover:bg-successLightColor focus:ring-successColor',
+      'btn-outline-warning':
+        'btn border border-warningColor text-warningColor bg-transparent hover:bg-warningLightColor focus:ring-warningColor',
+      'btn-outline-error':
+        'btn border border-errorColor text-errorColor bg-transparent hover:bg-errorLightColor focus:ring-errorColor',
+      'btn-outline-info':
+        'btn border border-infoColor text-infoColor bg-transparent hover:bg-infoLightColor focus:ring-infoColor',
     },
 
     // 卡片快捷方式
     {
-      card: 'bg-backgroundColor border border-textColor rounded p-4',
-      'card-hover': 'card hover:bg-backgroundHighlightColor transition-colors duration-200',
-      'card-shadow': 'card shadow-md hover:shadow-lg transition-shadow duration-200',
+      // 基础卡片
+      card: 'bg-bg200 border border-bg300 rounded p-gap hover:border-primary300 transition-slow',
+      'card-hover': 'card hover:shadow-xl hover:border-bg200',
+      'card-active': 'card border-primary200 shadow-lg shadow-primary300/30',
+
+      // 特殊卡片
+      'card-primary': 'bg-primary300 border border-primary200 rounded p-gap text-text100',
+      'card-accent': 'bg-accent100/10 border border-accent100/30 rounded p-gap text-text100',
+    },
+
+    // 输入框快捷方式
+    {
+      // 基础输入框
+      'input-base':
+        'w-full px-gap py-gaps border border-bg300 rounded bg-bg100 text-text100 placeholder:text-text200 focus:outline-none focus:ring-2 focus:ring-primary200 focus:border-primary100 transition-slow',
+    },
+
+    // 过渡快捷方式
+    {
+      // 过渡效果
+      'transition-fast': 'transition-all duration-200 ease-in-out',
+      'transition-slow': 'transition-all duration-300 ease-in-out',
+      'transition-slower': 'transition-all duration-500 ease-in-out',
+      'transition-slowest': 'transition-all duration-1000 ease-in-out',
+    },
+
+    // 状态快捷方式
+    {
+      // 禁用状态
+      disabled: 'opacity-50 cursor-not-allowed pointer-events-none',
+      // 加载状态
+      loading: 'opacity-75 cursor-wait',
+      // 活跃状态
+      active: 'ring-2 ring-primaryColor ring-offset-2',
     },
   ],
 

@@ -48,6 +48,7 @@ export function getPluginsList(env: ViteEnv): PluginOption[] {
     vue(),
     // JSX/TSX 语法支持
     vueJsx(),
+    // 注意：我们不需要 Vue I18n 编译插件，因为使用运行时配置
   ]
 
   // 注：Vite 7 已内置 Vue DevTools 支持，无需额外插件

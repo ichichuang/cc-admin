@@ -1,4 +1,3 @@
-/* 尺寸配置 */
 import { getUserInfo } from '@/api'
 import router from '@/router'
 import store from '@/stores'
@@ -9,7 +8,6 @@ interface UserState {
   userInfo: UserInfo
 }
 
-/* 尺寸store */
 export const useUserStore = defineStore('user', {
   state: (): UserState => ({
     token: '',

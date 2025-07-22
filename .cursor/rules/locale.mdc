@@ -14,13 +14,23 @@ src/locales/
 │   ├── common.ts          # 通用语言配置
 │   ├── auth.ts            # 认证模块语言配置
 │   ├── user.ts            # 用户模块语言配置
-│   └── dashboard.ts       # 仪表盘模块语言配置
+│   ├── dashboard.ts       # 仪表盘模块语言配置
+│   └── router.ts          # 路由模块语言配置
 └── lang/                  # 按语言组织的完整配置
     ├── zh-CN.ts           # 简体中文
     ├── en-US.ts           # 美式英语
     ├── zh-TW.ts           # 繁体中文
     └── ja-JP.ts           # 日语
 ```
+
+### 支持的语言
+
+| 语言代码 | 语言名称 | 国旗 | 文字方向 | 状态        |
+| -------- | -------- | ---- | -------- | ----------- |
+| zh-CN    | 简体中文 | 🇨🇳   | ltr      | ✅ 完整支持 |
+| en-US    | English  | 🇺🇸   | ltr      | ✅ 完整支持 |
+| zh-TW    | 繁體中文 | 🇹🇼   | ltr      | ✅ 完整支持 |
+| ja-JP    | 日本語   | 🇯🇵   | ltr      | ✅ 完整支持 |
 
 ## 📝 类型定义
 
@@ -72,6 +82,8 @@ export interface CommonLocaleMessages {
     pending: string
     completed: string
     failed: string
+    active: string
+    inactive: string
   }
 
   // 表单相关
@@ -117,6 +129,20 @@ export interface CommonLocaleMessages {
       time: string
     }
   }
+
+  // 系统相关
+  system: {
+    title: string
+    description: string
+    version: string
+    copyright: string
+    loading: string
+    networkError: string
+    serverError: string
+    unauthorized: string
+    forbidden: string
+    notFound: string
+  }
 }
 
 // 认证模块语言配置
@@ -131,21 +157,30 @@ export interface AuthLocaleMessages {
     loginSuccess: string
     loginFailed: string
     invalidCredentials: string
+    usernameRequired: string
+    passwordRequired: string
   }
 
   logout: {
     title: string
     confirm: string
     success: string
+    failed: string
   }
 
   register: {
     title: string
+    username: string
+    password: string
     confirmPassword: string
+    email: string
+    phone: string
     agreement: string
     registerButton: string
     registerSuccess: string
+    registerFailed: string
     userExists: string
+    emailExists: string
   }
 }
 
@@ -161,7 +196,10 @@ export interface UserLocaleMessages {
     department: string
     role: string
     lastLogin: string
+    createdAt: string
+    updatedAt: string
     updateSuccess: string
+    updateFailed: string
   }
 
   management: {
@@ -175,6 +213,9 @@ export interface UserLocaleMessages {
     exportUsers: string
     importUsers: string
     userCount: string
+    searchUser: string
+    filterByRole: string
+    filterByStatus: string
   }
 
   roles: {
@@ -182,6 +223,8 @@ export interface UserLocaleMessages {
     user: string
     guest: string
     moderator: string
+    editor: string
+    viewer: string
   }
 
   status: {
@@ -189,6 +232,61 @@ export interface UserLocaleMessages {
     inactive: string
     banned: string
     pending: string
+    suspended: string
+  }
+}
+
+// 仪表盘模块语言配置
+export interface DashboardLocaleMessages {
+  title: string
+  welcome: string
+  overview: string
+  statistics: {
+    totalUsers: string
+    activeUsers: string
+    totalOrders: string
+    totalRevenue: string
+    growthRate: string
+    conversionRate: string
+  }
+  charts: {
+    userGrowth: string
+    revenueChart: string
+    orderChart: string
+    trafficChart: string
+    conversionChart: string
+  }
+  quickActions: {
+    title: string
+    addUser: string
+    viewOrders: string
+    generateReport: string
+    systemSettings: string
+  }
+  recentActivities: {
+    title: string
+    viewAll: string
+    noActivities: string
+  }
+}
+
+// 路由配置模块语言配置
+export interface RouterLocaleMessages {
+  core: {
+    login: string
+  }
+  dashboard: {
+    dashboard: string
+  }
+  example: {
+    example: string
+    i18n: string
+    unocss: string
+  }
+  error: {
+    notFound: string
+    forbidden: string
+    serverError: string
   }
 }
 
@@ -197,7 +295,16 @@ export interface LocaleMessages {
   common: CommonLocaleMessages
   auth: AuthLocaleMessages
   user: UserLocaleMessages
-  // 其他模块...
+  dashboard: DashboardLocaleMessages
+  router: RouterLocaleMessages
+}
+
+// 语言包加载配置
+export interface LocaleConfig {
+  messages: Record<SupportedLocale, LocaleMessages>
+  fallbackLocale: SupportedLocale
+  supportedLocales: LocaleInfo[]
+  defaultLocale: SupportedLocale
 }
 ```
 
@@ -207,6 +314,8 @@ export interface LocaleMessages {
 
 ```typescript
 // src/locales/modules/common.ts
+
+/** 中文配置 */
 export const commonZhCN: CommonLocaleMessages = {
   actions: {
     confirm: '确认',
@@ -236,6 +345,8 @@ export const commonZhCN: CommonLocaleMessages = {
     pending: '等待中',
     completed: '已完成',
     failed: '失败',
+    active: '启用',
+    inactive: '禁用',
   },
 
   form: {
@@ -278,8 +389,22 @@ export const commonZhCN: CommonLocaleMessages = {
       time: 'HH:mm:ss',
     },
   },
+
+  system: {
+    title: 'CC-Admin',
+    description: '企业级后台管理系统',
+    version: '版本',
+    copyright: '版权所有',
+    loading: '系统加载中...',
+    networkError: '网络连接失败',
+    serverError: '服务器错误',
+    unauthorized: '未授权访问',
+    forbidden: '访问被拒绝',
+    notFound: '页面不存在',
+  },
 }
 
+/** 英文配置 */
 export const commonEnUS: CommonLocaleMessages = {
   actions: {
     confirm: 'Confirm',
@@ -300,7 +425,30 @@ export const commonEnUS: CommonLocaleMessages = {
     previous: 'Previous',
   },
 
+  status: {
+    loading: 'Loading...',
+    success: 'Success',
+    error: 'Error',
+    warning: 'Warning',
+    info: 'Info',
+    pending: 'Pending',
+    completed: 'Completed',
+    failed: 'Failed',
+    active: 'Active',
+    inactive: 'Inactive',
+  },
+
   // ... 其他英文配置
+}
+
+/** 繁体中文配置 */
+export const commonZhTW: CommonLocaleMessages = {
+  // ... 繁体中文配置
+}
+
+/** 日文配置 */
+export const commonJaJP: CommonLocaleMessages = {
+  // ... 日文配置
 }
 ```
 
@@ -308,8 +456,10 @@ export const commonEnUS: CommonLocaleMessages = {
 
 ```typescript
 // src/locales/lang/zh-CN.ts
-import { commonZhCN } from '../modules/common'
 import { authZhCN } from '../modules/auth'
+import { commonZhCN } from '../modules/common'
+import { dashboardZhCN } from '../modules/dashboard'
+import { routerZhCN } from '../modules/router'
 import { userZhCN } from '../modules/user'
 import type { LocaleMessages } from '../types'
 
@@ -317,20 +467,24 @@ export const zhCN: LocaleMessages = {
   common: commonZhCN,
   auth: authZhCN,
   user: userZhCN,
-  // 其他模块...
+  dashboard: dashboardZhCN,
+  router: routerZhCN,
 }
 
 // src/locales/lang/en-US.ts
-import { commonEnUS } from '../modules/common'
 import { authEnUS } from '../modules/auth'
+import { commonEnUS } from '../modules/common'
+import { dashboardEnUS } from '../modules/dashboard'
 import { userEnUS } from '../modules/user'
+import { routerEnUS } from '../modules/router'
 import type { LocaleMessages } from '../types'
 
 export const enUS: LocaleMessages = {
   common: commonEnUS,
   auth: authEnUS,
   user: userEnUS,
-  // 其他模块...
+  dashboard: dashboardEnUS,
+  router: routerEnUS,
 }
 ```
 
@@ -340,12 +494,13 @@ export const enUS: LocaleMessages = {
 
 ```typescript
 // src/locales/index.ts
-import { createI18n } from 'vue-i18n'
 import type { App } from 'vue'
-import type { SupportedLocale, LocaleMessages } from './types'
-import { zhCN } from './lang/zh-CN'
+import { createI18n } from 'vue-i18n'
 import { enUS } from './lang/en-US'
+import { jaJP } from './lang/ja-JP'
+import { zhCN } from './lang/zh-CN'
 import { zhTW } from './lang/zh-TW'
+import type { LocaleInfo, LocaleMessages, SupportedLocale } from './types'
 
 // 支持的语言列表
 export const supportedLocales: LocaleInfo[] = [
@@ -367,14 +522,20 @@ export const supportedLocales: LocaleInfo[] = [
     flag: '🇹🇼',
     direction: 'ltr',
   },
+  {
+    key: 'ja-JP',
+    name: '日本語',
+    flag: '🇯🇵',
+    direction: 'ltr',
+  },
 ]
 
 // 语言包映射
 const messages: Record<SupportedLocale, LocaleMessages> = {
-  'zh-CN': zhCN,
-  'en-US': enUS,
-  'zh-TW': zhTW,
-  'ja-JP': jaJP,
+  ['zh-CN']: zhCN,
+  ['en-US']: enUS,
+  ['zh-TW']: zhTW,
+  ['ja-JP']: jaJP,
 }
 
 // 获取默认语言
@@ -386,27 +547,41 @@ function getDefaultLocale(): SupportedLocale {
   }
 
   // 2. 从浏览器语言检测
-  const browserLang = navigator.language
-  if (browserLang.startsWith('zh')) {
-    return browserLang.includes('TW') || browserLang.includes('HK') ? 'zh-TW' : 'zh-CN'
+  const browserLang = navigator.language.toLowerCase()
+
+  // 中文检测
+  if (browserLang.includes('zh')) {
+    if (browserLang.includes('tw') || browserLang.includes('hk') || browserLang.includes('hant')) {
+      return 'zh-TW'
+    }
+    return 'zh-CN'
   }
-  if (browserLang.startsWith('ja')) {
+
+  // 日文检测
+  if (browserLang.includes('ja')) {
     return 'ja-JP'
   }
 
-  // 3. 默认英文
-  return 'en-US'
+  // 英文检测
+  if (browserLang.includes('en')) {
+    return 'en-US'
+  }
+
+  // 3. 默认中文
+  return 'zh-CN'
 }
 
 // 创建 i18n 实例
-export const i18n = createI18n<[LocaleMessages], SupportedLocale>({
+export const i18n = createI18n({
   legacy: false,
   locale: getDefaultLocale(),
-  fallbackLocale: 'en-US',
-  messages,
+  fallbackLocale: 'zh-CN',
+  messages: messages as any,
   globalInjection: true,
   silentTranslationWarn: true,
   silentFallbackWarn: true,
+  missingWarn: import.meta.env.DEV,
+  fallbackWarn: import.meta.env.DEV,
 })
 
 // 安装插件
@@ -414,24 +589,64 @@ export function setupI18n(app: App) {
   app.use(i18n)
 }
 
+// 获取当前语言
+export function getCurrentLocale(): SupportedLocale {
+  return (i18n.global.locale as any).value
+}
+
+// 设置语言
+export function setLocale(locale: SupportedLocale) {
+  if (messages[locale]) {
+    ;(i18n.global.locale as any).value = locale
+    localStorage.setItem('cc-admin-locale', locale)
+
+    // 更新HTML lang属性
+    document.documentElement.lang = locale
+
+    // 更新HTML dir属性
+    const localeInfo = supportedLocales.find(item => item.key === locale)
+    document.documentElement.dir = localeInfo?.direction || 'ltr'
+
+    // 触发语言变更事件
+    window.dispatchEvent(
+      new CustomEvent('locale-changed', {
+        detail: { locale },
+      })
+    )
+  }
+}
+
+// 获取翻译文本
+export function t(key: string, params?: Record<string, any>): string {
+  return i18n.global.t(key, params || {})
+}
+
+// 格式化日期
+export function d(date: Date | number, format?: string): string {
+  return format ? i18n.global.d(date, format) : i18n.global.d(date)
+}
+
+// 格式化数字
+export function n(number: number, format?: string): string {
+  return format ? i18n.global.n(number, format) : i18n.global.n(number)
+}
+
 // 导出类型和工具函数
-export type { SupportedLocale, LocaleMessages, LocaleInfo }
-export { messages, getDefaultLocale }
+export { getDefaultLocale, messages }
+export type { LocaleInfo, LocaleMessages, SupportedLocale }
 ```
 
-### 语言切换 Composable
+### 语言切换 Hook
 
 ```typescript
-// src/hooks/useLocale.ts
-import { computed, watch } from 'vue'
+// src/hooks/modules/useLocale.ts
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useColorStore } from '@/stores/color'
 import type { SupportedLocale } from '@/locales/types'
-import { supportedLocales } from '@/locales'
+import { supportedLocales, setLocale, getCurrentLocale } from '@/locales'
 
 export function useLocale() {
   const { locale, t, d, n } = useI18n()
-  const colorStore = useColorStore()
 
   // 当前语言信息
   const currentLocale = computed(() => supportedLocales.find(item => item.key === locale.value))
@@ -447,25 +662,7 @@ export function useLocale() {
     if (locale.value === newLocale) return
 
     try {
-      // 更新i18n
-      locale.value = newLocale
-
-      // 保存到localStorage
-      localStorage.setItem('cc-admin-locale', newLocale)
-
-      // 更新HTML lang属性
-      document.documentElement.lang = newLocale
-
-      // 更新HTML dir属性
-      const localeInfo = supportedLocales.find(item => item.key === newLocale)
-      document.documentElement.dir = localeInfo?.direction || 'ltr'
-
-      // 通知其他模块语言已切换
-      window.dispatchEvent(
-        new CustomEvent('locale-changed', {
-          detail: { locale: newLocale },
-        })
-      )
+      setLocale(newLocale)
     } catch (error) {
       console.error('Failed to switch locale:', error)
     }
@@ -486,15 +683,9 @@ export function useLocale() {
     return n(number, format)
   }
 
-  // 监听语言变化，更新相关状态
-  watch(locale, newLocale => {
-    // 这里可以添加语言变化时的额外逻辑
-    console.log('Locale changed to:', newLocale)
-  })
-
   return {
     // 响应式数据
-    locale,
+    locale: computed(() => getCurrentLocale()),
     currentLocale,
     isChineseLang,
     isRTL,
@@ -507,6 +698,60 @@ export function useLocale() {
     $n,
   }
 }
+```
+
+### Pinia 语言状态管理
+
+```typescript
+// src/stores/modules/locale.ts
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
+import type { SupportedLocale, LocaleInfo } from '@/locales/types'
+import { supportedLocales, setLocale, getCurrentLocale } from '@/locales'
+
+export const useLocaleStore = defineStore('locale', () => {
+  // 状态
+  const currentLocale = ref<SupportedLocale>(getCurrentLocale())
+
+  // 计算属性
+  const localeInfo = computed(() => supportedLocales.find(item => item.key === currentLocale.value))
+
+  const isChineseLang = computed(() => currentLocale.value.startsWith('zh'))
+
+  // 操作
+  const changeLocale = async (locale: SupportedLocale) => {
+    if (currentLocale.value === locale) return
+
+    try {
+      setLocale(locale)
+      currentLocale.value = locale
+    } catch (error) {
+      console.error('Failed to change locale:', error)
+      throw error
+    }
+  }
+
+  const toggleLocale = () => {
+    const currentIndex = supportedLocales.findIndex(item => item.key === currentLocale.value)
+    const nextIndex = (currentIndex + 1) % supportedLocales.length
+    const nextLocale = supportedLocales[nextIndex].key
+    changeLocale(nextLocale)
+  }
+
+  return {
+    // 状态
+    currentLocale,
+
+    // 计算属性
+    localeInfo,
+    isChineseLang,
+    supportedLocales,
+
+    // 操作
+    changeLocale,
+    toggleLocale,
+  }
+})
 ```
 
 ## 🧩 组件中的国际化使用
@@ -566,208 +811,221 @@ const statusClass = computed(() => ({
 </script>
 ```
 
-### 高级使用场景
+### 语言切换组件
 
 ```vue
-<!-- DataTable.vue -->
+<!-- LanguageSwitch.vue -->
 <template>
-  <div class="data-table">
-    <!-- 表格头部 -->
-    <div class="table-header">
-      <h2>{{ $t('user.management.title') }}</h2>
-      <div class="actions">
-        <button @click="handleAdd">
-          {{ $t('common.actions.add') }}
-        </button>
-        <button @click="handleExport">
-          {{ $t('common.actions.export') }}
-        </button>
-      </div>
-    </div>
-
-    <!-- 搜索栏 -->
-    <div class="search-bar">
-      <input
-        v-model="searchText"
-        :placeholder="$t('common.actions.search')"
-        class="search-input"
-      />
-    </div>
-
-    <!-- 表格内容 -->
-    <table class="table">
-      <thead>
-        <tr>
-          <th
-            v-for="column in columns"
-            :key="column.key"
-          >
-            {{ $t(column.title) }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="user in users"
-          :key="user.id"
-        >
-          <td>{{ user.username }}</td>
-          <td>{{ $t(`user.roles.${user.role}`) }}</td>
-          <td>{{ $d(user.createdAt, 'date') }}</td>
-          <td>
-            <span :class="`status-${user.status}`">
-              {{ $t(`user.status.${user.status}`) }}
-            </span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <!-- 分页 -->
-    <div class="pagination">
-      <span class="total">
-        {{ $t('common.table.total', { total: pagination.total }) }}
-      </span>
-      <!-- 分页控件 -->
-    </div>
-
-    <!-- 空状态 -->
-    <div
-      v-if="users.length === 0"
-      class="empty-state"
+  <div class="language-switch">
+    <button
+      v-for="locale in supportedLocales"
+      :key="locale.key"
+      :class="['locale-btn', { active: currentLocale === locale.key }]"
+      @click="switchLocale(locale.key)"
     >
-      {{ $t('common.table.noData') }}
-    </div>
+      <span class="flag">{{ locale.flag }}</span>
+      <span class="name">{{ locale.name }}</span>
+    </button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useLocale } from '@/hooks/useLocale'
-import type { User } from '@/types/user'
+import { computed } from 'vue'
+import { useLocale } from '@/hooks/modules/useLocale'
 
-const { $t, $d } = useLocale()
-const searchText = ref('')
-
-// 表格列配置
-const columns = computed(() => [
-  { key: 'username', title: 'user.profile.username' },
-  { key: 'role', title: 'user.profile.role' },
-  { key: 'createdAt', title: 'user.profile.createdAt' },
-  { key: 'status', title: 'common.status' },
-])
-
-// 示例数据
-const users = ref<User[]>([])
-const pagination = ref({
-  page: 1,
-  pageSize: 20,
-  total: 0,
-})
-
-const handleAdd = () => {
-  // 添加用户逻辑
-}
-
-const handleExport = () => {
-  // 导出逻辑
-}
+const { currentLocale, supportedLocales, switchLocale } = useLocale()
 </script>
+
+<style scoped>
+.language-switch {
+  display: flex;
+  gap: 8px;
+}
+
+.locale-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.locale-btn:hover {
+  background: var(--hover-bg);
+}
+
+.locale-btn.active {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.flag {
+  font-size: 16px;
+}
+
+.name {
+  font-size: 14px;
+}
+</style>
 ```
 
-## 🔧 语言包管理工具
-
-### 语言包验证
+### 路由标题国际化
 
 ```typescript
-// scripts/validate-locales.ts
+// src/router/utils/helper.ts
+import { t } from '@/locales'
 
-interface ValidationResult {
-  isValid: boolean
-  errors: string[]
-  warnings: string[]
-}
+export function generateRouteTitle(routeTitle?: string): string {
+  if (!routeTitle) return ''
 
-function validateLocales(): ValidationResult {
-  const result: ValidationResult = {
-    isValid: true,
-    errors: [],
-    warnings: [],
+  // 如果是翻译键，进行翻译
+  if (routeTitle.includes('.')) {
+    return t(routeTitle)
   }
 
-  const baseLocale = 'zh-CN'
-  const baseMessages = messages[baseLocale]
-
-  // 检查所有语言包的完整性
-  Object.keys(messages).forEach(locale => {
-    if (locale === baseLocale) return
-
-    const localeMessages = messages[locale as SupportedLocale]
-    const missingKeys = findMissingKeys(baseMessages, localeMessages)
-
-    if (missingKeys.length > 0) {
-      result.isValid = false
-      result.errors.push(`Locale ${locale} is missing keys: ${missingKeys.join(', ')}`)
-    }
-  })
-
-  return result
+  // 否则直接返回
+  return routeTitle
 }
 
-function findMissingKeys(base: any, target: any, prefix = ''): string[] {
-  const missing: string[] = []
+// 在路由配置中使用
+export const routes = [
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: () => import('@/views/dashboard/index.vue'),
+    meta: {
+      title: 'router.dashboard.dashboard', // 使用翻译键
+      requiresAuth: true,
+    },
+  },
+  {
+    path: '/user',
+    name: 'User',
+    component: () => import('@/views/user/index.vue'),
+    meta: {
+      title: 'user.management.title',
+      requiresAuth: true,
+    },
+  },
+]
+```
 
-  Object.keys(base).forEach(key => {
-    const fullKey = prefix ? `${prefix}.${key}` : key
+## 🔧 i18n Ally 插件配置
 
-    if (!(key in target)) {
-      missing.push(fullKey)
-    } else if (typeof base[key] === 'object' && typeof target[key] === 'object') {
-      missing.push(...findMissingKeys(base[key], target[key], fullKey))
-    }
-  })
+### VSCode/Cursor 设置
 
-  return missing
+```json
+// .vscode/settings.json 或 .cursor/settings.json
+{
+  // i18n Ally 国际化插件配置
+  "i18n-ally.localesPaths": ["src/locales/lang"],
+  "i18n-ally.keystyle": "nested",
+  "i18n-ally.sortKeys": true,
+  "i18n-ally.namespace": false,
+  "i18n-ally.pathMatcher": "{locale}.{ext}",
+  "i18n-ally.enabledParsers": ["ts", "js"],
+  "i18n-ally.sourceLanguage": "zh-CN",
+  "i18n-ally.displayLanguage": "zh-CN",
+  "i18n-ally.enabledFrameworks": ["vue", "vue-i18n"],
+  "i18n-ally.extract.keyPrefix": "",
+  "i18n-ally.extract.keyMaxLength": 100,
+  "i18n-ally.extract.parsers.html.attributes": ["alt", "title", "placeholder"],
+  "i18n-ally.extract.parsers.html.ignoredTags": ["script", "style"],
+  "i18n-ally.review.enabled": true,
+  "i18n-ally.review.gutters": true,
+  "i18n-ally.dirStructure": "dir",
+  "i18n-ally.annotationInPlace": true,
+  "i18n-ally.annotationMaxLength": 50,
+  "i18n-ally.editor.preferEditor": true,
+  "i18n-ally.readonly": false,
+  "i18n-ally.usage.scanningDirs": ["src"],
+  "i18n-ally.usage.ignoredFiles": ["**/*.d.ts", "**/node_modules/**", "**/dist/**"]
 }
 ```
 
-### 自动提取翻译键
+### 专用配置文件
 
 ```typescript
-// scripts/extract-i18n-keys.ts
+// i18n-ally.config.ts
+export default {
+  // 语言文件位置
+  localesPaths: ['src/locales/lang'],
 
-import { glob } from 'glob'
-import { readFileSync } from 'fs'
+  // 支持的语言
+  sourceLanguage: 'zh-CN',
+  displayLanguage: 'zh-CN',
 
-// 提取Vue文件中的翻译键
-function extractKeysFromVueFiles(): Set<string> {
-  const keys = new Set<string>()
-  const vueFiles = glob.sync('src/**/*.vue')
+  // 文件结构配置
+  pathMatcher: '{locale}.{ext}',
+  dirStructure: 'dir',
+  namespace: false,
 
-  vueFiles.forEach(file => {
-    const content = readFileSync(file, 'utf-8')
+  // 解析器配置
+  enabledParsers: ['ts', 'js'],
+  enabledFrameworks: ['vue', 'vue-i18n'],
 
-    // 匹配 $t('key') 模式
-    const tMatches = content.match(/\$t\(['"`]([^'"`]+)['"`]\)/g)
-    if (tMatches) {
-      tMatches.forEach(match => {
-        const key = match.match(/\$t\(['"`]([^'"`]+)['"`]\)/)?.[1]
-        if (key) keys.add(key)
-      })
-    }
+  // 键值配置
+  keystyle: 'nested',
+  sortKeys: true,
 
-    // 匹配 t('key') 模式
-    const directTMatches = content.match(/\bt\(['"`]([^'"`]+)['"`]\)/g)
-    if (directTMatches) {
-      directTMatches.forEach(match => {
-        const key = match.match(/\bt\(['"`]([^'"`]+)['"`]\)/)?.[1]
-        if (key) keys.add(key)
-      })
-    }
-  })
+  // 提取配置
+  extract: {
+    keyPrefix: '',
+    keyMaxLength: 100,
+    parsers: {
+      html: {
+        attributes: ['alt', 'title', 'placeholder', 'aria-label'],
+        ignoredTags: ['script', 'style'],
+      },
+      vue: {
+        attributes: ['v-text', 'v-html'],
+        directives: ['t', 'tc', 'te', 'd', 'n'],
+      },
+    },
+  },
 
-  return keys
+  // 重构模板
+  refactor: {
+    templates: [
+      {
+        name: 'vue-i18n-template',
+        find: "\\$t\\('([^']*)'\\)",
+        replace: "{{ \\$t('$1') }}",
+      },
+      {
+        name: 'vue-i18n-script',
+        find: "this\\.\\$t\\('([^']*)'\\)",
+        replace: "t('$1')",
+      },
+    ],
+  },
+
+  // 审查配置
+  review: {
+    enabled: true,
+    gutters: true,
+  },
+
+  // 编辑器配置
+  editor: {
+    preferEditor: true,
+    annotationInPlace: true,
+    annotationMaxLength: 50,
+  },
+
+  // 使用情况分析
+  usage: {
+    scanningDirs: ['src'],
+    ignoredFiles: ['**/*.d.ts', '**/node_modules/**', '**/dist/**', '**/.git/**', '**/coverage/**'],
+  },
+
+  // 只读模式（设置为false以允许编辑）
+  readonly: false,
 }
 ```
 
@@ -780,6 +1038,7 @@ function extractKeysFromVueFiles(): Set<string> {
 $t('user.profile.title') // 用户.资料.标题
 $t('auth.login.username') // 认证.登录.用户名
 $t('common.actions.confirm') // 通用.操作.确认
+$t('dashboard.statistics.totalUsers') // 仪表盘.统计.总用户数
 
 // ❌ 错误：过于简单或混乱的键名
 $t('title') // 不明确
@@ -800,11 +1059,11 @@ const message = $t('user.management.deleteConfirm', {
 // en-US: "Are you sure to delete user {username}?"
 
 // ✅ 正确：复数形式处理
-const userCount = $t('user.management.userCount', { count }, count)
+const userCount = $t('common.table.total', { total: count })
 
 // 语言文件中：
-// zh-CN: "共 {count} 个用户"
-// en-US: "{count} user | {count} users"
+// zh-CN: "共 {total} 条"
+// en-US: "Total {total} items"
 ```
 
 ### 条件翻译
@@ -826,12 +1085,90 @@ const userCount = $t('user.management.userCount', { count }, count)
 </template>
 ```
 
-遵循这些国际化规范，确保CC-Admin项目能够支持多语言，提供良好的国际化用户体验。
+### 性能优化
 
-        </div>
-    );
+```typescript
+// ✅ 正确：缓存翻译结果
+const { $t } = useLocale()
+const cachedTranslations = computed(() => ({
+  title: $t('user.profile.title'),
+  username: $t('user.profile.username'),
+  email: $t('user.profile.email'),
+}))
 
+// ✅ 正确：避免在循环中调用翻译
+const statusOptions = computed(() => [
+  { value: 'active', label: $t('user.status.active') },
+  { value: 'inactive', label: $t('user.status.inactive') },
+  { value: 'banned', label: $t('user.status.banned') },
+])
+```
+
+### 类型安全
+
+```typescript
+// ✅ 正确：使用类型化的翻译键
+type TranslationKey =
+  | 'common.actions.confirm'
+  | 'common.actions.cancel'
+  | 'user.profile.title'
+  | 'user.status.active'
+
+const safeT = (key: TranslationKey, params?: Record<string, any>) => {
+  return $t(key, params)
 }
+
+// 使用时会有类型提示和检查
+const title = safeT('user.profile.title') // ✅ 正确
+const invalid = safeT('invalid.key') // ❌ 类型错误
+```
+
+### 测试国际化
+
+```typescript
+// tests/i18n.test.ts
+import { describe, it, expect } from 'vitest'
+import { createI18n } from 'vue-i18n'
+import { messages } from '@/locales'
+
+describe('i18n', () => {
+  it('should have all required translations', () => {
+    const i18n = createI18n({
+      legacy: false,
+      locale: 'zh-CN',
+      messages,
+    })
+
+    // 测试基本翻译
+    expect(i18n.global.t('common.actions.confirm')).toBe('确认')
+    expect(i18n.global.t('common.actions.cancel')).toBe('取消')
+  })
+
+  it('should handle parameters correctly', () => {
+    const i18n = createI18n({
+      legacy: false,
+      locale: 'zh-CN',
+      messages,
+    })
+
+    const result = i18n.global.t('common.table.total', { total: 100 })
+    expect(result).toBe('共 100 条')
+  })
+
+  it('should fallback to default language', () => {
+    const i18n = createI18n({
+      legacy: false,
+      locale: 'invalid-locale',
+      fallbackLocale: 'zh-CN',
+      messages,
+    })
+
+    expect(i18n.global.t('common.actions.confirm')).toBe('确认')
+  })
+})
+```
+
+遵循这些国际化规范，确保CC-Admin项目能够支持多语言，提供良好的国际化用户体验。所有翻译键都应该遵循模块化的命名规范，并且保持所有语言包的结构一致性。
 
 ```
 

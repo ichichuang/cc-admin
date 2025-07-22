@@ -1,3 +1,4 @@
+import postcssPxToRem from 'postcss-pxtorem'
 import { type ConfigEnv, defineConfig, loadEnv, type UserConfigExport } from 'vite'
 import { exclude, include } from './build/optimize'
 import { getPluginsList } from './build/plugins'
@@ -136,6 +137,50 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
               },
             },
           },
+          // postcss-pxtorem 配置
+          postcssPxToRem({
+            // 基准字体大小，与 rem 适配器保持一致
+            rootValue: 16,
+            // 需要转换的CSS属性，* 表示所有属性
+            propList: [
+              '*',
+              // 不转换边框相关，避免出现 0.5px 等问题
+              '!border',
+              '!border-width',
+              '!border-top-width',
+              '!border-right-width',
+              '!border-bottom-width',
+              '!border-left-width',
+            ],
+            // 过滤不需要转换的选择器 - 修复 UnoCSS 兼容性
+            selectorBlackList: [
+              // 修复：正确排除 UnoCSS 工具类
+              /^\.([whmp][tblrxysa]?-|text-|bg-|border-|rounded-|flex|grid|absolute|relative|fixed|sticky)/,
+              /^\.([0-9]+|xs|sm|md|lg|xl|2xl|3xl|4xl|5xl|6xl|7xl|8xl|9xl):/,
+              // HTML 根元素不转换
+              /^html$/,
+              // 根字体大小相关不转换
+              /^:root$/,
+              // 某些第三方组件不转换
+              /^\.el-/,
+              /^\.ant-/,
+              /^\.van-/,
+              // 不转换包含 'no-rem' 的类名
+              /no-rem/,
+              // 不转换 UnoCSS 生成的响应式前缀
+              /^@media.*\.(xs|sm|md|lg|xl|2xl):/,
+            ],
+            // 替换规则
+            replace: true,
+            // 允许在媒体查询中转换px
+            mediaQuery: true,
+            // 设置要转换的最小像素值
+            minPixelValue: 1,
+            // 保留单位精度
+            unitPrecision: 4,
+            // 排除文件或文件夹
+            exclude: /node_modules/i,
+          }),
         ],
       },
       preprocessorOptions: {

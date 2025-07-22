@@ -1,25 +1,59 @@
 /* 尺寸配置 */
-import { toCamelCase } from '@/common/modules/function'
+import { deepClone, toCamelCase } from '@/common'
 import store, { useLayoutStoreWithOut } from '@/stores'
 import { defineStore } from 'pinia'
 
 /* 尺寸模式类型 宽松尺寸 > 舒适尺寸 > 紧凑尺寸 */
-export type SizeOption = 'compact' | 'comfortable' | 'loose'
-
-interface SizeOptionConfig {
+export type Size = 'compact' | 'comfortable' | 'loose'
+export interface SizeOptions {
   label: string
-  value: SizeOption
+  value: Size
 }
 
-const sizeOptions: SizeOptionConfig[] = [
-  { label: '紧凑尺寸', value: 'compact' },
-  { label: '舒适尺寸', value: 'comfortable' },
-  { label: '宽松尺寸', value: 'loose' },
-]
-
 /* 尺寸定义 */
-// 布局尺寸具体定义
-interface LayoutSizes {
+type Gap = [
+  {
+    label: '小'
+    key: 'sm'
+  },
+  {
+    label: '中'
+    key: 'md'
+  },
+  {
+    label: '大'
+    key: 'lg'
+  },
+]
+export interface GapOptions {
+  label: Gap[number]['label']
+  key: Gap[number]['key']
+  value: number
+}
+type Rounded = [
+  {
+    label: '尖锐'
+    key: 'sharp'
+  },
+  {
+    label: '平滑'
+    key: 'smooth'
+  },
+  {
+    label: '圆滑'
+    key: 'round'
+  },
+  {
+    label: '圆润'
+    key: 'soft'
+  },
+]
+export interface RoundedOptions {
+  label: Rounded[number]['label']
+  key: Rounded[number]['key']
+  value: number
+}
+interface Layout {
   // 侧边栏宽度
   sidebarWidth: number
   // 侧边栏折叠宽度
@@ -37,165 +71,118 @@ interface LayoutSizes {
   // 内容区域高度(不包含头部、底部)
   contentsHeight: number
 }
-
-// 间距具体定义
-type Sizes = {
-  xs: string
-  sm: string
-  md: string
-  lg: string
-  xl: string
-}
-
-interface SizesOptions {
-  label: keyof Sizes
-  value: number
-}
-
-// 尺寸变量
 interface SizeVariables {
-  // 布局尺寸
-  layout: LayoutSizes
-  // 间距尺寸
-  gapOptions: SizesOptions[]
+  layout: Layout
+  gapOptions: GapOptions[]
 }
 
-interface SizeState {
-  /* 尺寸模式配置 */
-  size: SizeOption
-  sizeOptions: SizeOptionConfig[]
+/* 预设 */
+const sizeOptions: SizeOptions[] = [
+  { label: '紧凑尺寸', value: 'compact' },
+  { label: '舒适尺寸', value: 'comfortable' },
+  { label: '宽松尺寸', value: 'loose' },
+]
 
-  /* 尺寸变量配置 */
-  sizes: SizeVariables
-
-  gap: keyof Sizes
-  gapOptions: SizesOptions[]
-
-  // 圆角尺寸
-  rounded: keyof Sizes
-  roundedOptions: SizesOptions[]
-
-  sizesLabel: Record<keyof Sizes, string>
-}
-
-// 尺寸标签
-const sizesLabel: Record<keyof Sizes, string> = {
-  xs: '小',
-  sm: '中',
-  md: '大',
-  lg: '特大',
-  xl: '超大',
-}
-
-/* 尺寸预设 */
 // 紧凑尺寸预设
 const compactSizes: SizeVariables = {
   layout: {
-    sidebarWidth: 180,
-    sidebarCollapsedWidth: 50,
+    sidebarWidth: 200,
+    sidebarCollapsedWidth: 60,
     headerHeight: 50,
-    breadcrumbHeight: 32,
-    footerHeight: 30,
-    tabsHeight: 32,
+    breadcrumbHeight: 28,
+    footerHeight: 28,
+    tabsHeight: 40,
     contentHeight: 0,
     contentsHeight: 0,
   },
   gapOptions: [
-    { label: 'xs', value: 2 },
-    { label: 'sm', value: 4 },
-    { label: 'md', value: 6 },
-    { label: 'lg', value: 8 },
-    { label: 'xl', value: 10 },
+    { label: '小', key: 'sm', value: 4 },
+    { label: '中', key: 'md', value: 6 },
+    { label: '大', key: 'lg', value: 10 },
   ],
 }
 
 // 舒适尺寸预设
 const comfortableSizes: SizeVariables = {
   layout: {
-    sidebarWidth: 200,
-    sidebarCollapsedWidth: 60,
+    sidebarWidth: 250,
+    sidebarCollapsedWidth: 80,
     headerHeight: 60,
-    breadcrumbHeight: 40,
-    footerHeight: 40,
-    tabsHeight: 40,
+    breadcrumbHeight: 32,
+    footerHeight: 32,
+    tabsHeight: 44,
     contentHeight: 0,
     contentsHeight: 0,
   },
   gapOptions: [
-    { label: 'xs', value: 4 },
-    { label: 'sm', value: 6 },
-    { label: 'md', value: 8 },
-    { label: 'lg', value: 10 },
-    { label: 'xl', value: 12 },
+    { label: '小', key: 'sm', value: 6 },
+    { label: '中', key: 'md', value: 8 },
+    { label: '大', key: 'lg', value: 12 },
   ],
 }
 
 // 宽松尺寸预设
 const looseSizes: SizeVariables = {
   layout: {
-    sidebarWidth: 240,
-    sidebarCollapsedWidth: 70,
+    sidebarWidth: 280,
+    sidebarCollapsedWidth: 90,
     headerHeight: 70,
-    breadcrumbHeight: 48,
-    footerHeight: 30,
+    breadcrumbHeight: 40,
+    footerHeight: 32,
     tabsHeight: 48,
     contentHeight: 0,
     contentsHeight: 0,
   },
   gapOptions: [
-    { label: 'xs', value: 6 },
-    { label: 'sm', value: 8 },
-    { label: 'md', value: 10 },
-    { label: 'lg', value: 12 },
-    { label: 'xl', value: 14 },
+    { label: '小', key: 'sm', value: 8 },
+    { label: '中', key: 'md', value: 10 },
+    { label: '大', key: 'lg', value: 14 },
   ],
 }
 
-/* 尺寸store */
+interface SizeState {
+  size: SizeOptions['value']
+  sizeOptions: SizeOptions[]
+
+  sizes: SizeVariables
+
+  gap: GapOptions['key']
+  rounded: RoundedOptions['key']
+  roundedOptions: RoundedOptions[]
+}
+
+// 创建尺寸预设映射表
+const sizePresetsMap: Record<Size, SizeVariables> = {
+  compact: compactSizes,
+  comfortable: comfortableSizes,
+  loose: looseSizes,
+}
+
 export const useSizeStore = defineStore('size', {
   state: (): SizeState => ({
-    // 尺寸模式
     size: 'comfortable',
     sizeOptions,
 
-    // 尺寸变量配置（默认舒适尺寸）
-    sizes: comfortableSizes,
+    sizes: deepClone(comfortableSizes),
 
-    // 默认舒适间隔尺寸
     gap: 'md',
-    gapOptions: comfortableSizes.gapOptions,
-
-    // 圆角尺寸
-    rounded: 'md',
+    rounded: 'smooth',
     roundedOptions: [
-      { label: 'xs', value: 4 },
-      { label: 'sm', value: 6 },
-      { label: 'md', value: 8 },
-      { label: 'lg', value: 10 },
-      { label: 'xl', value: 12 },
+      { label: '尖锐', key: 'sharp', value: 0 },
+      { label: '平滑', key: 'smooth', value: 6 },
+      { label: '圆滑', key: 'round', value: 12 },
+      { label: '圆润', key: 'soft', value: 24 },
     ],
-
-    // 尺寸标签
-    sizesLabel,
   }),
 
   getters: {
-    /* 尺寸模式相关 */
-    // 获取当前尺寸模式
-    getSize: state => state.size,
-    // 获取尺寸模式选项
-    getSizeOptions: state => state.sizeOptions,
-    // 获取当前是否是紧凑模式
+    // 获取尺寸模式
     isCompact: state => state.size === 'compact',
-    // 获取当前是否是舒适模式
     isComfortable: state => state.size === 'comfortable',
-    // 获取当前是否是宽松模式
     isLoose: state => state.size === 'loose',
-
-    // 获取当前尺寸标签
-    getSizesLabel: state => {
-      return (key: keyof Sizes) => state.sizesLabel[key]
-    },
+    getSizeOptions: state => state.sizeOptions,
+    getSize: state => state.size,
+    getSizeLabel: state => state.sizeOptions.find(option => option.value === state.size)?.label,
 
     /* 尺寸变量配置相关 layout */
     // 获取侧边栏宽度
@@ -217,30 +204,29 @@ export const useSizeStore = defineStore('size', {
 
     /* 尺寸变量配置相关 gap */
     // 获取间距尺寸
-    getGap: state => state.gap,
+    getGap: state => {
+      const gapOptions = state.sizes.gapOptions
+      const gap = gapOptions.find(option => option.key === state.gap) as GapOptions
+      return gap.key
+    },
     // 获取当前间距的具体数值
-    getGapValue: state => state.gapOptions.find(option => option.label === state.gap)?.value,
+    getGapValue: state => state.sizes.gapOptions.find(option => option.key === state.gap)?.value,
     // 获取间距尺寸标签
-    getGapLabel: state => state.sizesLabel[state.gap],
+    getGapLabel: state => state.sizes.gapOptions.find(option => option.key === state.gap)?.label,
     // 获取间距选项
-    getGapOptions: state => state.gapOptions,
+    getGapOptions: state => state.sizes.gapOptions,
 
     /* 尺寸变量配置相关 rounded */
     // 获取圆角尺寸
     getRounded: state => state.rounded,
     // 获取圆角尺寸的具体数值
     getRoundedValue: state =>
-      state.roundedOptions.find(option => option.label === state.rounded)?.value,
+      state.roundedOptions.find(option => option.key === state.rounded)?.value,
     // 获取圆角尺寸标签
-    getRoundedLabel: state => state.sizesLabel[state.rounded],
+    getRoundedLabel: state =>
+      state.roundedOptions.find(option => option.key === state.rounded)?.label,
     // 获取圆角尺寸选项
     getRoundedOptions: state => state.roundedOptions,
-
-    /* 获取所有尺寸变量 */
-    getAllSizes: state => {
-      const { size: _size, sizeOptions: _sizeOptions, ...sizes } = state
-      return sizes
-    },
   },
 
   actions: {
@@ -298,65 +284,44 @@ export const useSizeStore = defineStore('size', {
 
     /* 尺寸模式相关 */
     // 设置尺寸模式
-    setSize(size: SizeOption) {
+    setSize(size: SizeOptions['value']) {
+      if (this.size === size) {
+        return
+      }
       this.size = size
 
-      // 应用对应的尺寸预设
-      if (size === 'compact') {
-        this.sizes = { ...compactSizes }
-        this.gap = 'sm'
-      } else if (size === 'comfortable') {
-        this.sizes = { ...comfortableSizes }
-        this.gap = 'md'
-      } else if (size === 'loose') {
-        this.sizes = { ...looseSizes }
-        this.gap = 'lg'
+      // 使用深拷贝确保不会互相影响
+      const targetSizePreset = sizePresetsMap[size]
+      if (!targetSizePreset) {
+        console.error(`Invalid size preset: ${size}`)
+        return
       }
 
-      this.gapOptions = this.sizes.gapOptions
+      this.sizes = deepClone(targetSizePreset)
+
+      // 立即更新 CSS 变量
       this.setCssVariables()
     },
 
     /* 尺寸变量配置相关 gap */
     // 设置间距尺寸
-    setGap(gap: keyof Sizes) {
+    setGap(gap: GapOptions['key']) {
+      if (this.gap === gap) {
+        return
+      }
       this.gap = gap
       this.setCssVariables()
     },
     // 设置圆角尺寸
-    setRounded(rounded: keyof Sizes) {
+    setRounded(rounded: RoundedOptions['key']) {
+      if (this.rounded === rounded) {
+        return
+      }
       this.rounded = rounded
       this.setCssVariables()
     },
 
-    /* 批量设置方法 */
-    updateLayout(layout: Partial<LayoutSizes>) {
-      Object.assign(this.sizes.layout, layout)
-      this.setCssVariables()
-    },
-
-    updateGapOptions(gapOptions: Partial<SizesOptions>[]) {
-      gapOptions.forEach(gap => {
-        const existingGap = this.gapOptions.find(option => option.label === gap.label)
-        if (existingGap && gap.value) {
-          existingGap.value = gap.value
-        }
-      })
-      this.setCssVariables()
-    },
-
-    /* 重置方法 */
-    resetToDefault() {
-      this.setSize('comfortable')
-    },
-
-    resetSizes() {
-      this.sizes = { ...comfortableSizes }
-      this.gap = 'md'
-      this.gapOptions = this.sizes.gapOptions
-      this.setCssVariables()
-    },
-
+    /* 设置 CSS 变量 */
     setCssVariables() {
       // 重新计算内容高度
       this.calculateContentHeight()
@@ -373,12 +338,13 @@ export const useSizeStore = defineStore('size', {
         [toCamelCase('contentsHeight', '--')]: this.sizes.layout.contentsHeight + 'px',
 
         // 间距变量
-        [toCamelCase('gap', '--')]: this.getGapValue + 'px',
-        [toCamelCase('gaps', '--')]: (this.getGapValue ? this.getGapValue / 2 : 0) + 'px',
+        [toCamelCase('gap', '--')]: (this.getGapValue || 0) + 'px',
+        [toCamelCase('gaps', '--')]: (this.getGapValue || 0) / 2 + 'px',
 
         // 圆角变量
-        [toCamelCase('rounded', '--')]: this.getRoundedValue + 'px',
+        [toCamelCase('rounded', '--')]: (this.getRoundedValue || 0) + 'px',
       }
+
       Object.entries(cssVariables).forEach(([key, value]) => {
         document.documentElement.style.setProperty(key, value)
       })
@@ -386,13 +352,37 @@ export const useSizeStore = defineStore('size', {
 
     /* 初始化方法 */
     init() {
+      // 确保使用深拷贝初始化
       this.setSize(this.size)
+      this.setCssVariables()
+    },
+
+    /* 重置方法 - 用于调试 */
+    reset() {
+      this.size = 'comfortable'
+      this.gap = 'md'
+      this.rounded = 'smooth'
+      this.sizes = deepClone(comfortableSizes)
+      this.setCssVariables()
     },
   },
 
   persist: {
     key: `${import.meta.env.VITE_PINIA_PERSIST_KEY_PREFIX}-size`,
     storage: localStorage,
+    // 添加序列化配置，确保持久化正确
+    serializer: {
+      deserialize: (value: string) => {
+        try {
+          return JSON.parse(value)
+        } catch {
+          return {}
+        }
+      },
+      serialize: (value: any) => {
+        return JSON.stringify(value)
+      },
+    },
   },
 })
 

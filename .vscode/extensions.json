@@ -5,6 +5,7 @@
     "ms-vscode.vscode-typescript-next",
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
+    "lokalise.i18n-ally",
     "eamodio.gitlens",
     "GitHub.vscode-github-actions",
     "vscode-icons-team.vscode-icons",

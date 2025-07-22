@@ -69,7 +69,7 @@ onMounted(() => {
 .atom-spinner .spinner-circle {
   display: block;
   position: absolute;
-  color: var(--theme-color);
+  color: var(--primary100);
   font-size: var(--circle-size);
   top: 50%;
   left: 50%;
@@ -81,7 +81,7 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border-left: var(--border-size) solid var(--theme-color);
+  border-left: var(--border-size) solid var(--primary200);
   border-top: var(--border-size) solid transparent;
 }
 

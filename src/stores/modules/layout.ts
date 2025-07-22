@@ -1,5 +1,6 @@
 /* 尺寸配置 */
 import store from '@/stores'
+import type { DeviceInfo } from '@/Types/global'
 import { getDeviceInfo } from '@/utils/deviceInfo'
 import { debounce } from 'lodash-es'
 import { defineStore } from 'pinia'
