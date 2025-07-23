@@ -55,8 +55,8 @@ export function useLocale() {
   // 监听语言变化，更新相关状态
   watch(
     () => getCurrentLocale(),
-    newLocale => {
-      console.log('Locale changed to:', newLocale)
+    _newLocale => {
+      // console.log('Locale changed to:', newLocale)
     },
     { immediate: true }
   )

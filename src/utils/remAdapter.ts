@@ -1,3 +1,4 @@
+const isDebug = import.meta.env.VITE_DEBUG && false
 /**
  * rem 适配系统
  *
@@ -9,6 +10,47 @@
  */
 
 import type { DeviceInfo } from '@/Types/global'
+import { debounce } from 'lodash-es'
+
+// 从环境变量解析 rem 适配配置
+export const parseRemConfigFromEnv = (): RemAdapterConfig => {
+  try {
+    // 解析断点配置（JSON 格式）
+    const breakpointsStr =
+      import.meta.env.VITE_REM_BREAKPOINTS ||
+      '{"xs":375,"sm":768,"md":1024,"lg":1400,"xl":1660,"xls":1920}'
+    const breakpoints = JSON.parse(breakpointsStr)
+
+    return {
+      designWidth: Number(import.meta.env.VITE_REM_DESIGN_WIDTH) || 1800,
+      baseFontSize: Number(import.meta.env.VITE_REM_BASE_FONT_SIZE) || 16,
+      minFontSize: Number(import.meta.env.VITE_REM_MIN_FONT_SIZE) || 12,
+      maxFontSize: Number(import.meta.env.VITE_REM_MAX_FONT_SIZE) || 24,
+      mobileFirst: import.meta.env.VITE_REM_MOBILE_FIRST === 'true',
+      breakpoints,
+    }
+  } catch (error) {
+    if (isDebug) {
+      console.warn('解析环境变量中的 rem 配置失败，使用默认配置:', error)
+    }
+    // fallback 到硬编码配置
+    return {
+      designWidth: 1800,
+      baseFontSize: 16,
+      minFontSize: 12,
+      maxFontSize: 24,
+      mobileFirst: false,
+      breakpoints: {
+        xs: 375,
+        sm: 768,
+        md: 1024,
+        lg: 1400,
+        xl: 1660,
+        xls: 1920,
+      },
+    }
+  }
+}
 
 // rem 适配配置
 export interface RemAdapterConfig {
@@ -33,27 +75,16 @@ export interface RemAdapterConfig {
   }
 }
 
-// 默认配置
-const DEFAULT_CONFIG: RemAdapterConfig = {
-  designWidth: 1920, // 设计稿宽度（大屏优先）
-  baseFontSize: 16, // 基准字体大小
-  minFontSize: 12, // 最小字体大小
-  maxFontSize: 24, // 最大字体大小
-  mobileFirst: false, // 是否移动端优先
-  breakpoints: {
-    xs: 375, // 超小屏断点 (UnoCSS: xs)
-    sm: 768, // 小屏断点 (UnoCSS: sm)
-    md: 1024, // 中屏断点 (UnoCSS: md)
-    lg: 1400, // 大屏断点 (UnoCSS: lg)
-    xl: 1660, // 超大屏断点 (UnoCSS: xl)
-    xls: 1920, // 特大屏断点 (UnoCSS: xls)
-  },
+// 默认配置（从环境变量解析）
+const DEFAULT_CONFIG: RemAdapterConfig = parseRemConfigFromEnv()
+
+if (isDebug) {
+  console.log('🎯 rem 适配配置已从环境变量加载:', DEFAULT_CONFIG)
 }
 
 export class RemAdapter {
   private config: RemAdapterConfig
   private currentFontSize: number = 16
-  private resizeTimer: number = 0
 
   constructor(config?: Partial<RemAdapterConfig>) {
     this.config = { ...DEFAULT_CONFIG, ...config }
@@ -80,68 +111,61 @@ export class RemAdapter {
   /**
    * 移动端优先计算策略
    */
-  private calculateMobileFirstSize(viewportWidth: number, deviceType: 'PC' | 'Mobile'): number {
-    const { breakpoints, baseFontSize, minFontSize, maxFontSize } = this.config
+  private calculateMobileFirstSize(viewportWidth: number, _deviceType: 'PC' | 'Mobile'): number {
+    const { designWidth, baseFontSize, minFontSize, maxFontSize } = this.config
 
-    let fontSize: number
+    // 🎯 移动端优先：也使用比例缩放，但可以设置不同的基准
+    // 对于移动端优先，可以考虑以较小的设计稿宽度为基准
+    const mobileDesignWidth = Math.min(designWidth, 768) // 取设计稿宽度和768px的较小值
+    const scale = viewportWidth / mobileDesignWidth
 
-    if (deviceType === 'Mobile' || viewportWidth <= breakpoints.xs) {
-      // 超小屏：基于 375px 计算
-      fontSize = (viewportWidth / 375) * 14
-    } else if (viewportWidth <= breakpoints.sm) {
-      // 小屏：基于 768px 计算
-      fontSize = (viewportWidth / 768) * 15
-    } else if (viewportWidth <= breakpoints.md) {
-      // 中屏：基于 1024px 计算
-      fontSize = (viewportWidth / 1024) * baseFontSize
-    } else if (viewportWidth <= breakpoints.lg) {
-      // 大屏：基于 1400px 计算
-      fontSize = (viewportWidth / 1400) * (baseFontSize + 2)
-    } else if (viewportWidth <= breakpoints.xl) {
-      // 超大屏：基于 1660px 计算
-      fontSize = (viewportWidth / 1660) * (baseFontSize + 3)
-    } else {
-      // 特大屏：基于 1920px 计算
-      fontSize = (viewportWidth / breakpoints.xls) * (baseFontSize + 4)
-    }
+    // 基于缩放比例计算字体大小
+    let fontSize = baseFontSize * scale
 
     // 限制字体大小范围
-    return Math.max(minFontSize, Math.min(maxFontSize, fontSize))
+    const minScale = minFontSize / baseFontSize
+    const maxScale = maxFontSize / baseFontSize
+    const clampedScale = Math.max(minScale, Math.min(maxScale, scale))
+    fontSize = baseFontSize * clampedScale
+
+    if (isDebug) {
+      console.log(
+        `🎯 移动端缩放计算: 屏幕${viewportWidth}px / 移动设计稿${mobileDesignWidth}px = ${scale.toFixed(4)} | 字体: ${fontSize.toFixed(2)}px`
+      )
+    }
+
+    return fontSize
   }
 
   /**
    * 桌面端优先计算策略（推荐用于管理后台）
    */
-  private calculateDesktopFirstSize(viewportWidth: number, deviceType: 'PC' | 'Mobile'): number {
-    const { breakpoints, baseFontSize, minFontSize, maxFontSize } = this.config
+  private calculateDesktopFirstSize(viewportWidth: number, _deviceType: 'PC' | 'Mobile'): number {
+    const { designWidth, baseFontSize, minFontSize, maxFontSize } = this.config
 
-    let fontSize: number
+    // 🎯 核心修复：按照设计稿宽度进行比例缩放
+    // 计算当前屏幕相对于设计稿的缩放比例
+    const scale = viewportWidth / designWidth
 
-    if (deviceType === 'Mobile' || viewportWidth <= breakpoints.xs) {
-      // 超小屏：使用较小的字体保证内容显示
-      fontSize = (viewportWidth / 375) * 13
-    } else if (viewportWidth <= breakpoints.sm) {
-      // 小屏
-      fontSize = (viewportWidth / 768) * 14
-    } else if (viewportWidth <= breakpoints.md) {
-      // 中屏
-      fontSize = baseFontSize
-    } else if (viewportWidth <= breakpoints.lg) {
-      // 大屏
-      fontSize = (viewportWidth / 1400) * baseFontSize
-    } else if (viewportWidth <= breakpoints.xl) {
-      // 超大屏
-      fontSize = (viewportWidth / 1660) * baseFontSize
-    } else if (viewportWidth <= breakpoints.xls) {
-      // 特大屏
-      fontSize = (viewportWidth / 1920) * baseFontSize
-    } else {
-      // 4K及以上超大屏：适当放大
-      fontSize = (viewportWidth / this.config.designWidth) * baseFontSize * 1.2
+    // 基于缩放比例计算字体大小
+    // 保持 PostCSS 的 rootValue=16 基准，确保 1:1 映射
+    let fontSize = baseFontSize * scale
+
+    // 对于极小屏幕，适当调整最小缩放比例，避免字体过小
+    const minScale = minFontSize / baseFontSize // 最小缩放比例
+    const maxScale = maxFontSize / baseFontSize // 最大缩放比例
+
+    // 限制缩放比例范围
+    const clampedScale = Math.max(minScale, Math.min(maxScale, scale))
+    fontSize = baseFontSize * clampedScale
+
+    if (isDebug) {
+      console.log(
+        `🎯 rem 缩放计算: 屏幕${viewportWidth}px / 设计稿${designWidth}px = ${scale.toFixed(4)} | 字体: ${fontSize.toFixed(2)}px`
+      )
     }
 
-    // 限制字体大小范围
-    return Math.max(minFontSize, Math.min(maxFontSize, fontSize))
+    return fontSize
   }
 
   /**
@@ -169,9 +193,11 @@ export class RemAdapter {
         })
       )
 
-      console.log(
-        `🎯 rem 适配已设置: ${fontSize.toFixed(2)}px (设备: ${deviceInfo.type}, 宽度: ${deviceInfo.screen.width}px)`
-      )
+      if (isDebug) {
+        console.log(
+          `🎯 rem 适配已设置: ${fontSize.toFixed(2)}px (设备: ${deviceInfo.type}, 宽度: ${deviceInfo.screen.width}px)`
+        )
+      }
     }
   }
 
@@ -240,32 +266,75 @@ export class RemAdapter {
   }
 
   /**
-   * 初始化适配器（带防抖）
+   * 初始化适配器（节流 + 防抖双重保障）
    */
-  init(getDeviceInfo: () => DeviceInfo, debounceTime: number = 200): () => void {
+  init(getDeviceInfo: () => DeviceInfo, debounceTime: number = 300): () => void {
     // 立即设置一次
     this.setRootFontSize(getDeviceInfo())
 
-    // 防抖处理的 resize 事件
-    const debouncedResize = () => {
-      clearTimeout(this.resizeTimer)
-      this.resizeTimer = window.setTimeout(() => {
+    let throttleTimer: number = 0
+    let isThrottled = false
+
+    // 节流处理：确保拖拽过程中实时响应 (每100ms最多执行一次)
+    const throttledResize = () => {
+      if (!isThrottled) {
         this.setRootFontSize(getDeviceInfo())
-      }, debounceTime)
+        isThrottled = true
+        throttleTimer = window.setTimeout(() => {
+          isThrottled = false
+        }, 100)
+      }
     }
 
-    // 监听相关事件
-    const events = ['resize', 'orientationchange', 'pageshow']
+    // 使用 lodash 防抖：确保停止拖拽后最终执行一次
+    const debouncedResize = debounce(() => {
+      this.setRootFontSize(getDeviceInfo())
+      if (isDebug) {
+        console.log('🎯 防抖最终更新完成 (300ms)')
+      }
+    }, debounceTime)
+
+    // 组合处理：节流 + 防抖
+    const handleResize = () => {
+      throttledResize() // 立即节流响应
+      debouncedResize() // 延迟防抖确保最终更新
+    }
+
+    // 监听更全面的事件
+    const events = [
+      'resize', // 窗口大小变化
+      'orientationchange', // 设备方向变化
+      'pageshow', // 页面显示
+      'visibilitychange', // 页面可见性变化
+      'focus', // 窗口获得焦点
+    ]
+
     events.forEach(event => {
-      window.addEventListener(event, debouncedResize)
+      if (event === 'visibilitychange') {
+        document.addEventListener(event, handleResize)
+      } else {
+        window.addEventListener(event, handleResize)
+      }
     })
+
+    if (isDebug) {
+      console.log('🎯 rem 适配器事件监听已启动 (节流+防抖300ms)')
+    }
 
     // 返回清理函数
     return () => {
-      clearTimeout(this.resizeTimer)
+      clearTimeout(throttleTimer)
+      debouncedResize.cancel() // 取消 lodash debounce
       events.forEach(event => {
-        window.removeEventListener(event, debouncedResize)
+        if (event === 'visibilitychange') {
+          document.removeEventListener(event, handleResize)
+        } else {
+          window.removeEventListener(event, handleResize)
+        }
       })
+      if (isDebug) {
+        console.log('🎯 rem 适配器事件监听已清理')
+      }
     }
   }
 }
@@ -328,4 +397,66 @@ export const toRem = (px: number): string => {
 export const toPx = (rem: number): number => {
   const base = getRemBase()
   return rem * base
+}
+
+// 🛠️ 开发调试工具：挂载到全局 window 对象
+if (typeof window !== 'undefined') {
+  ;(window as any).remDebug = {
+    // 获取当前 rem 基准值
+    getRemBase,
+
+    // px 转 rem
+    toRem,
+
+    // rem 转 px
+    toPx,
+
+    // 强制刷新适配（需要先初始化 postcss store）
+    async forceRefresh() {
+      try {
+        const { usePostcssStoreWithOut } = await import('@/stores/modules/postcss')
+        const postcssStore = usePostcssStoreWithOut()
+        return await postcssStore.forceRefreshAdapter()
+      } catch (_error) {
+        console.warn('请先初始化 postcss store')
+        return false
+      }
+    },
+
+    // 获取适配器状态
+    async getStatus() {
+      try {
+        const { usePostcssStoreWithOut } = await import('@/stores/modules/postcss')
+        const postcssStore = usePostcssStoreWithOut()
+        return postcssStore.getAdapterStatus()
+      } catch (_error) {
+        console.warn('请先初始化 postcss store')
+        return null
+      }
+    },
+
+    // 显示帮助信息
+    help() {
+      console.log(`
+🛠️ rem 适配调试工具
+
+用法：
+• remDebug.getRemBase() - 获取当前 rem 基准值
+• remDebug.toRem(px) - px 转 rem
+• remDebug.toPx(rem) - rem 转 px
+• remDebug.forceRefresh() - 强制刷新适配
+• remDebug.getStatus() - 获取适配器状态
+• remDebug.help() - 显示此帮助
+
+示例：
+remDebug.toRem(200) // "12.5000rem"
+remDebug.toPx(12.5) // 200
+remDebug.getRemBase() // 16
+      `)
+    },
+  }
+
+  if (isDebug) {
+    console.log('🛠️ rem 调试工具已加载，输入 remDebug.help() 查看使用方法')
+  }
 }

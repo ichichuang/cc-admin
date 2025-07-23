@@ -17,10 +17,10 @@
     "type-check": "vue-tsc --noEmit",
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
-    "naming-check": "node scripts/naming-rules.js",
+    "naming-check": "pnpm exec tsx scripts/naming-rules.ts",
     "check": "pnpm type-check && pnpm lint && pnpm naming-check && pnpm env-check",
     "fix": "pnpm format && pnpm lint",
-    "env-check": "node scripts/check-env.cjs",
+    "env-check": "pnpm exec tsx scripts/check-env.ts",
     "pre-commit": "pnpm check",
     "commit": "git-cz",
     "prepare": "husky"
@@ -45,6 +45,7 @@
     }
   },
   "dependencies": {
+    "@unocss/preset-rem-to-px": "^66.3.3",
     "alova": "^3.3.3",
     "crypto-js": "^4.2.0",
     "lodash-es": "^4.17.21",
@@ -89,6 +90,8 @@
     "rollup-plugin-visualizer": "^6.0.3",
     "sass": "^1.89.2",
     "terser": "^5.36.0",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.3",
     "typescript": "^5.6.2",
     "typescript-eslint": "^8.18.1",
     "unocss": "^66.3.2",

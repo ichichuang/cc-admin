@@ -63,6 +63,14 @@ export interface ViteEnv {
   VITE_DROP_DEBUGGER: boolean
   VITE_DROP_CONSOLE: boolean
   VITE_API_TIMEOUT: number
+  // rem 适配系统配置
+  VITE_REM_DESIGN_WIDTH: number
+  VITE_REM_BASE_FONT_SIZE: number
+  VITE_REM_MIN_FONT_SIZE: number
+  VITE_REM_MAX_FONT_SIZE: number
+  VITE_REM_MOBILE_FIRST: boolean
+  VITE_REM_BREAKPOINTS: string
+  VITE_POSTCSS_ROOT_VALUE: number
 }
 
 /** 处理环境变量 */
@@ -89,6 +97,14 @@ export const wrapperEnv = (envConf: Record<string, unknown>): ViteEnv => {
     VITE_DROP_DEBUGGER: true,
     VITE_DROP_CONSOLE: true,
     VITE_API_TIMEOUT: 10000,
+    // rem 适配系统默认值
+    VITE_REM_DESIGN_WIDTH: 1800,
+    VITE_REM_BASE_FONT_SIZE: 16,
+    VITE_REM_MIN_FONT_SIZE: 12,
+    VITE_REM_MAX_FONT_SIZE: 24,
+    VITE_REM_MOBILE_FIRST: false,
+    VITE_REM_BREAKPOINTS: '{"xs":375,"sm":768,"md":1024,"lg":1400,"xl":1660,"xls":1920}',
+    VITE_POSTCSS_ROOT_VALUE: 16,
   }
 
   for (const envName of Object.keys(envConf)) {
@@ -106,7 +122,12 @@ export const wrapperEnv = (envConf: Record<string, unknown>): ViteEnv => {
     if (
       envName === 'VITE_PORT' ||
       envName === 'VITE_LOADING_SIZE' ||
-      envName === 'VITE_API_TIMEOUT'
+      envName === 'VITE_API_TIMEOUT' ||
+      envName === 'VITE_REM_DESIGN_WIDTH' ||
+      envName === 'VITE_REM_BASE_FONT_SIZE' ||
+      envName === 'VITE_REM_MIN_FONT_SIZE' ||
+      envName === 'VITE_REM_MAX_FONT_SIZE' ||
+      envName === 'VITE_POSTCSS_ROOT_VALUE'
     ) {
       realName = Number(realName)
     }

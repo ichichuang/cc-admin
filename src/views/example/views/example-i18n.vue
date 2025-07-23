@@ -1,204 +1,302 @@
 <script setup lang="ts">
-import { computed, getCurrentInstance } from 'vue'
+import { useLocale } from '@/hooks/modules/useLocale'
+import type { SupportedLocale } from '@/locales/types'
+import { useLocaleStore } from '@/stores/modules/locale'
+import { computed } from 'vue'
 
-// 通过 getCurrentInstance 获取全局属性
-const instance = getCurrentInstance()
-const { $t, $d, $n, $te } = instance!.appContext.app.config.globalProperties
+interface I18nExample {
+  title: string
+  examples: {
+    name: string
+    key: string
+    value: string
+    params?: Record<string, any>
+  }[]
+}
 
-// 或者直接使用全局属性（在模板中可以直接使用 $t）
-const dynamicTitle = computed(() => $t('common.system.title'))
-const formattedDate = computed(() => $d(new Date(), 'datetime'))
-const formattedNumber = computed(() => $n(1234.56))
+const i18nExamples: I18nExample[] = [
+  {
+    title: '基础翻译',
+    examples: [
+      {
+        name: '系统标题',
+        key: 'common.system.title',
+        value: 'common.system.title',
+      },
+      {
+        name: '确认操作',
+        key: 'common.actions.confirm',
+        value: 'common.actions.confirm',
+      },
+      {
+        name: '加载状态',
+        key: 'common.status.loading',
+        value: 'common.status.loading',
+      },
+    ],
+  },
+  {
+    title: '用户模块',
+    examples: [
+      {
+        name: '用户资料标题',
+        key: 'user.profile.title',
+        value: 'user.profile.title',
+      },
+      {
+        name: '用户名',
+        key: 'user.profile.username',
+        value: 'user.profile.username',
+      },
+      {
+        name: '邮箱',
+        key: 'user.profile.email',
+        value: 'user.profile.email',
+      },
+      {
+        name: '用户状态',
+        key: 'user.status.active',
+        value: 'user.status.active',
+      },
+    ],
+  },
+  {
+    title: '认证模块',
+    examples: [
+      {
+        name: '登录标题',
+        key: 'auth.login.title',
+        value: 'auth.login.title',
+      },
+      {
+        name: '用户名输入',
+        key: 'auth.login.username',
+        value: 'auth.login.username',
+      },
+      {
+        name: '密码输入',
+        key: 'auth.login.password',
+        value: 'auth.login.password',
+      },
+      {
+        name: '登录按钮',
+        key: 'auth.login.loginButton',
+        value: 'auth.login.loginButton',
+      },
+    ],
+  },
+  {
+    title: '路由模块',
+    examples: [
+      {
+        name: '仪表盘',
+        key: 'router.dashboard.dashboard',
+        value: 'router.dashboard.dashboard',
+      },
+      {
+        name: '登录页面',
+        key: 'router.core.login',
+        value: 'router.core.login',
+      },
+      {
+        name: '示例页面',
+        key: 'router.example.example',
+        value: 'router.example.example',
+      },
+      {
+        name: '国际化示例',
+        key: 'router.example.i18n',
+        value: 'router.example.i18n',
+      },
+    ],
+  },
+  {
+    title: '参数化翻译',
+    examples: [
+      {
+        name: '表格总数',
+        key: 'common.table.total',
+        value: 'common.table.total',
+        params: { total: 100 },
+      },
+      {
+        name: '当前页码',
+        key: 'common.table.page',
+        value: 'common.table.page',
+        params: { page: 1 },
+      },
+    ],
+  },
+  {
+    title: '格式化示例',
+    examples: [
+      {
+        name: '当前日期',
+        key: 'common.format.date',
+        value: 'common.format.date',
+      },
+      {
+        name: '数字格式化',
+        key: 'common.format.number',
+        value: 'common.format.number',
+      },
+    ],
+  },
+]
+
+const localeStore = useLocaleStore()
+const { $t } = useLocale()
+
+const currentLocale = computed(() => localeStore.currentLocale)
+const currentLocaleInfo = computed(() => localeStore.currentLocaleInfo)
+const availableLocales = computed(() => localeStore.availableLocales)
+const isChineseLang = computed(() => localeStore.isChineseLang)
+const isRTL = computed(() => localeStore.isRTL)
+
+const switchLocale = (locale: SupportedLocale) => {
+  localeStore.switchLocale(locale)
+}
+
+// 格式化示例数据
+const currentDate = new Date()
+const formattedDate = computed(() => {
+  return currentDate.toLocaleString(currentLocale.value)
+})
+const formattedNumber = computed(() => {
+  return (1234.56).toLocaleString(currentLocale.value, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })
+})
 
 // 检查翻译键是否存在
 const checkKey = (key: string) => {
-  return $te(key)
+  try {
+    const result = $t(key)
+    return result !== key
+  } catch {
+    return false
+  }
 }
-
-console.log('Translation key exists:', checkKey('common.actions.confirm'))
-console.log('Current title:', $t('dashboard.title'))
 </script>
 
 <template>
-  <div class="example-i18n">
-    <div class="header">
-      <h1>{{ $t('dashboard.title') }}</h1>
-      <p>{{ $t('dashboard.welcome') }}</p>
+  <!-- 语言配置 -->
+  <div
+    class="bg-bg200 color-primary100 border p-gap mb-gap sticky top-0 left-0 right-0 between-col gap-gap"
+  >
+    <div class="between">
+      <div>
+        当前语言: {{ currentLocaleInfo?.flag }} {{ currentLocaleInfo?.name }} {{ currentLocale }}
+      </div>
+      <div class="between">
+        <template
+          v-for="locale in availableLocales"
+          :key="locale.key"
+        >
+          <div
+            class="btn-primary"
+            :class="currentLocale === locale.key ? 'btn-success' : ''"
+            @click="switchLocale(locale.key)"
+          >
+            {{ locale.flag }} {{ locale.name }}
+          </div>
+        </template>
+      </div>
     </div>
-
-    <div class="content">
-      <div class="section">
-        <h2>{{ $t('common.actions.confirm') }}</h2>
-        <p>{{ $t('common.status.loading') }}</p>
+    <div class="between">
+      <div>语言信息: 中文: {{ isChineseLang }} | RTL: {{ isRTL }}</div>
+      <div class="between">
+        <div class="bg-bg100 p-gap rounded">格式化日期: {{ formattedDate }}</div>
+        <div class="bg-bg100 p-gap rounded">格式化数字: {{ formattedNumber }}</div>
       </div>
+    </div>
+  </div>
 
-      <div class="section">
-        <h2>{{ $t('user.profile.title') }}</h2>
-        <ul>
-          <li>{{ $t('user.profile.username') }}: Admin</li>
-          <li>{{ $t('user.profile.email') }}: admin@example.com</li>
-          <li>{{ $t('user.status.active') }}</li>
-        </ul>
-      </div>
-
-      <div class="section">
-        <h2>{{ $t('auth.login.title') }}</h2>
-        <form>
-          <div class="form-item">
-            <label>{{ $t('auth.login.username') }}</label>
+  <!-- 国际化示例展示 -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gap p-gap">
+    <template
+      v-for="example in i18nExamples"
+      :key="example.title"
+    >
+      <div class="card">
+        <div class="center">{{ example.title }}</div>
+        <div
+          v-for="item in example.examples"
+          :key="item.name"
+          class="m-gap between gap-gap"
+        >
+          <div class="w50% hfull">
+            <div class="min-h40px between p-gap">
+              {{ item.name }}
+            </div>
             <input
+              class="input-base"
               type="text"
-              :placeholder="$t('auth.login.username')"
+              :value="item.key"
             />
           </div>
-          <div class="form-item">
-            <label>{{ $t('auth.login.password') }}</label>
+          <div class="w50% hfull">
+            <div class="h40px center bg-bg100 color-text100">
+              {{ item.params ? $t(item.key, item.params) : $t(item.key) }}
+            </div>
             <input
-              type="password"
-              :placeholder="$t('auth.login.password')"
+              class="input-base"
+              type="text"
+              :value="item.params ? `${item.key} (${JSON.stringify(item.params)})` : item.key"
             />
           </div>
-          <button type="button">{{ $t('auth.login.loginButton') }}</button>
-        </form>
-      </div>
-
-      <div class="section">
-        <h2>{{ $t('router.dashboard.dashboard') }}</h2>
-        <nav>
-          <ul>
-            <li>{{ $t('router.core.login') }}</li>
-            <li>{{ $t('router.example.example') }}</li>
-            <li>{{ $t('router.example.i18n') }}</li>
-            <li>{{ $t('router.example.unocss') }}</li>
-          </ul>
-        </nav>
-      </div>
-
-      <!-- 带参数的翻译示例 -->
-      <div class="section">
-        <h2>参数化翻译示例</h2>
-        <p>{{ $t('common.table.total', { total: 100 }) }}</p>
-        <p>{{ $t('common.table.page', { page: 1 }) }}</p>
-      </div>
-
-      <!-- 条件翻译示例 -->
-      <div class="section">
-        <h2>条件翻译示例</h2>
-        <div v-if="$te('user.management.userCount')">
-          <p>键存在: {{ $t('user.management.userCount') }}</p>
-        </div>
-        <div v-else>
-          <p>键不存在</p>
         </div>
       </div>
+    </template>
+  </div>
 
-      <!-- 在脚本中使用全局函数 -->
-      <div class="section">
-        <h2>脚本中使用示例</h2>
-        <p>动态标题: {{ dynamicTitle }}</p>
-        <p>格式化日期: {{ formattedDate }}</p>
-        <p>格式化数字: {{ formattedNumber }}</p>
+  <!-- 特殊示例 -->
+  <div class="p-gap">
+    <div class="card">
+      <div class="center">特殊示例</div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-gap p-gap">
+        <div class="bg-bg200 border border-bg300 p-gap rounded">
+          <div class="center mb-gap">键存在性检查</div>
+          <div class="between gap-gap">
+            <div class="bg-bg100 p-gap rounded">
+              <div>common.actions.confirm</div>
+              <div
+                :class="
+                  checkKey('common.actions.confirm') ? 'color-successColor' : 'color-errorColor'
+                "
+              >
+                {{ checkKey('common.actions.confirm') ? '✓ 存在' : '✗ 不存在' }}
+              </div>
+            </div>
+            <div class="bg-bg100 p-gap rounded">
+              <div>user.management.userCount</div>
+              <div
+                :class="
+                  checkKey('user.management.userCount') ? 'color-successColor' : 'color-errorColor'
+                "
+              >
+                {{ checkKey('user.management.userCount') ? '✓ 存在' : '✗ 不存在' }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-bg200 border border-bg300 p-gap rounded">
+          <div class="center mb-gap">格式化示例</div>
+          <div class="between-col gap-gap">
+            <div class="bg-bg100 p-gap rounded">
+              <div>当前日期时间</div>
+              <div class="color-primaryColor">{{ formattedDate }}</div>
+            </div>
+            <div class="bg-bg100 p-gap rounded">
+              <div>数字格式化</div>
+              <div class="color-primaryColor">{{ formattedNumber }}</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
-<style scoped>
-.example-i18n {
-  padding: 20px;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.header {
-  text-align: center;
-  margin-bottom: 30px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #eee;
-}
-
-.header h1 {
-  color: #333;
-  margin-bottom: 10px;
-}
-
-.header p {
-  color: #666;
-  font-size: 16px;
-}
-
-.content {
-  display: grid;
-  gap: 30px;
-}
-
-.section {
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #f9f9f9;
-}
-
-.section h2 {
-  color: #444;
-  margin-bottom: 15px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #ddd;
-}
-
-.section ul {
-  list-style: none;
-  padding: 0;
-}
-
-.section li {
-  padding: 5px 0;
-  border-bottom: 1px solid #eee;
-}
-
-.form-item {
-  margin-bottom: 15px;
-}
-
-.form-item label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-  color: #555;
-}
-
-.form-item input {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-button {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-button:hover {
-  background: #0056b3;
-}
-
-nav ul {
-  display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
-}
-
-nav li {
-  background: #e9ecef;
-  padding: 8px 12px;
-  border-radius: 4px;
-  border: none !important;
-}
-</style>
+<style lang="scss" scope></style>

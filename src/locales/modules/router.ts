@@ -68,25 +68,3 @@ export const routerZhTW: RouterLocaleMessages = {
     serverError: '服務器錯誤',
   },
 }
-
-/** 日文配置 */
-export const routerJaJP: RouterLocaleMessages = {
-  core: {
-    login: 'ログイン',
-  },
-  dashboard: {
-    dashboard: 'ダッシュボード',
-  },
-  example: {
-    example: '例',
-    i18n: '国際化',
-    color: 'テーマ',
-    size: 'サイズ',
-    rem: 'rem アダプター',
-  },
-  error: {
-    notFound: 'ページが見つかりません',
-    forbidden: 'アクセスが拒否されました',
-    serverError: 'サーバーエラー',
-  },
-}

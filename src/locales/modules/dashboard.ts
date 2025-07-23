@@ -104,37 +104,3 @@ export const dashboardZhTW: DashboardLocaleMessages = {
     noActivities: '暫無活動',
   },
 }
-
-/** 日文配置 */
-export const dashboardJaJP: DashboardLocaleMessages = {
-  title: 'ダッシュボード',
-  welcome: 'CC-Admin へようこそ',
-  overview: '概要',
-  statistics: {
-    totalUsers: '総ユーザー数',
-    activeUsers: 'アクティブユーザー',
-    totalOrders: '総注文数',
-    totalRevenue: '総売上',
-    growthRate: '成長率',
-    conversionRate: 'コンバージョン率',
-  },
-  charts: {
-    userGrowth: 'ユーザー成長トレンド',
-    revenueChart: '売上チャート',
-    orderChart: '注文チャート',
-    trafficChart: 'トラフィックチャート',
-    conversionChart: 'コンバージョンチャート',
-  },
-  quickActions: {
-    title: 'クイックアクション',
-    addUser: 'ユーザー追加',
-    viewOrders: '注文表示',
-    generateReport: 'レポート生成',
-    systemSettings: 'システム設定',
-  },
-  recentActivities: {
-    title: '最近の活動',
-    viewAll: 'すべて表示',
-    noActivities: 'アクティビティなし',
-  },
-}

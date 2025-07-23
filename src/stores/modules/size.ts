@@ -1,5 +1,5 @@
 /* 尺寸配置 */
-import { deepClone, toCamelCase } from '@/common'
+import { deepClone, toKebabCase } from '@/common'
 import store, { useLayoutStoreWithOut } from '@/stores'
 import { defineStore } from 'pinia'
 
@@ -273,11 +273,11 @@ export const useSizeStore = defineStore('size', {
       this.calculateContentHeight()
       // 更新 CSS 变量
       document.documentElement.style.setProperty(
-        toCamelCase('contentHeight', '--'),
+        toKebabCase('contentHeight', '--'),
         this.sizes.layout.contentHeight + 'px'
       )
       document.documentElement.style.setProperty(
-        toCamelCase('contentsHeight', '--'),
+        toKebabCase('contentsHeight', '--'),
         this.sizes.layout.contentsHeight + 'px'
       )
     },
@@ -328,21 +328,21 @@ export const useSizeStore = defineStore('size', {
 
       const cssVariables: Record<string, string> = {
         // 布局尺寸变量
-        [toCamelCase('sidebarWidth', '--')]: this.getSidebarWidth + 'px',
-        [toCamelCase('sidebarCollapsedWidth', '--')]: this.getSidebarCollapsedWidth + 'px',
-        [toCamelCase('headerHeight', '--')]: this.getHeaderHeight + 'px',
-        [toCamelCase('breadcrumbHeight', '--')]: this.getBreadcrumbHeight + 'px',
-        [toCamelCase('footerHeight', '--')]: this.getFooterHeight + 'px',
-        [toCamelCase('tabsHeight', '--')]: this.getTabsHeight + 'px',
-        [toCamelCase('contentHeight', '--')]: this.sizes.layout.contentHeight + 'px',
-        [toCamelCase('contentsHeight', '--')]: this.sizes.layout.contentsHeight + 'px',
+        [toKebabCase('sidebarWidth', '--')]: this.getSidebarWidth + 'px',
+        [toKebabCase('sidebarCollapsedWidth', '--')]: this.getSidebarCollapsedWidth + 'px',
+        [toKebabCase('headerHeight', '--')]: this.getHeaderHeight + 'px',
+        [toKebabCase('breadcrumbHeight', '--')]: this.getBreadcrumbHeight + 'px',
+        [toKebabCase('footerHeight', '--')]: this.getFooterHeight + 'px',
+        [toKebabCase('tabsHeight', '--')]: this.getTabsHeight + 'px',
+        [toKebabCase('contentHeight', '--')]: this.sizes.layout.contentHeight + 'px',
+        [toKebabCase('contentsHeight', '--')]: this.sizes.layout.contentsHeight + 'px',
 
         // 间距变量
-        [toCamelCase('gap', '--')]: (this.getGapValue || 0) + 'px',
-        [toCamelCase('gaps', '--')]: (this.getGapValue || 0) / 2 + 'px',
+        [toKebabCase('gap', '--')]: (this.getGapValue || 0) + 'px',
+        [toKebabCase('gaps', '--')]: (this.getGapValue || 0) / 2 + 'px',
 
         // 圆角变量
-        [toCamelCase('rounded', '--')]: (this.getRoundedValue || 0) + 'px',
+        [toKebabCase('rounded', '--')]: (this.getRoundedValue || 0) + 'px',
       }
 
       Object.entries(cssVariables).forEach(([key, value]) => {

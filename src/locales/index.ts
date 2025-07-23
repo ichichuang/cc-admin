@@ -4,7 +4,6 @@
 import type { App } from 'vue'
 import { createI18n } from 'vue-i18n'
 import enUS from './lang/en-US'
-import jaJP from './lang/ja-JP'
 import zhCN from './lang/zh-CN'
 import zhTW from './lang/zh-TW'
 import type { LocaleInfo, LocaleMessages, SupportedLocale } from './types'
@@ -29,12 +28,6 @@ export const supportedLocales: LocaleInfo[] = [
     flag: '🇹🇼',
     direction: 'ltr',
   },
-  {
-    key: 'ja-JP',
-    name: '日本語',
-    flag: '🇯🇵',
-    direction: 'ltr',
-  },
 ]
 
 // 语言包映射
@@ -42,7 +35,6 @@ const messages: Record<SupportedLocale, LocaleMessages> = {
   ['zh-CN']: zhCN,
   ['en-US']: enUS,
   ['zh-TW']: zhTW,
-  ['ja-JP']: jaJP,
 }
 
 // 获取默认语言
@@ -62,11 +54,6 @@ function getDefaultLocale(): SupportedLocale {
       return 'zh-TW'
     }
     return 'zh-CN'
-  }
-
-  // 日文检测
-  if (browserLang.includes('ja')) {
-    return 'ja-JP'
   }
 
   // 英文检测

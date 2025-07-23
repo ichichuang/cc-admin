@@ -78,6 +78,11 @@ export const commonZhCN: CommonLocaleMessages = {
     },
   },
 
+  format: {
+    date: '当前日期',
+    number: '数字格式化',
+  },
+
   system: {
     title: 'CC-Admin',
     description: '企业级后台管理系统',
@@ -165,6 +170,11 @@ export const commonEnUS: CommonLocaleMessages = {
       datetime: 'YYYY-MM-DD HH:mm:ss',
       time: 'HH:mm:ss',
     },
+  },
+
+  format: {
+    date: 'Current Date',
+    number: 'Number Format',
   },
 
   system: {
@@ -256,6 +266,11 @@ export const commonZhTW: CommonLocaleMessages = {
     },
   },
 
+  format: {
+    date: '當前日期',
+    number: '數字格式化',
+  },
+
   system: {
     title: 'CC-Admin',
     description: '企業級後台管理系統',
@@ -267,94 +282,5 @@ export const commonZhTW: CommonLocaleMessages = {
     unauthorized: '未授權存取',
     forbidden: '存取被拒絕',
     notFound: '頁面不存在',
-  },
-}
-
-/** 日文配置 */
-export const commonJaJP: CommonLocaleMessages = {
-  actions: {
-    confirm: '確認',
-    cancel: 'キャンセル',
-    save: '保存',
-    delete: '削除',
-    edit: '編集',
-    add: '追加',
-    search: '検索',
-    reset: 'リセット',
-    submit: '送信',
-    refresh: '更新',
-    export: 'エクスポート',
-    import: 'インポート',
-    close: '閉じる',
-    back: '戻る',
-    next: '次へ',
-    previous: '前へ',
-  },
-
-  status: {
-    loading: '読み込み中...',
-    success: '成功',
-    error: 'エラー',
-    warning: '警告',
-    info: '情報',
-    pending: '保留中',
-    completed: '完了',
-    failed: '失敗',
-    active: '有効',
-    inactive: '無効',
-  },
-
-  form: {
-    required: 'この項目は必須です',
-    invalid: '入力形式が正しくありません',
-    tooShort: '入力内容が短すぎます',
-    tooLong: '入力内容が長すぎます',
-    invalidEmail: 'メールアドレスの形式が正しくありません',
-    invalidPhone: '電話番号の形式が正しくありません',
-    invalidUrl: 'URLの形式が正しくありません',
-    passwordMismatch: 'パスワードが一致しません',
-    pleaseSelect: '選択してください',
-    pleaseInput: '入力してください',
-  },
-
-  table: {
-    noData: 'データがありません',
-    total: '合計 {total} 件',
-    page: '{page} ページ',
-    pageSize: 'ページあたり {size} 件',
-    itemsPerPage: '1ページの項目数',
-    goToPage: 'ページに移動',
-    firstPage: '最初',
-    lastPage: '最後',
-    previousPage: '前のページ',
-    nextPage: '次のページ',
-  },
-
-  time: {
-    now: 'たった今',
-    today: '今日',
-    yesterday: '昨日',
-    tomorrow: '明日',
-    thisWeek: '今週',
-    thisMonth: '今月',
-    thisYear: '今年',
-    format: {
-      date: 'YYYY-MM-DD',
-      datetime: 'YYYY-MM-DD HH:mm:ss',
-      time: 'HH:mm:ss',
-    },
-  },
-
-  system: {
-    title: 'CC-Admin',
-    description: '企業向け管理システム',
-    version: 'バージョン',
-    copyright: '著作権',
-    loading: 'システム読み込み中...',
-    networkError: 'ネットワーク接続に失敗しました',
-    serverError: 'サーバーエラー',
-    unauthorized: '認証されていません',
-    forbidden: 'アクセスが拒否されました',
-    notFound: 'ページが見つかりません',
   },
 }

@@ -130,6 +130,33 @@ declare interface ImportMetaEnv {
 
   /** 是否启用 CDN */
   readonly VITE_CDN: BooleanString
+
+  /**
+   * ==========================================
+   * rem 适配系统配置
+   * ==========================================
+   */
+
+  /** 设计稿基准宽度（像素） */
+  readonly VITE_REM_DESIGN_WIDTH: NumberString
+
+  /** 基准字体大小（像素） */
+  readonly VITE_REM_BASE_FONT_SIZE: NumberString
+
+  /** 最小字体大小（像素） */
+  readonly VITE_REM_MIN_FONT_SIZE: NumberString
+
+  /** 最大字体大小（像素） */
+  readonly VITE_REM_MAX_FONT_SIZE: NumberString
+
+  /** 是否启用移动端优先策略（true | false） */
+  readonly VITE_REM_MOBILE_FIRST: BooleanString
+
+  /** 响应式断点配置（JSON 格式，与 UnoCSS 保持一致） */
+  readonly VITE_REM_BREAKPOINTS: string
+
+  /** PostCSS px-to-rem 转换基准值（与 REM_BASE_FONT_SIZE 保持一致） */
+  readonly VITE_POSTCSS_ROOT_VALUE: NumberString
 }
 
 /**

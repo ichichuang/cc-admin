@@ -70,7 +70,7 @@
 | ------------------------- | ------------ | -------------------- |
 | `commitlint.config.js`    | 提交信息规范 | Conventional Commits |
 | `.prettierrc.json`        | 代码格式化   | 统一代码风格         |
-| `scripts/naming-rules.js` | 命名规范检查 | 自动验证文件命名     |
+| `scripts/naming-rules.ts` | 命名规范检查 | 自动验证文件命名     |
 
 ## 🏗️ 技术栈配置
 
@@ -198,7 +198,7 @@ src/
 
 ### 自动化命名检查
 
-通过 `scripts/naming-rules.js` 实现：
+通过 `scripts/naming-rules.ts` 实现：
 
 - 检查文件命名规范
 - 验证目录结构
@@ -236,7 +236,7 @@ src/
     "lint": "eslint . --fix", // ESLint检查修复
     "format": "prettier --write src/", // 代码格式化
     "type-check": "vue-tsc --noEmit", // TypeScript检查
-    "naming-check": "node scripts/naming-rules.js", // 命名检查
+    "naming-check": "node scripts/naming-rules.ts", // 命名检查
     "code-check": "pnpm type-check && pnpm lint && pnpm naming-check", // 综合检查
     "code-fix": "pnpm format && pnpm lint", // 代码修复
     "pre-commit": "pnpm code-check", // Git提交前检查

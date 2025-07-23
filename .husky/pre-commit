@@ -2,6 +2,6 @@
 pnpm dlx lint-staged
 
 # 检查命名规范
-pnpm naming-check
+pnpm check
 
 echo "✅ 代码检查和命名规范检查通过！"

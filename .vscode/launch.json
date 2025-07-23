@@ -19,7 +19,7 @@
       "name": "Run Naming Check",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceFolder}/scripts/naming-rules.js",
+      "program": "${workspaceFolder}/scripts/naming-rules.ts",
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}"
     },

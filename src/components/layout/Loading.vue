@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { toCamelCase } from '@/common'
+import { toKebabCase } from '@/common'
 import { useLayoutStore } from '@/stores'
 import { computed, onMounted, reactive, ref } from 'vue'
 const layoutStore = useLayoutStore()
@@ -17,8 +17,8 @@ const newSize = computed(() => {
 const spinnerStyle = reactive({
   width: `${newSize.value}px`,
   height: `${newSize.value}px`,
-  [toCamelCase('circleSize', '--')]: `${newSize.value * 0.24}px`,
-  [toCamelCase('borderSize', '--')]: `${newSize.value / 25}px`,
+  [toKebabCase('circleSize', '--')]: `${newSize.value * 0.24}px`,
+  [toKebabCase('borderSize', '--')]: `${newSize.value / 25}px`,
 })
 
 const loadingRef = ref<HTMLElement | null>(null)
@@ -32,8 +32,8 @@ onMounted(() => {
     if (props.page) {
       spinnerStyle.width = `${min}px`
       spinnerStyle.height = `${min}px`
-      spinnerStyle[toCamelCase('circleSize', '--')] = `${min * 0.24}px`
-      spinnerStyle[toCamelCase('borderSize', '--')] = `${min / 25}px`
+      spinnerStyle[toKebabCase('circleSize', '--')] = `${min * 0.24}px`
+      spinnerStyle[toKebabCase('borderSize', '--')] = `${min / 25}px`
     }
   }
 })

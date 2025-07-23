@@ -197,3 +197,16 @@ if (isDev()) {
     console.error('❌ 环境变量验证失败:', error)
   }
 }
+
+/* rem 适配系统配置 */
+export const remConfig = {
+  designWidth: Number(import.meta.env.VITE_REM_DESIGN_WIDTH) || 1800,
+  baseFontSize: Number(import.meta.env.VITE_REM_BASE_FONT_SIZE) || 16,
+  minFontSize: Number(import.meta.env.VITE_REM_MIN_FONT_SIZE) || 12,
+  maxFontSize: Number(import.meta.env.VITE_REM_MAX_FONT_SIZE) || 24,
+  mobileFirst: import.meta.env.VITE_REM_MOBILE_FIRST === 'true',
+  breakpoints: JSON.parse(
+    import.meta.env.VITE_REM_BREAKPOINTS ||
+      '{"xs":375,"sm":768,"md":1024,"lg":1400,"xl":1660,"xls":1920}'
+  ),
+}

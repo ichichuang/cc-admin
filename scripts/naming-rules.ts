@@ -42,7 +42,7 @@ const NAMING_RULES = {
 }
 
 // 错误收集器
-const errors = []
+const errors: any[] = []
 
 /**
  * 添加错误
@@ -80,7 +80,10 @@ function checkFileName(filePath, fileName) {
     'commitlint.config.js',
   ]
 
-  if (skipFiles.includes(fileName)) return
+  // 国际化文件名规则（允许语言代码格式如 en-US.ts）
+  const isI18nFile = filePath.includes('/locales/') && /^[a-z]{2}-[A-Z]{2}\.ts$/.test(fileName)
+
+  if (skipFiles.includes(fileName) || isI18nFile) return
 
   // 判断是否在 src/common、src/hooks、src/router、src/stores、src/utils 目录下
   const isInSpecialCamelCaseDir = /\/src\/(common|hooks|router|stores|utils)\//.test(filePath)
@@ -288,13 +291,13 @@ function outputResults() {
 
   console.log(`❌ 发现 ${errors.length} 个命名规范问题：\n`)
 
-  const groupedErrors = errors.reduce((groups, error) => {
+  const groupedErrors = errors.reduce((groups: any, error: any) => {
     if (!groups[error.type]) groups[error.type] = []
     groups[error.type].push(error)
     return groups
   }, {})
 
-  Object.entries(groupedErrors).forEach(([type, typeErrors]) => {
+  Object.entries(groupedErrors).forEach(([type, typeErrors]: any) => {
     const typeNames = {
       'file-naming': '📁 文件命名',
       'directory-naming': '📂 目录命名',

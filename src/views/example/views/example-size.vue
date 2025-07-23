@@ -57,7 +57,7 @@ const toggleSidebar = () => {
 <template>
   <!-- 尺寸配置 -->
   <div
-    class="bg-primary100 color-primary300 border p-gap sticky top-0 left-0 right-0 between-col gap-gap"
+    class="bg-bg200 color-primary100 border p-gap sticky top-0 left-0 right-0 between-col gap-gap"
   >
     <div class="between">
       <div>切换尺寸模式: {{ sizeLabel }} {{ size }}</div>
@@ -132,8 +132,8 @@ const toggleSidebar = () => {
         </div>
       </div>
       <div class="wfull h100% bg-bg100 between-col">
-        <div class="h-breadcrumbHeight bg-primary100 center">breadcrumb {{ breadcrumbHeight }}</div>
-        <div class="h-tabsHeight bg-primary200 center">tabs {{ tabsHeight }}</div>
+        <div class="h-breadcrumbHeight bg-bg100 center">breadcrumb {{ breadcrumbHeight }}</div>
+        <div class="h-tabsHeight bg-bg200 center">tabs {{ tabsHeight }}</div>
         <div class="h-contentHeight center-col">
           <div class="bg-bg200 border border-bg300 p-gap rounded">
             <div>content {{ contentHeight }}</div>

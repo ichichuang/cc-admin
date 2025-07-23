@@ -23,6 +23,12 @@ import AppContainer from '@/layouts/components/AppContainer.vue'
       >
         rem
       </div>
+      <div
+        class="btn-info"
+        @click="goName('ExampleI18n')"
+      >
+        i18n
+      </div>
     </div>
     <div class="wfull h-[calc(var(--contents-height)+var(--footer-height))] overflow-auto">
       <div>

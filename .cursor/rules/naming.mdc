@@ -314,7 +314,7 @@ export const userRoutes = [
 
 ## ✅ 命名检查规则
 
-项目通过 `scripts/naming-rules.js` 自动检查以下规则：
+项目通过 `scripts/naming-rules.ts` 自动检查以下规则：
 
 1. **文件命名**: 确保 Vue 组件使用 PascalCase，页面使用 kebab-case
 2. **目录命名**: 确保所有目录使用 kebab-case

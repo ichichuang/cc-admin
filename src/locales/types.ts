@@ -4,7 +4,7 @@
  */
 
 /** 支持的语言类型 */
-export type SupportedLocale = 'zh-CN' | 'en-US' | 'zh-TW' | 'ja-JP'
+export type SupportedLocale = 'zh-CN' | 'en-US' | 'zh-TW'
 
 /** 语言配置信息 */
 export interface LocaleInfo {
@@ -92,6 +92,12 @@ export interface CommonLocaleMessages {
       datetime: string
       time: string
     }
+  }
+
+  // 格式化示例
+  format: {
+    date: string
+    number: string
   }
 
   // 系统相关

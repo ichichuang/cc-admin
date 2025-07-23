@@ -139,8 +139,8 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
           },
           // postcss-pxtorem 配置
           postcssPxToRem({
-            // 基准字体大小，与 rem 适配器保持一致
-            rootValue: 16,
+            // 基准字体大小，从环境变量读取
+            rootValue: Number(env.VITE_POSTCSS_ROOT_VALUE) || 16,
             // 需要转换的CSS属性，* 表示所有属性
             propList: [
               '*',
@@ -152,22 +152,41 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
               '!border-bottom-width',
               '!border-left-width',
             ],
-            // 过滤不需要转换的选择器 - 修复 UnoCSS 兼容性
+            // 过滤不需要转换的选择器 - 修复设计稿映射兼容性
             selectorBlackList: [
-              // 修复：正确排除 UnoCSS 工具类
-              /^\.([whmp][tblrxysa]?-|text-|bg-|border-|rounded-|flex|grid|absolute|relative|fixed|sticky)/,
+              // ✅ 排除传统 UnoCSS 工具类（非数字值）
+              /^\.w-(full|auto|screen|min|max|fit)/, // w-full, w-auto 等
+              /^\.h-(full|auto|screen|min|max|fit)/, // h-full, h-auto 等
+              /^\.text-(xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|6xl|7xl|8xl|9xl)/, // text-sm, text-lg 等
+              /^\.p-(auto|px|py)/, // p-auto, px-4 等
+              /^\.m-(auto|px|py)/, // m-auto, mx-4 等
+
+              // ✅ 排除其他 UnoCSS 工具类
+              /^\.bg-/, // 背景颜色类
+              /^\.border-(?![\d])/, // 边框类（排除 border-2 等数字）
+              /^\.rounded-(?![\d])/, // 圆角类（排除 rounded-8 等数字）
+              /^\.flex/, // 布局类
+              /^\.grid/, // 网格类
+              /^\.absolute|\.relative|\.fixed|\.sticky/, // 定位类
+              /^\.justify-|\.items-|\.content-/, // 对齐类
+              /^\.overflow-|\.cursor-|\.select-/, // 其他工具类
+
+              // ✅ 排除响应式前缀
               /^\.([0-9]+|xs|sm|md|lg|xl|2xl|3xl|4xl|5xl|6xl|7xl|8xl|9xl):/,
-              // HTML 根元素不转换
-              /^html$/,
-              // 根字体大小相关不转换
-              /^:root$/,
-              // 某些第三方组件不转换
-              /^\.el-/,
-              /^\.ant-/,
-              /^\.van-/,
-              // 不转换包含 'no-rem' 的类名
-              /no-rem/,
-              // 不转换 UnoCSS 生成的响应式前缀
+
+              // ✅ 排除系统类
+              /^html$/, // HTML 根元素
+              /^:root$/, // CSS 根变量
+
+              // ✅ 排除第三方组件
+              /^\.el-/, // Element Plus
+              /^\.ant-/, // Ant Design
+              /^\.van-/, // Vant
+
+              // ✅ 排除明确标记的类
+              /no-rem/, // 明确不转换的类
+
+              // ✅ 排除媒体查询
               /^@media.*\.(xs|sm|md|lg|xl|2xl):/,
             ],
             // 替换规则

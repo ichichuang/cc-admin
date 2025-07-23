@@ -1,4 +1,4 @@
-import { getSystemColorMode, toCamelCase } from '@/common'
+import { getSystemColorMode, toKebabCase } from '@/common'
 import store from '@/stores'
 import { defineStore } from 'pinia'
 
@@ -550,49 +550,49 @@ export const useColorStore = defineStore('color', {
     /* 将颜色变量都存储到 css 变量中 用于全局样式 */
     setCssVariables() {
       const cssVariables: Record<string, string> = {
-        [toCamelCase('primaryColor', '--')]: this.getPrimaryColor,
-        [toCamelCase('successColor', '--')]: this.getSuccessColor,
-        [toCamelCase('warningColor', '--')]: this.getWarningColor,
-        [toCamelCase('errorColor', '--')]: this.getErrorColor,
-        [toCamelCase('infoColor', '--')]: this.getInfoColor,
+        [toKebabCase('primaryColor', '--')]: this.getPrimaryColor,
+        [toKebabCase('successColor', '--')]: this.getSuccessColor,
+        [toKebabCase('warningColor', '--')]: this.getWarningColor,
+        [toKebabCase('errorColor', '--')]: this.getErrorColor,
+        [toKebabCase('infoColor', '--')]: this.getInfoColor,
 
-        [toCamelCase('primaryHoverColor', '--')]: this.getPrimaryHoverColor,
-        [toCamelCase('successHoverColor', '--')]: this.getSuccessHoverColor,
-        [toCamelCase('warningHoverColor', '--')]: this.getWarningHoverColor,
-        [toCamelCase('errorHoverColor', '--')]: this.getErrorHoverColor,
-        [toCamelCase('infoHoverColor', '--')]: this.getInfoHoverColor,
+        [toKebabCase('primaryHoverColor', '--')]: this.getPrimaryHoverColor,
+        [toKebabCase('successHoverColor', '--')]: this.getSuccessHoverColor,
+        [toKebabCase('warningHoverColor', '--')]: this.getWarningHoverColor,
+        [toKebabCase('errorHoverColor', '--')]: this.getErrorHoverColor,
+        [toKebabCase('infoHoverColor', '--')]: this.getInfoHoverColor,
 
-        [toCamelCase('primaryActiveColor', '--')]: this.getPrimaryActiveColor,
-        [toCamelCase('successActiveColor', '--')]: this.getSuccessActiveColor,
-        [toCamelCase('warningActiveColor', '--')]: this.getWarningActiveColor,
-        [toCamelCase('errorActiveColor', '--')]: this.getErrorActiveColor,
-        [toCamelCase('infoActiveColor', '--')]: this.getInfoActiveColor,
+        [toKebabCase('primaryActiveColor', '--')]: this.getPrimaryActiveColor,
+        [toKebabCase('successActiveColor', '--')]: this.getSuccessActiveColor,
+        [toKebabCase('warningActiveColor', '--')]: this.getWarningActiveColor,
+        [toKebabCase('errorActiveColor', '--')]: this.getErrorActiveColor,
+        [toKebabCase('infoActiveColor', '--')]: this.getInfoActiveColor,
 
-        [toCamelCase('primaryDisabledColor', '--')]: this.getPrimaryDisabledColor,
-        [toCamelCase('successDisabledColor', '--')]: this.getSuccessDisabledColor,
-        [toCamelCase('warningDisabledColor', '--')]: this.getWarningDisabledColor,
-        [toCamelCase('errorDisabledColor', '--')]: this.getErrorDisabledColor,
-        [toCamelCase('infoDisabledColor', '--')]: this.getInfoDisabledColor,
+        [toKebabCase('primaryDisabledColor', '--')]: this.getPrimaryDisabledColor,
+        [toKebabCase('successDisabledColor', '--')]: this.getSuccessDisabledColor,
+        [toKebabCase('warningDisabledColor', '--')]: this.getWarningDisabledColor,
+        [toKebabCase('errorDisabledColor', '--')]: this.getErrorDisabledColor,
+        [toKebabCase('infoDisabledColor', '--')]: this.getInfoDisabledColor,
 
-        [toCamelCase('primaryLightColor', '--')]: this.getPrimaryLightColor,
-        [toCamelCase('successLightColor', '--')]: this.getSuccessLightColor,
-        [toCamelCase('warningLightColor', '--')]: this.getWarningLightColor,
-        [toCamelCase('errorLightColor', '--')]: this.getErrorLightColor,
-        [toCamelCase('infoLightColor', '--')]: this.getInfoLightColor,
+        [toKebabCase('primaryLightColor', '--')]: this.getPrimaryLightColor,
+        [toKebabCase('successLightColor', '--')]: this.getSuccessLightColor,
+        [toKebabCase('warningLightColor', '--')]: this.getWarningLightColor,
+        [toKebabCase('errorLightColor', '--')]: this.getErrorLightColor,
+        [toKebabCase('infoLightColor', '--')]: this.getInfoLightColor,
 
-        [toCamelCase('primary100', '--')]: this.getPrimary100,
-        [toCamelCase('primary200', '--')]: this.getPrimary200,
-        [toCamelCase('primary300', '--')]: this.getPrimary300,
+        [toKebabCase('primary100', '--')]: this.getPrimary100,
+        [toKebabCase('primary200', '--')]: this.getPrimary200,
+        [toKebabCase('primary300', '--')]: this.getPrimary300,
 
-        [toCamelCase('accent100', '--')]: this.getAccent100,
-        [toCamelCase('accent200', '--')]: this.getAccent200,
+        [toKebabCase('accent100', '--')]: this.getAccent100,
+        [toKebabCase('accent200', '--')]: this.getAccent200,
 
-        [toCamelCase('text100', '--')]: this.getText100,
-        [toCamelCase('text200', '--')]: this.getText200,
+        [toKebabCase('text100', '--')]: this.getText100,
+        [toKebabCase('text200', '--')]: this.getText200,
 
-        [toCamelCase('bg100', '--')]: this.getBg100,
-        [toCamelCase('bg200', '--')]: this.getBg200,
-        [toCamelCase('bg300', '--')]: this.getBg300,
+        [toKebabCase('bg100', '--')]: this.getBg100,
+        [toKebabCase('bg200', '--')]: this.getBg200,
+        [toKebabCase('bg300', '--')]: this.getBg300,
       }
 
       Object.entries(cssVariables).forEach(([key, value]) => {

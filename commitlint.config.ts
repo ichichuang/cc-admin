@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 export default {
   extends: ['@commitlint/config-conventional'],
   rules: {

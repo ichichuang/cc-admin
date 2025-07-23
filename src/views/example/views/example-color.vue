@@ -156,7 +156,7 @@ const setTheme = (value: ThemeColor['value']) => {
 <template>
   <!-- 颜色配置 -->
   <div
-    class="bg-primary100 color-primary300 border p-gap mb-gap sticky top-0 left-0 right-0 between-col gap-gap"
+    class="bg-bg200 color-primary100 border p-gap mb-gap sticky top-0 left-0 right-0 between-col gap-gap"
   >
     <div class="between">
       <div>切换颜色模式: {{ modeLabel }} {{ mode }}</div>
@@ -194,7 +194,7 @@ const setTheme = (value: ThemeColor['value']) => {
     </div>
   </div>
   <!-- 颜色展示 -->
-  <div class="grid grid-cols-2 gap-gap p-gap">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gap p-gap">
     <template
       v-for="color in colors"
       :key="color.title"
