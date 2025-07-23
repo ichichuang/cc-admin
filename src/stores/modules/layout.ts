@@ -1,5 +1,6 @@
 /* 尺寸配置 */
 import store from '@/stores'
+import { useSizeStoreWithOut } from '@/stores/modules/size'
 import type { DeviceInfo } from '@/Types/global'
 import { getDeviceInfo } from '@/utils/deviceInfo'
 import { debounce } from 'lodash-es'
@@ -178,7 +179,6 @@ export const useLayoutStore = defineStore('layout', {
       // 使用 nextTick 确保在下一个事件循环中执行，避免循环依赖
       setTimeout(async () => {
         try {
-          const { useSizeStoreWithOut } = await import('@/stores/modules/size')
           const sizeStore = useSizeStoreWithOut()
           sizeStore.updateContentHeight()
         } catch (error) {

@@ -1,5 +1,6 @@
 const isDebug = import.meta.env.VITE_DEBUG && false
 import store from '@/stores'
+import { useLayoutStoreWithOut } from '@/stores/modules/layout'
 import type { DeviceInfo } from '@/Types/global'
 import { RemAdapter, type RemAdapterConfig, parseRemConfigFromEnv } from '@/utils/remAdapter'
 import { defineStore } from 'pinia'
@@ -52,7 +53,6 @@ export const usePostcssStore = defineStore(
     const initRemAdapter = async () => {
       try {
         // 获取设备信息
-        const { useLayoutStoreWithOut } = await import('@/stores/modules/layout')
         const layoutStore = useLayoutStoreWithOut()
         const deviceInfo = layoutStore.deviceInfo
 
@@ -182,7 +182,6 @@ export const usePostcssStore = defineStore(
         typeof remAdapter.value.getCurrentFontSize === 'function'
       ) {
         try {
-          const { useLayoutStoreWithOut } = await import('@/stores/modules/layout')
           const layoutStore = useLayoutStoreWithOut()
           const deviceInfo = layoutStore.deviceInfo
 
@@ -239,7 +238,6 @@ export const usePostcssStore = defineStore(
     const getRemAdapterInfoAsync = async () => {
       if (remAdapter.value && typeof remAdapter.value.getAdapterInfo === 'function') {
         try {
-          const { useLayoutStoreWithOut } = await import('@/stores/modules/layout')
           const layoutStore = useLayoutStoreWithOut()
           return remAdapter.value.getAdapterInfo(layoutStore.deviceInfo)
         } catch (error) {
@@ -252,7 +250,6 @@ export const usePostcssStore = defineStore(
 
     const getCurrentBreakpointAsync = async (): Promise<string> => {
       try {
-        const { useLayoutStoreWithOut } = await import('@/stores/modules/layout')
         const layoutStore = useLayoutStoreWithOut()
         return getCurrentBreakpoint.value(layoutStore.deviceInfo)
       } catch (error) {
@@ -264,7 +261,6 @@ export const usePostcssStore = defineStore(
     // 手动刷新适配器（强制更新）
     const forceRefreshAdapter = async () => {
       try {
-        const { useLayoutStoreWithOut } = await import('@/stores/modules/layout')
         const layoutStore = useLayoutStoreWithOut()
         const deviceInfo = layoutStore.deviceInfo
 

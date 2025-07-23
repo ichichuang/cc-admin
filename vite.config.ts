@@ -101,7 +101,6 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
           manualChunks: {
             vue: ['vue', 'vue-router', 'pinia'],
             vendor: ['alova', 'lodash-es'],
-            utils: ['dayjs', 'crypto-js'],
           },
         },
       },
