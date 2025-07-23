@@ -2,33 +2,19 @@
   "version": 2,
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "vite",
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
+
   "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    },
     {
       "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot))",
       "headers": {
         "Cache-Control": "public, max-age=31536000, immutable"
-      },
-      "dest": "/$1"
+      }
     },
     {
       "src": "/assets/(.*)",
       "headers": {
         "Cache-Control": "public, max-age=31536000, immutable"
-      },
-      "dest": "/assets/$1"
+      }
     },
     {
       "src": "/(.*)",
@@ -85,8 +71,10 @@
     }
   ],
   "functions": {
-    "app/api/**/*.ts": {
-      "runtime": "nodejs18.x"
+    "api/**/*.ts": {
+      "runtime": "nodejs18.x",
+      "memory": 1024,
+      "maxDuration": 10
     }
   },
   "env": {
