@@ -5,7 +5,7 @@ import { createDynamicRouteManager, createRouteUtils, sortRoutes } from '@/route
 import { registerRouterGuards } from '@/router/utils/customs'
 import { autoImportModulesSync } from '@/utils/moduleLoader'
 import type { RouteRecordRaw } from 'vue-router'
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import {
   getCurrentRouteInfo,
   initDynamicRoutes,
@@ -52,9 +52,9 @@ const initialRoutes: RouteRecordRaw[] = allStaticRoutesWithRedirect.map(
 
 // 创建路由实例
 const router = createRouter({
-  // hash 模式
-  // history: createWebHistory(import.meta.env.BASE_URL),
-  history: createWebHashHistory(import.meta.env.BASE_URL),
+  // history 模式
+  history: createWebHistory(import.meta.env.VITE_PUBLIC_PATH),
+  // history: createWebHashHistory(import.meta.env.VITE_PUBLIC_PATH),
   routes: initialRoutes,
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
