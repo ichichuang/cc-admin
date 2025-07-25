@@ -5,6 +5,10 @@ import 'uno.css'
 // 导入全局样式
 import '@/assets/styles/reset.scss'
 
+// 初始化 Mock 服务
+import { initMockService } from './mock'
+initMockService()
+
 import App from '@/App.vue'
 import { setupI18n } from '@/locales'
 import router from '@/router'
