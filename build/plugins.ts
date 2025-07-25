@@ -53,12 +53,8 @@ export function getPluginsList(env: ViteEnv): PluginOption[] {
     VITE_MOCK_ENABLE &&
       viteMockServe({
         mockPath: 'src/mock/modules',
-        localEnabled: VITE_MOCK_ENABLE,
-        prodEnabled: false,
-        injectCode: `
-        import { setupProdMockServer } from './mock/mockProdServer';
-        setupProdMockServer();
-      `,
+        enable: VITE_MOCK_ENABLE,
+        logger: true,
       }),
     // 注意：我们不需要 Vue I18n 编译插件，因为使用运行时配置
   ].filter(Boolean) as PluginOption[]

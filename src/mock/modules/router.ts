@@ -47,7 +47,7 @@ const MOCK_TOKEN = 'fake-jwt-token-123456'
 
 export default [
   {
-    url: '/auth/routes',
+    url: '/mock/auth/routes',
     method: 'get',
     response: ({ headers }: { headers: { authorization: string } }) => {
       const auth = headers.authorization || ''

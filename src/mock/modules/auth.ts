@@ -18,7 +18,7 @@ const MOCK_TOKEN = 'fake-jwt-token-123456'
 
 export default [
   {
-    url: '/auth/login',
+    url: '/mock/auth/login',
     method: 'post',
     response: ({ body }: { body: { username: string; password: string } }) => {
       const { username, password } = body
@@ -47,7 +47,7 @@ export default [
     },
   },
   {
-    url: '/auth/userInfo',
+    url: '/mock/auth/userInfo',
     method: 'get',
     response: ({ headers }: { headers: { authorization: string } }) => {
       const auth = headers.authorization || ''
