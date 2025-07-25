@@ -19,7 +19,7 @@ export function initMockService() {
 
   if (isMockEnabled) {
     // 使用自定义 Mock 服务，支持生产环境
-    import('./mockService')
+    import('./mock-service')
       .then(() => {
         console.log('✅ Mock 服务已启动')
       })
