@@ -1,8 +1,6 @@
-// src/utils/http/interceptors.ts
+const isDebug = import.meta.env.VITE_DEBUG === 'true'
 import { useUserStoreWithOut } from '@/stores'
 import type { Method } from 'alova'
-
-const isDebug = import.meta.env.VITE_DEBUG
 
 /**
  * 全局请求拦截器

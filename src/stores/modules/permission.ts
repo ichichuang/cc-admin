@@ -39,7 +39,6 @@ export const usePermissionStore = defineStore('permission', {
     },
     // 重置
     reset() {
-      console.log('重置权限')
       this.staticRoutes = []
       this.dynamicRoutes = []
       this.isRoutesLoaded = false

@@ -1,6 +1,6 @@
 import { useLoading } from '@/hooks'
 import { recordUnauthorizedAccess } from '@/router/utils'
-import { usePermissionStoreWithOut, useUserStoreWithOut } from '@/stores'
+import { useAppStoreWithOut, usePermissionStoreWithOut, useUserStoreWithOut } from '@/stores'
 import type { Router } from 'vue-router'
 
 const { loadingStart, loadingDone } = useLoading()
@@ -63,15 +63,20 @@ export function registerRouterGuards(
   }
 ) {
   // 路由白名单
-  const whiteList = ['/login', '/register', '/404', '/403', '/500']
+  const whiteList = ['/login', '/register']
   // 错误页面
   const errorPages = ['/404', '/403', '/500']
 
   router.beforeEach(async (to, from, next) => {
     loadingStart()
     try {
+      const appStore = useAppStoreWithOut()
+      const env = import.meta.env
+      const title = env.VITE_APP_TITLE || appStore.getTitle
       if (to.meta?.title) {
-        document.title = `${to.meta.title} - ${import.meta.env.VITE_APP_TITLE}`
+        document.title = `${to.meta.title} - ${title}`
+      } else {
+        document.title = title
       }
       if (errorPages.includes(to.path)) {
         next()

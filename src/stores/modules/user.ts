@@ -32,7 +32,6 @@ export const useUserStore = defineStore('user', {
     setToken(token: string) {
       this.token = token
       getUserInfo().then(res => {
-        console.log('获取用户信息: ', res)
         this.userInfo = res
         router.push(
           (router.currentRoute.value.query.redirect as string) || import.meta.env.VITE_ROOT_REDIRECT

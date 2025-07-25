@@ -9,7 +9,12 @@ import { beforeRequest, responseHandler } from './interceptors'
  */
 export const alovaInstance = createAlova({
   // 连接到本地 cc-server
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL:
+    import.meta.env.VITE_MOCK_ENABLE === 'true'
+      ? '' // Mock 模式下不需要 baseURL 前缀
+      : import.meta.env.VITE_APP_ENV === 'development'
+        ? '/api'
+        : import.meta.env.VITE_API_BASE_URL,
 
   // 使用 fetch 作为请求适配器
   requestAdapter: adapterFetch(),

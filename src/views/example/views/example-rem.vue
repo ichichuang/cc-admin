@@ -98,12 +98,7 @@ const resetConfig = () => {
 
 // 手动刷新适配器
 const forceRefresh = async () => {
-  const success = await postcssStore.forceRefreshAdapter()
-  if (success) {
-    console.log('✅ 适配器刷新成功')
-  } else {
-    console.warn('❌ 适配器刷新失败')
-  }
+  await postcssStore.forceRefreshAdapter()
 }
 
 // 获取适配器状态
@@ -113,9 +108,7 @@ onMounted(async () => {
   await postcssStore.initRemAdapter()
 
   // 监听手动刷新事件
-  const handleAdapterRefresh = (event: CustomEvent) => {
-    console.log('🔄 适配器已刷新：', event.detail)
-  }
+  const handleAdapterRefresh = (_event: CustomEvent) => {}
 
   window.addEventListener('remAdapterRefreshed', handleAdapterRefresh as EventListener)
 
@@ -163,8 +156,8 @@ onMounted(async () => {
           <div
             v-for="item in breakpointOptions"
             :key="item.key"
-            class="btn-sm px-2 py-1 text-xs"
-            :class="currentBreakpoint === item.key ? 'btn-success' : 'btn-outline'"
+            class="p-gap py-gaps"
+            :class="currentBreakpoint === item.key ? 'btn-success' : 'btn-info'"
           >
             {{ item.label }}
           </div>
@@ -349,27 +342,3 @@ onMounted(async () => {
     </div>
   </div>
 </template>
-
-<style scoped lang="scss">
-.example-rem {
-  .card {
-    @apply bg-bg200 border border-bg300 rounded p-gap;
-  }
-
-  .btn-sm {
-    @apply px-2 py-1 text-xs rounded;
-  }
-
-  .btn-outline {
-    @apply border border-bg300 bg-bg100 color-text200;
-  }
-
-  .input-base {
-    @apply px-2 py-1 border border-bg300 rounded bg-bg100 color-text100;
-
-    &:focus {
-      @apply outline-none border-primaryColor;
-    }
-  }
-}
-</style>

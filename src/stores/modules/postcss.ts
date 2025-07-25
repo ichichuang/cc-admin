@@ -1,4 +1,4 @@
-const isDebug = import.meta.env.VITE_DEBUG && false
+const isDebug = import.meta.env.VITE_DEBUG === 'true'
 import store from '@/stores'
 import { useLayoutStoreWithOut } from '@/stores/modules/layout'
 import type { DeviceInfo } from '@/Types/global'
@@ -66,6 +66,14 @@ export const usePostcssStore = defineStore(
             console.log(
               `🎯 自动切换适配模式: ${isMobile ? '移动端优先' : '桌面端优先'} (设备: ${deviceInfo.type})`
             )
+          }
+        }
+
+        // 设置全局变量供调试工具使用
+        if (typeof window !== 'undefined') {
+          ;(window as any).__POSTCSS_STORE__ = {
+            forceRefreshAdapter,
+            getAdapterStatus,
           }
         }
 

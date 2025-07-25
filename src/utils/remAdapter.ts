@@ -1,4 +1,4 @@
-const isDebug = import.meta.env.VITE_DEBUG && false
+const isDebug = import.meta.env.VITE_DEBUG === 'true'
 /**
  * rem 适配系统
  *
@@ -411,24 +411,34 @@ if (typeof window !== 'undefined') {
     // rem 转 px
     toPx,
 
-    // 强制刷新适配（需要先初始化 postcss store）
-    async forceRefresh() {
+    // 强制刷新适配
+    forceRefresh() {
       try {
-        const { usePostcssStoreWithOut } = await import('@/stores/modules/postcss')
-        const postcssStore = usePostcssStoreWithOut()
-        return await postcssStore.forceRefreshAdapter()
+        // 使用全局变量访问 store，避免动态导入
+        const postcssStore = (window as any).__POSTCSS_STORE__
+        if (postcssStore) {
+          return postcssStore.forceRefreshAdapter()
+        } else {
+          console.warn('postcss store 未初始化，请先访问 rem 适配页面')
+          return Promise.resolve(false)
+        }
       } catch (_error) {
         console.warn('请先初始化 postcss store')
-        return false
+        return Promise.resolve(false)
       }
     },
 
     // 获取适配器状态
-    async getStatus() {
+    getStatus() {
       try {
-        const { usePostcssStoreWithOut } = await import('@/stores/modules/postcss')
-        const postcssStore = usePostcssStoreWithOut()
-        return postcssStore.getAdapterStatus()
+        // 使用全局变量访问 store，避免动态导入
+        const postcssStore = (window as any).__POSTCSS_STORE__
+        if (postcssStore) {
+          return postcssStore.getAdapterStatus()
+        } else {
+          console.warn('postcss store 未初始化，请先访问 rem 适配页面')
+          return null
+        }
       } catch (_error) {
         console.warn('请先初始化 postcss store')
         return null

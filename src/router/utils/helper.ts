@@ -28,7 +28,7 @@ export const initDynamicRoutes = async (
     if (backendRoutes && backendRoutes.length > 0) {
       const processedRoutes = processAsyncRoutes(backendRoutes as BackendRouteConfig[])
       if (isDebug) {
-        console.log('3-处理后的动态路由: ', processedRoutes)
+        console.log('router-处理后的动态路由: ', processedRoutes)
       }
       if (!processedRoutes || processedRoutes.length === 0) {
         throw new Error('处理后的动态路由为空')
@@ -47,7 +47,9 @@ export const initDynamicRoutes = async (
         }
       })
       if (isDebug) {
-        console.log(`3-动态路由加载成功，添加了 ${addedCount}/${processedRoutes.length} 个路由`)
+        console.log(
+          `router-动态路由加载成功，添加了 ${addedCount}/${processedRoutes.length} 个路由`
+        )
       }
     } else {
       console.warn('后端返回的动态路由为空')
@@ -84,7 +86,6 @@ export const resetRouter = (router: any, dynamicRouteManager: any): void => {
   permissionStore.reset()
   dynamicRouteManager.clearRoutes()
   permissionStore.setIsRoutesLoaded(false)
-  console.log('路由系统已重置')
 }
 
 export const validateRouteConfig = (sortedStaticRoutes: any, routeUtils: any) => {

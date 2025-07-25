@@ -1,4 +1,5 @@
-const isDebug = import.meta.env.VITE_DEBUG && false
+const isDebug = import.meta.env.VITE_DEBUG === 'true'
+
 // Router 统一管理入口
 import { createDynamicRouteManager, createRouteUtils, sortRoutes } from '@/router/utils'
 import { registerRouterGuards } from '@/router/utils/customs'
@@ -30,8 +31,8 @@ if (isDebug) {
 // 创建路由工具集（用于菜单渲染、面包屑等）
 export const routeUtils = createRouteUtils(sortedStaticRoutes)
 if (isDebug) {
-  console.log('1-所有静态路由: ', staticRoutes)
-  console.log('1-路由工具集: ', routeUtils)
+  console.log('router-所有静态路由: ', staticRoutes)
+  console.log('router-路由工具集: ', routeUtils)
 }
 
 // 添加根路径重定向
@@ -100,7 +101,7 @@ export {
 // 每个路由模块应该导出一个 RouteConfig[] 数组
 
 // 动态路由使用说明：
-// 1. 用户登录后，系统会自动从后端获取动态路由
+//. 用户登录后，系统会自动从后端获取动态路由
 // 2. 动态路由会根据用户权限进行过滤
 // 3. 权限检查包括页面级权限（roles）和按钮级权限（auths）
 // 4. 路由会自动添加到 Vue Router 和权限 Store 中

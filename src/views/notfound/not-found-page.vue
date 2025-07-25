@@ -1,8 +1,6 @@
 <script setup lang="ts">
 const env = import.meta.env
 const title = env.VITE_APP_TITLE
-console.log('env: ', env)
-console.log('title: ', title)
 </script>
 <template>
   <div>

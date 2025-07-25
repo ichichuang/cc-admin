@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": "22.x",
+    "node": ">=22.x",
     "pnpm": ">=8.0.0"
   },
   "packageManager": "pnpm@10.12.4",
@@ -45,6 +45,7 @@
     }
   },
   "dependencies": {
+    "@types/mockjs": "^1.0.10",
     "@unocss/preset-rem-to-px": "^66.3.3",
     "alova": "^3.3.3",
     "crypto-js": "^4.2.0",
@@ -84,6 +85,7 @@
     "eslint-plugin-vue": "^9.31.0",
     "husky": "^9.1.7",
     "lint-staged": "^15.2.11",
+    "mockjs": "^1.1.0",
     "npm-run-all2": "^7.0.2",
     "postcss-pxtorem": "^6.1.0",
     "prettier": "^3.4.2",
@@ -97,6 +99,7 @@
     "unocss": "^66.3.2",
     "vite": "^7.0.0",
     "vite-plugin-compression": "^0.5.1",
+    "vite-plugin-mock": "^3.0.2",
     "vue-tsc": "^2.2.10"
   }
 }

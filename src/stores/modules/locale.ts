@@ -51,8 +51,6 @@ export const useLocaleStore = defineStore(
             detail: { locale: newLocale },
           })
         )
-
-        // console.log(`Locale switched to: ${newLocale}`)
       } catch (error) {
         console.error('Failed to switch locale:', error)
         throw error
