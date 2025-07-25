@@ -1,11 +1,7 @@
 #!/usr/bin/env node
 /* eslint-disable */
-import { existsSync, readFileSync } from 'node:fs'
-import { dirname, join } from 'node:path'
-import { fileURLToPath } from 'node:url'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
+import { existsSync, readFileSync } from 'fs'
+import { join } from 'path'
 
 /* -------------------- 类型定义 -------------------- */
 interface Colors {
