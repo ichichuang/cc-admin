@@ -1,0 +1,59 @@
+name: Deno CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  deno-checks:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 克隆代码
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 缓存 Deno 模块，加快构建速度
+      - name: Cache Deno modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/deno
+          key: ${{ runner.os }}-deno-${{ hashFiles('**/*.ts', '**/*.tsx', 'deno.json', 'deno.jsonc') }}
+          restore-keys: |
+            ${{ runner.os }}-deno-
+
+      # 安装 Deno（指定 v1.x 最新稳定）
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+
+      # 检查代码格式
+      - name: Check Formatting
+        run: deno fmt --check
+
+      # Lint 检查
+      - name: Run Linter
+        run: deno lint
+
+      # 类型检查（可根据入口文件自定义）
+      - name: Type Check
+        run: deno check main.ts
+
+      # 单元测试 + 覆盖率输出
+      - name: Run Tests with Coverage
+        run: |
+          deno test --coverage=cov_profile
+          deno coverage cov_profile --lcov > cov.lcov
+
+      # 可选：上传测试覆盖率报告到 Codecov（需要配置 CODECOV_TOKEN）
+      # - name: Upload Coverage to Codecov
+      #   uses: codecov/codecov-action@v4
+      #   with:
+      #     files: cov.lcov
+      #     token: ${{ secrets.CODECOV_TOKEN }}
