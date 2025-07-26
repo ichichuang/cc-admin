@@ -11,9 +11,6 @@ importers:
 
   .:
     dependencies:
-      '@types/mockjs':
-        specifier: ^1.0.10
-        version: 1.0.10
       '@unocss/preset-rem-to-px':
         specifier: ^66.3.3
         version: 66.3.3
@@ -51,6 +48,9 @@ importers:
       '@eslint/js':
         specifier: ^9.17.0
         version: 9.30.0
+      '@faker-js/faker':
+        specifier: ^9.9.0
+        version: 9.9.0
       '@iconify/json':
         specifier: ^2.2.353
         version: 2.2.353
@@ -126,9 +126,6 @@ importers:
       lint-staged:
         specifier: ^15.2.11
         version: 15.5.2
-      mockjs:
-        specifier: ^1.1.0
-        version: 1.1.0
       npm-run-all2:
         specifier: ^7.0.2
         version: 7.0.2
@@ -954,6 +951,10 @@ packages:
     resolution: {integrity: sha512-1+WqvgNMhmlAambTvT3KPtCl/Ibr68VldY2XY40SL1CE0ZXiakFR/cbTspaF5HsnpDMvcYYoJHfl4980NBjGag==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
+  '@faker-js/faker@9.9.0':
+    resolution: {integrity: sha512-OEl393iCOoo/z8bMezRlJu+GlRGlsKbUAN7jKB6LhnKoqKve5DXRpalbItIIcwnCjs1k/FOPjFzcA6Qn+H+YbA==}
+    engines: {node: '>=18.0.0', npm: '>=9.0.0'}
+
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
     engines: {node: '>=18.18.0'}
@@ -1270,9 +1271,6 @@ packages:
 
   '@types/lodash@4.17.19':
     resolution: {integrity: sha512-NYqRyg/hIQrYPT9lbOeYc3kIRabJDn/k4qQHIXUpx88CBDww2fD15Sg5kbXlW86zm2XEW4g0QxkTI3/Kfkc7xQ==}
-
-  '@types/mockjs@1.0.10':
-    resolution: {integrity: sha512-SXgrhajHG7boLv6oU93CcmdDm0HYRiceuz6b+7z+/2lCJPTWDv0V5YiwFHT2ejE4bQqgSXQiVPQYPWv7LGsK1g==}
 
   '@types/node@22.15.34':
     resolution: {integrity: sha512-8Y6E5WUupYy1Dd0II32BsWAx5MWdcnRd8L84Oys3veg1YrYtNtzgO4CFhiBg6MDSjk7Ay36HYOnU7/tuOzIzcw==}
@@ -4356,6 +4354,8 @@ snapshots:
       '@eslint/core': 0.15.1
       levn: 0.4.1
 
+  '@faker-js/faker@9.9.0': {}
+
   '@humanfs/core@0.19.1': {}
 
   '@humanfs/node@0.16.6':
@@ -4611,8 +4611,6 @@ snapshots:
       '@types/lodash': 4.17.19
 
   '@types/lodash@4.17.19': {}
-
-  '@types/mockjs@1.0.10': {}
 
   '@types/node@22.15.34':
     dependencies:

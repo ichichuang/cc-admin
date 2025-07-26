@@ -100,7 +100,7 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
           assetFileNames: 'static/[ext]/[name]-[hash].[ext]',
           manualChunks: {
             vue: ['vue', 'vue-router', 'pinia'],
-            vendor: ['alova', 'lodash-es', 'mockjs'],
+            vendor: ['alova', 'lodash-es'],
           },
         },
       },

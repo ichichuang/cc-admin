@@ -22,6 +22,8 @@ export function initMockService() {
     import('./mock-service')
       .then(() => {
         console.log('✅ Mock 服务已启动')
+        console.log('🎭 使用 @faker-js/faker 生成真实模拟数据')
+        console.log('📊 包含模块：认证、路由')
       })
       .catch(error => {
         console.error('❌ Mock 服务启动失败:', error)
