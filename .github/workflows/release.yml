@@ -1,0 +1,251 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  NODE_VERSION: '22.x'
+  PNPM_VERSION: '10.12.4'
+
+jobs:
+  # 发布准备
+  prepare-release:
+    name: 发布准备
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: 设置 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 获取 pnpm store 目录
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: 设置 pnpm 缓存
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: 代码质量检查
+        run: pnpm check
+
+      - name: 构建项目
+        run: pnpm build
+        env:
+          VITE_APP_ENV: production
+
+      - name: 生成变更日志
+        id: changelog
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: commits } = await github.rest.repos.compareCommits({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              base: 'main',
+              head: context.sha
+            });
+
+            const changelog = commits.commits
+              .map(commit => `- ${commit.commit.message}`)
+              .join('\n');
+
+            core.setOutput('changelog', changelog);
+
+      - name: 创建 Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            ## 🚀 新版本发布
+
+            ### 📋 变更内容
+            ${{ steps.changelog.outputs.changelog }}
+
+            ### 📦 构建信息
+            - 版本: ${{ github.ref }}
+            - 提交: ${{ github.sha }}
+            - 时间: ${{ github.event.head_commit.timestamp }}
+
+            ### 🔧 技术栈
+            - Vue 3.5+
+            - TypeScript 5+
+            - Vite 7+
+            - UnoCSS
+            - Pinia
+
+            ### 📝 更新日志
+            请查看 [CHANGELOG.md](docs/CHANGELOG.md) 获取详细更新信息。
+          draft: false
+          prerelease: false
+
+  # 部署到生产环境
+  deploy-production:
+    name: 生产部署
+    runs-on: ubuntu-latest
+    needs: prepare-release
+    environment: production
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: 设置 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 获取 pnpm store 目录
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: 设置 pnpm 缓存
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: 构建项目
+        run: pnpm build
+        env:
+          VITE_APP_ENV: production
+
+      - name: 部署到 Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+
+      - name: 部署成功通知
+        run: |
+          echo "🎉 版本 ${{ github.ref }} 发布成功！"
+          echo "🌐 生产环境已更新"
+          echo "📦 构建完成时间: $(date)"
+
+  # 更新文档
+  update-docs:
+    name: 更新文档
+    runs-on: ubuntu-latest
+    needs: prepare-release
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: 设置 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 获取 pnpm store 目录
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: 设置 pnpm 缓存
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: 更新 CHANGELOG
+        run: |
+          echo "## [${{ github.ref_name }}] - $(date +%Y-%m-%d)" >> docs/CHANGELOG.md
+          echo "" >> docs/CHANGELOG.md
+          echo "### 🚀 新功能" >> docs/CHANGELOG.md
+          echo "### 🐛 修复" >> docs/CHANGELOG.md
+          echo "### 📝 文档" >> docs/CHANGELOG.md
+          echo "### 🔧 构建" >> docs/CHANGELOG.md
+          echo "" >> docs/CHANGELOG.md
+
+      - name: 提交文档更新
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add docs/CHANGELOG.md
+          git commit -m "docs: update changelog for ${{ github.ref }}" || echo "No changes to commit"
+          git push
+
+  # 发布完成通知
+  notify-release:
+    name: 发布完成通知
+    runs-on: ubuntu-latest
+    needs: [prepare-release, deploy-production, update-docs]
+    if: always()
+
+    steps:
+      - name: 检查发布状态
+        id: check
+        run: |
+          if [[ "${{ needs.prepare-release.result }}" == "success" && "${{ needs.deploy-production.result }}" == "success" ]]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 成功通知
+        if: steps.check.outputs.status == 'success'
+        run: |
+          echo "🎉 版本 ${{ github.ref }} 发布成功！"
+          echo "✅ Release 已创建"
+          echo "🚀 生产环境已部署"
+          echo "📝 文档已更新"
+
+      - name: 失败通知
+        if: steps.check.outputs.status == 'failure'
+        run: |
+          echo "❌ 版本发布失败"
+          echo "🔍 Release 准备: ${{ needs.prepare-release.result }}"
+          echo "🚀 生产部署: ${{ needs.deploy-production.result }}"
+          echo "📝 文档更新: ${{ needs.update-docs.result }}"

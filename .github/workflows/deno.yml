@@ -1,59 +1,319 @@
-name: Deno CI
+name: CC-Admin CI/CD
 
 on:
   push:
-    branches: ["main"]
+    branches: ['main', 'feature/*']
   pull_request:
-    branches: ["main"]
+    branches: ['main', 'feature/*']
 
 permissions:
   contents: read
+  pull-requests: write
+
+env:
+  NODE_VERSION: '22.x'
+  PNPM_VERSION: '10.12.4'
 
 jobs:
-  deno-checks:
+  # 代码质量检查
+  code-quality:
+    name: 代码质量检查
     runs-on: ubuntu-latest
 
     steps:
-      # 克隆代码
-      - name: Checkout Repository
+      - name: 检出代码
         uses: actions/checkout@v4
 
-      # 缓存 Deno 模块，加快构建速度
-      - name: Cache Deno modules
-        uses: actions/cache@v3
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
         with:
-          path: ~/.cache/deno
-          key: ${{ runner.os }}-deno-${{ hashFiles('**/*.ts', '**/*.tsx', 'deno.json', 'deno.jsonc') }}
-          restore-keys: |
-            ${{ runner.os }}-deno-
+          node-version: ${{ env.NODE_VERSION }}
 
-      # 安装 Deno（指定 v1.x 最新稳定）
-      - name: Setup Deno
-        uses: denoland/setup-deno@v1
+      - name: 设置 pnpm
+        uses: pnpm/action-setup@v4
         with:
-          deno-version: v1.x
+          version: ${{ env.PNPM_VERSION }}
 
-      # 检查代码格式
-      - name: Check Formatting
-        run: deno fmt --check
-
-      # Lint 检查
-      - name: Run Linter
-        run: deno lint
-
-      # 类型检查（可根据入口文件自定义）
-      - name: Type Check
-        run: deno check main.ts
-
-      # 单元测试 + 覆盖率输出
-      - name: Run Tests with Coverage
+      - name: 获取 pnpm store 目录
+        shell: bash
         run: |
-          deno test --coverage=cov_profile
-          deno coverage cov_profile --lcov > cov.lcov
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
-      # 可选：上传测试覆盖率报告到 Codecov（需要配置 CODECOV_TOKEN）
-      # - name: Upload Coverage to Codecov
-      #   uses: codecov/codecov-action@v4
-      #   with:
-      #     files: cov.lcov
-      #     token: ${{ secrets.CODECOV_TOKEN }}
+      - name: 设置 pnpm 缓存
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: 检查命名规范
+        run: pnpm naming-check
+
+      - name: 检查环境变量
+        run: pnpm env-check
+
+      - name: ESLint 检查
+        run: pnpm lint
+
+      - name: TypeScript 类型检查
+        run: pnpm type-check
+
+      - name: 代码格式化检查
+        run: pnpm format --check
+
+  # 构建测试
+  build-test:
+    name: 构建测试
+    runs-on: ubuntu-latest
+    needs: code-quality
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: 设置 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 获取 pnpm store 目录
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: 设置 pnpm 缓存
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: 构建项目
+        run: pnpm build
+
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 7
+
+  # 构建分析
+  build-analyze:
+    name: 构建分析
+    runs-on: ubuntu-latest
+    needs: code-quality
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: 设置 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 获取 pnpm store 目录
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: 设置 pnpm 缓存
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: 构建分析
+        run: pnpm build:analyze
+
+      - name: 上传构建分析报告
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-analysis
+          path: dist/stats.html
+          retention-days: 30
+
+  # 安全扫描
+  security-scan:
+    name: 安全扫描
+    runs-on: ubuntu-latest
+    needs: code-quality
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: 设置 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: 运行安全扫描
+        run: pnpm audit --audit-level moderate
+
+  # 部署预览 (仅 PR)
+  deploy-preview:
+    name: 部署预览
+    runs-on: ubuntu-latest
+    needs: [code-quality, build-test]
+    if: github.event_name == 'pull_request'
+    environment: preview
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: 设置 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 获取 pnpm store 目录
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: 设置 pnpm 缓存
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: 构建项目
+        run: pnpm build
+        env:
+          VITE_APP_ENV: preview
+
+      - name: 部署到 Vercel (预览)
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+
+  # 生产部署 (仅 main 分支)
+  deploy-production:
+    name: 生产部署
+    runs-on: ubuntu-latest
+    needs: [code-quality, build-test, security-scan]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: 设置 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 获取 pnpm store 目录
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: 设置 pnpm 缓存
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: 构建项目
+        run: pnpm build
+        env:
+          VITE_APP_ENV: production
+
+      - name: 部署到 Vercel (生产)
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+
+  # 通知
+  notify:
+    name: 通知
+    runs-on: ubuntu-latest
+    needs: [code-quality, build-test, security-scan]
+    if: always()
+
+    steps:
+      - name: 检查工作流状态
+        id: check
+        run: |
+          if [[ "${{ needs.code-quality.result }}" == "success" && "${{ needs.build-test.result }}" == "success" && "${{ needs.security-scan.result }}" == "success" ]]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 成功通知
+        if: steps.check.outputs.status == 'success'
+        run: |
+          echo "✅ 所有检查通过！"
+          echo "📦 构建成功"
+          echo "🔒 安全扫描通过"
+
+      - name: 失败通知
+        if: steps.check.outputs.status == 'failure'
+        run: |
+          echo "❌ 检查失败，请查看详细日志"
+          echo "🔍 代码质量: ${{ needs.code-quality.result }}"
+          echo "🏗️ 构建测试: ${{ needs.build-test.result }}"
+          echo "🔒 安全扫描: ${{ needs.security-scan.result }}"

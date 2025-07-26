@@ -1,0 +1,200 @@
+# GitHub Actions 配置文件
+# 定义工作流中使用的环境变量和配置
+
+# 环境变量配置
+env:
+  # Node.js 版本
+  NODE_VERSION: '22.x'
+
+  # pnpm 版本
+  PNPM_VERSION: '10.12.4'
+
+  # 项目配置
+  PROJECT_NAME: 'cc-admin'
+  PROJECT_VERSION: '0.0.0'
+
+  # 构建配置
+  BUILD_TARGET: 'es2015'
+  BUILD_SOURCEMAP: 'false'
+
+  # 缓存配置
+  CACHE_KEY_PREFIX: 'cc-admin'
+
+  # 部署配置
+  DEPLOY_PLATFORM: 'vercel'
+
+  # 通知配置
+  NOTIFICATION_ENABLED: 'true'
+
+# 分支配置
+branches:
+  main: 'main'
+  develop: 'develop'
+  feature: 'feature/*'
+  hotfix: 'hotfix/*'
+  release: 'release/*'
+
+# 环境配置
+environments:
+  development:
+    name: 'development'
+    url: 'https://dev.cc-admin.com'
+
+  staging:
+    name: 'staging'
+    url: 'https://staging.cc-admin.com'
+
+  production:
+    name: 'production'
+    url: 'https://cc-admin.com'
+
+# 构建配置
+build:
+  # 构建命令
+  commands:
+    install: 'pnpm install --frozen-lockfile'
+    build: 'pnpm build'
+    test: 'pnpm test'
+    lint: 'pnpm lint'
+    type-check: 'pnpm type-check'
+    naming-check: 'pnpm naming-check'
+    env-check: 'pnpm env-check'
+
+  # 构建产物
+  artifacts:
+    - name: 'dist'
+      path: 'dist/'
+      retention-days: 7
+    - name: 'build-analysis'
+      path: 'dist/stats.html'
+      retention-days: 30
+
+# 测试配置
+test:
+  # 测试命令
+  commands:
+    unit: 'pnpm test:unit'
+    e2e: 'pnpm test:e2e'
+    coverage: 'pnpm test:coverage'
+
+  # 覆盖率配置
+  coverage:
+    threshold: 80
+    format: 'lcov'
+
+# 代码质量配置
+quality:
+  # 检查命令
+  commands:
+    eslint: 'pnpm lint'
+    prettier: 'pnpm format --check'
+    typescript: 'pnpm type-check'
+    naming: 'pnpm naming-check'
+
+  # 规则配置
+  rules:
+    eslint: 'error'
+    prettier: 'error'
+    typescript: 'error'
+    naming: 'error'
+
+# 部署配置
+deploy:
+  # 平台配置
+  platforms:
+    vercel:
+      action: 'amondnet/vercel-action@v25'
+      args: '--prod'
+
+  # 环境变量
+  env:
+    development:
+      VITE_APP_ENV: 'development'
+      VITE_API_BASE_URL: 'https://dev-api.cc-admin.com'
+
+    staging:
+      VITE_APP_ENV: 'staging'
+      VITE_API_BASE_URL: 'https://staging-api.cc-admin.com'
+
+    production:
+      VITE_APP_ENV: 'production'
+      VITE_API_BASE_URL: 'https://api.cc-admin.com'
+
+# 通知配置
+notifications:
+  # 成功通知
+  success:
+    message: '✅ 所有检查通过！'
+    details:
+      - '📦 构建成功'
+      - '🔒 安全扫描通过'
+      - '🧪 测试通过'
+
+  # 失败通知
+  failure:
+    message: '❌ 检查失败，请查看详细日志'
+    details:
+      - '🔍 代码质量: {result}'
+      - '🏗️ 构建测试: {result}'
+      - '🔒 安全扫描: {result}'
+
+# 缓存配置
+cache:
+  # pnpm 缓存
+  pnpm:
+    path: '${{ env.STORE_PATH }}'
+    key: '${{ runner.os }}-pnpm-store-${{ hashFiles("**/pnpm-lock.yaml") }}'
+    restore-keys:
+      - '${{ runner.os }}-pnpm-store-'
+
+  # 构建缓存
+  build:
+    path: 'node_modules/.cache'
+    key: '${{ runner.os }}-build-${{ hashFiles("**/*.{ts,tsx,vue,js,jsx}") }}'
+    restore-keys:
+      - '${{ runner.os }}-build-'
+
+# 安全配置
+security:
+  # 扫描命令
+  commands:
+    audit: 'pnpm audit --audit-level moderate'
+    snyk: 'snyk test'
+
+  # 规则配置
+  rules:
+    audit_level: 'moderate'
+    fail_on_vulnerability: true
+
+# 发布配置
+release:
+  # 版本格式
+  version_format: 'v*'
+
+  # 变更日志配置
+  changelog:
+    template: |
+      ## 🚀 新版本发布
+
+      ### 📋 变更内容
+      {changelog}
+
+      ### 📦 构建信息
+      - 版本: {version}
+      - 提交: {commit}
+      - 时间: {timestamp}
+
+      ### 🔧 技术栈
+      - Vue 3.5+
+      - TypeScript 5+
+      - Vite 7+
+      - UnoCSS
+      - Pinia
+
+      ### 📝 更新日志
+      请查看 [CHANGELOG.md](docs/CHANGELOG.md) 获取详细更新信息。
+
+  # 文档更新
+  docs:
+    changelog_file: 'docs/CHANGELOG.md'
+    commit_message: 'docs: update changelog for {version}'
