@@ -2,7 +2,7 @@
 
 ## 概述
 
-CC-Admin 使用 `vite-plugin-mock` 提供开发环境的接口模拟服务，支持认证、路由、用户管理等核心功能的 Mock 数据。
+CC-Admin 使用自定义 Mock 服务提供接口模拟功能，支持开发和生产环境，包含认证、路由、用户管理等核心功能的 Mock 数据。
 
 ## 环境配置
 
@@ -16,6 +16,7 @@ VITE_MOCK_ENABLE=true
 ### 禁用 Mock 服务
 
 ```bash
+# .env
 VITE_MOCK_ENABLE=false
 ```
 
@@ -39,39 +40,69 @@ VITE_MOCK_ENABLE=false
 
 - `GET /auth/routes` - 获取路由配置
 
+### 3. 示例模块 (`expmple.ts`)
+
+提供用户管理的 CRUD 操作示例：
+
+- `GET /api/users` - 获取用户列表
+- `GET /api/users/:id` - 获取单个用户
+- `POST /api/users` - 创建用户
+- `PUT /api/users/:id` - 更新用户
+- `DELETE /api/users/:id` - 删除用户
+
 ## 使用示例
 
-### 登录请求
+### 用户管理 CRUD 操作
 
 ```typescript
-const response = await fetch('/auth/login', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    username: 'admin',
-    password: '123456',
-  }),
-})
+// 获取用户列表
+const getUsers = async () => {
+  const response = await fetch('/api/users')
+  const result = await response.json()
+  return result.data
+}
+
+// 创建用户
+const createUser = async userData => {
+  const response = await fetch('/api/users', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(userData),
+  })
+  return await response.json()
+}
+
+// 更新用户
+const updateUser = async (id, userData) => {
+  const response = await fetch(`/api/users/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(userData),
+  })
+  return await response.json()
+}
+
+// 删除用户
+const deleteUser = async id => {
+  const response = await fetch(`/api/users/${id}`, {
+    method: 'DELETE',
+  })
+  return await response.json()
+}
 ```
 
-### 获取用户信息
+### 认证请求
 
 ```typescript
-const response = await fetch('/auth/userInfo', {
-  headers: {
-    Authorization: 'Bearer fake-jwt-token-123456',
-  },
-})
-```
-
-### 获取路由配置
-
-```typescript
-const response = await fetch('/auth/routes', {
-  headers: {
-    Authorization: 'Bearer fake-jwt-token-123456',
-  },
-})
+// 登录
+const login = async credentials => {
+  const response = await fetch('/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(credentials),
+  })
+  return await response.json()
+}
 ```
 
 ## 响应格式
@@ -80,7 +111,7 @@ const response = await fetch('/auth/routes', {
 
 ```typescript
 {
-  success: true,
+  code: 200,
   message: '操作成功',
   data: { /* 数据 */ }
 }
@@ -90,8 +121,9 @@ const response = await fetch('/auth/routes', {
 
 ```typescript
 {
-  success: false,
-  message: '错误信息'
+  code: 404,
+  message: '资源不存在',
+  data: null
 }
 ```
 
@@ -112,8 +144,8 @@ const response = await fetch('/auth/routes', {
 ### 3. 环境隔离
 
 - 开发环境启用 Mock 服务
-- 生产环境禁用 Mock 服务
-- 通过环境变量控制开关
+- 生产环境可通过环境变量控制
+- 支持生产环境使用
 
 ## 故障排除
 
@@ -131,9 +163,9 @@ echo $VITE_MOCK_ENABLE
 
 ```typescript
 {
-  url: '/auth/login',
-  method: 'post',
-  response: ({ body }) => ({ /* 响应数据 */ }),
+  url: '/api/users',
+  method: 'GET',
+  response: () => ({ code: 200, message: '成功', data: [] }),
 }
 ```
 
@@ -141,10 +173,11 @@ echo $VITE_MOCK_ENABLE
 
 Mock 服务提供：
 
+- ✅ 完整的 CRUD 操作示例
 - ✅ 简化的认证流程
 - ✅ 基础的路由配置
 - ✅ 类型安全的接口定义
 - ✅ 环境隔离的配置管理
-- ✅ 清晰的错误处理
+- ✅ 生产环境支持
 
 通过 Mock 服务，可以快速验证前端功能，提高开发效率。
