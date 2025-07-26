@@ -285,11 +285,11 @@ function toPascalCase(str) {
  */
 function outputResults() {
   if (errors.length === 0) {
-    console.log('✅ 所有文件和代码都符合命名规范！')
+    console.log('\n✅ 项目命名规范检查完成，一切正常！')
     return true
   }
 
-  console.log(`❌ 发现 ${errors.length} 个命名规范问题：\n`)
+  console.log(`❌ 发现 ${errors.length} 个命名规范问题：`)
 
   const groupedErrors = errors.reduce((groups: any, error: any) => {
     if (!groups[error.type]) groups[error.type] = []
@@ -310,7 +310,6 @@ function outputResults() {
       console.log(`  ${error.file}${error.line > 0 ? `:${error.line}` : ''}`)
       console.log(`    ${error.message}`)
     })
-    console.log()
   })
 
   return false
@@ -320,8 +319,6 @@ function outputResults() {
  * 主函数
  */
 async function main() {
-  console.log('🔍 开始检查项目命名规范...\n')
-
   // 扫描src目录
   const srcPath = join(projectRoot, 'src')
   await scanDirectory(srcPath)
