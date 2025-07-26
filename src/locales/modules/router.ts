@@ -17,6 +17,7 @@ export const routerZhCN: RouterLocaleMessages = {
     color: '主题',
     size: '尺寸',
     rem: 'rem 适配',
+    mock: 'Mock 示例',
   },
   error: {
     notFound: '页面未找到',
@@ -39,6 +40,7 @@ export const routerEnUS: RouterLocaleMessages = {
     color: 'Theme',
     size: 'Size',
     rem: 'rem Adapter',
+    mock: 'Mock exampleMock',
   },
   error: {
     notFound: 'Page Not Found',
@@ -61,6 +63,7 @@ export const routerZhTW: RouterLocaleMessages = {
     color: '主題',
     size: '尺寸',
     rem: 'rem 適配',
+    mock: 'Mock 示例',
   },
   error: {
     notFound: '頁面未找到',

@@ -1,5 +1,5 @@
-import type { MockMethod } from 'vite-plugin-mock'
 import { mockServices } from './index'
+import type { MockMethod } from './types'
 
 /**
  * 自定义 Mock 服务
@@ -30,7 +30,7 @@ class MockService {
    * 设置 Mock 数据
    */
   private setupMockData() {
-    mockServices.forEach((mock: MockMethod) => {
+    mockServices.forEach((mock: MockMethod, _index: number) => {
       if (mock.url && mock.response) {
         const key = `${mock.method?.toUpperCase() || 'GET'}:${mock.url}`
         this.mockData.set(key, mock.response)
@@ -80,7 +80,16 @@ class MockService {
    * 查找匹配的 Mock 配置
    */
   private findMockConfig(method: string, url: string) {
-    const urlPath = url.split('?')[0]
+    // 提取 URL 路径，移除协议、域名和端口
+    let urlPath = url.split('?')[0]
+
+    // 如果是完整 URL，提取路径部分
+    try {
+      const urlObj = new URL(urlPath)
+      urlPath = urlObj.pathname
+    } catch {
+      // 如果不是完整 URL，直接使用
+    }
 
     for (const mock of mockServices) {
       if (mock.method?.toUpperCase() !== method.toUpperCase()) {
@@ -88,6 +97,7 @@ class MockService {
       }
 
       const mockUrl = mock.url || ''
+
       if (mockUrl.includes(':')) {
         // 处理动态路由参数
         const mockParts = mockUrl.split('/')
@@ -128,8 +138,6 @@ class MockService {
         const mockConfig = this.findMockConfig(method, url)
 
         if (mockConfig) {
-          console.log(`🎭 Mock 请求: ${method} ${url}`)
-
           const { mock, params } = mockConfig
           let responseData: any
 
@@ -163,8 +171,7 @@ class MockService {
                 params,
                 query,
               })
-            } catch (error) {
-              console.error('Mock 响应函数执行失败:', error)
+            } catch {
               responseData = {
                 success: false,
                 message: 'Mock 响应失败',

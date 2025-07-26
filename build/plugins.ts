@@ -2,7 +2,6 @@ import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import UnoCSS from 'unocss/vite'
 import type { PluginOption } from 'vite'
-import { viteMockServe } from 'vite-plugin-mock'
 import { name, version } from '../package.json'
 import type { ViteEnv } from './utils'
 
@@ -37,7 +36,7 @@ function startupInfoPlugin(): PluginOption {
 }
 
 export function getPluginsList(env: ViteEnv): PluginOption[] {
-  const { VITE_COMPRESSION, VITE_BUILD_ANALYZE, VITE_MOCK_ENABLE } = env
+  const { VITE_COMPRESSION, VITE_BUILD_ANALYZE } = env
   const lifecycle = process.env.npm_lifecycle_event
 
   const plugins: PluginOption[] = [
@@ -49,13 +48,6 @@ export function getPluginsList(env: ViteEnv): PluginOption[] {
     vue(),
     // JSX/TSX 语法支持
     vueJsx(),
-    // Mock 服务 - 仅在启用时加载
-    VITE_MOCK_ENABLE &&
-      viteMockServe({
-        mockPath: 'src/mock/modules',
-        enable: VITE_MOCK_ENABLE,
-        logger: true,
-      }),
     // 注意：我们不需要 Vue I18n 编译插件，因为使用运行时配置
   ].filter(Boolean) as PluginOption[]
 

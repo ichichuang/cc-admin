@@ -47,6 +47,15 @@ const exampleRoutes: RouteConfig[] = [
           rank: 4,
         },
       },
+      {
+        path: 'mock',
+        name: 'ExampleMock',
+        component: () => import('@/views/example/views/example-mock.vue'),
+        meta: {
+          title: t('router.example.mock'),
+          rank: 5,
+        },
+      },
     ],
   },
 ]

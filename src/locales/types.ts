@@ -271,6 +271,7 @@ export interface RouterLocaleMessages {
     color: string
     size: string
     rem: string
+    mock: string
   }
   error: {
     notFound: string

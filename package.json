@@ -41,7 +41,8 @@
   },
   "pnpm": {
     "overrides": {
-      "glob": "^11.0.3"
+      "glob": "^11.0.3",
+      "mockjs": "1.0.1-beta3"
     }
   },
   "dependencies": {
@@ -98,7 +99,6 @@
     "unocss": "^66.3.2",
     "vite": "^7.0.0",
     "vite-plugin-compression": "^0.5.1",
-    "vite-plugin-mock": "^3.0.2",
     "vue-tsc": "^2.2.10"
   }
 }

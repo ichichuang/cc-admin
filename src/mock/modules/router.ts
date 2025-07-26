@@ -1,4 +1,4 @@
-import type { MockMethod } from 'vite-plugin-mock'
+import type { MockMethod } from '../types'
 
 const routes: BackendRouteConfig[] = [
   {

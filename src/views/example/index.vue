@@ -29,6 +29,12 @@ import AppContainer from '@/layouts/components/AppContainer.vue'
       >
         i18n
       </div>
+      <div
+        class="btn-info"
+        @click="goName('ExampleMock')"
+      >
+        mock
+      </div>
     </div>
     <div class="wfull h-[calc(var(--contents-height)+var(--footer-height))] overflow-auto">
       <div>

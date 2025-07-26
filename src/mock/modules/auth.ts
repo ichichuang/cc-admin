@@ -1,4 +1,4 @@
-import type { MockMethod } from 'vite-plugin-mock'
+import type { MockMethod } from '../types'
 
 // 模拟用户数据
 const mockUser: (UserInfo & { password: string })[] = [
