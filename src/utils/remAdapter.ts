@@ -22,7 +22,7 @@ export const parseRemConfigFromEnv = (): RemAdapterConfig => {
     const breakpoints = JSON.parse(breakpointsStr)
 
     return {
-      designWidth: Number(import.meta.env.VITE_REM_DESIGN_WIDTH) || 1800,
+      designWidth: Number(import.meta.env.VITE_REM_DESIGN_WIDTH) || 1920,
       baseFontSize: Number(import.meta.env.VITE_REM_BASE_FONT_SIZE) || 16,
       minFontSize: Number(import.meta.env.VITE_REM_MIN_FONT_SIZE) || 12,
       maxFontSize: Number(import.meta.env.VITE_REM_MAX_FONT_SIZE) || 24,

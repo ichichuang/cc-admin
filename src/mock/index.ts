@@ -2,7 +2,7 @@ import type { MockMethod } from './types'
 
 // 导入所有 Mock 模块
 import authMock from './modules/auth'
-import exampleMock from './modules/expmple'
+import exampleMock from './modules/example'
 import routerMock from './modules/router'
 
 /**
@@ -33,15 +33,3 @@ export function initMockService() {
 }
 
 export default mockServices
-
-// 初始化 Mock 服务（自定义 Mock 服务）
-if (import.meta.env.VITE_MOCK_ENABLE === 'true') {
-  // 导入并初始化 Mock 服务
-  import('@/mock')
-    .then(({ initMockService }) => {
-      initMockService()
-    })
-    .catch(error => {
-      console.error('Mock 服务初始化失败:', error)
-    })
-}

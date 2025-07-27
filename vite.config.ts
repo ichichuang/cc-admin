@@ -53,6 +53,8 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
       },
       hmr: {
         overlay: isDev,
+        // 优化HMR连接，减少扩展冲突
+        timeout: 30000,
       },
       proxy: {
         ['/api']: {

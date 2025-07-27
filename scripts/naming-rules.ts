@@ -9,27 +9,30 @@ import { readdir, readFile, stat } from 'node:fs/promises'
 import { basename, dirname, extname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const projectRoot = join(__dirname, '..')
+const _dirname = dirname(fileURLToPath(import.meta.url))
+const projectRoot = join(_dirname, '..')
 
 // 命名规范配置
 const NAMING_RULES = {
   // 文件名规范
   files: {
-    // Vue页面文件：kebab-case + .vue
-    vuePages: /^[a-z0-9]+(-[a-z0-9]+)*\.vue$/,
-    // Vue组件文件：PascalCase + .vue
-    vueComponents: /^[A-Z][a-zA-Z0-9]*\.vue$/,
-    // TypeScript/JavaScript文件：kebab-case
-    scripts: /^[a-z0-9]+(-[a-z0-9]+)*\.(ts|js)$/,
+    // kebab-case 文件名（不含扩展名）
+    kebabCase: /^[a-z0-9]+(-[a-z0-9]+)*$/,
     // camelCase 文件名（不含扩展名）
-    camelCase: /^[a-z][a-zA-Z0-9]*\.(ts|js)$/,
+    camelCase: /^[a-z][a-zA-Z0-9]*$/,
+    // PascalCase 文件名（不含扩展名）
+    pascalCase: /^[A-Z][a-zA-Z0-9]*$/,
     // 其他文件：kebab-case
     others: /^[a-z0-9]+(-[a-z0-9]+)*(\.[a-z0-9]+)*$/,
   },
 
-  // 目录名规范：kebab-case
-  directories: /^[a-z0-9]+(-[a-z0-9]+)*$/,
+  // 目录名规范
+  directories: {
+    // kebab-case 目录名
+    kebabCase: /^[a-z0-9]+(-[a-z0-9]+)*$/,
+    // camelCase 目录名
+    camelCase: /^[a-z][a-zA-Z0-9]*$/,
+  },
 
   // 变量名规范：camelCase
   variables: /^[a-z][a-zA-Z0-9]*$/,
@@ -62,6 +65,7 @@ function addError(type, file, line, message) {
 function checkFileName(filePath, fileName) {
   const ext = extname(fileName)
   const nameWithoutExt = basename(fileName, ext)
+  const normalizedPath = filePath.replace(/\\/g, '/')
 
   // 特殊文件跳过检查
   const skipFiles = [
@@ -78,46 +82,54 @@ function checkFileName(filePath, fileName) {
     'tsconfig.json',
     'eslint.config.ts',
     'commitlint.config.js',
+    'types.ts',
   ]
 
   // 国际化文件名规则（允许语言代码格式如 en-US.ts）
-  const isI18nFile = filePath.includes('/locales/') && /^[a-z]{2}-[A-Z]{2}\.ts$/.test(fileName)
+  const isI18nFile =
+    normalizedPath.includes('/locales/lang/') && /^[a-z]{2}-[A-Z]{2}\.ts$/.test(fileName)
 
   if (skipFiles.includes(fileName) || isI18nFile) return
 
-  // 判断是否在 src/common、src/hooks、src/router、src/stores、src/utils 目录下
-  const isInSpecialCamelCaseDir = /\/src\/(common|hooks|router|stores|utils)\//.test(filePath)
-  const isInComponents = filePath.includes('/components/')
-  const isInViews = filePath.includes('/views/')
+  // 判断文件所在目录类型
+  const isInComponents = normalizedPath.includes('/components/')
+  const isInViews = normalizedPath.includes('/views/')
+  const isInViewsComponents =
+    normalizedPath.includes('/views/') && normalizedPath.includes('/components/')
+  const isInViewsViews = normalizedPath.includes('/views/') && normalizedPath.includes('/views/')
+  const isInApi = normalizedPath.includes('/api/')
+  const isInHooks = normalizedPath.includes('/hooks/')
+  const isInStores = normalizedPath.includes('/stores/')
+  const isInRouter = normalizedPath.includes('/router/')
+  const isInLocales = normalizedPath.includes('/locales/')
+  const isInUtils = normalizedPath.includes('/utils/')
+  const isInCommon = normalizedPath.includes('/common/')
   const isVueFile = ext === '.vue'
 
-  if (isInSpecialCamelCaseDir && ['.ts', '.js'].includes(ext)) {
-    // 这些目录下必须用 camelCase
-    if (!NAMING_RULES.files.camelCase.test(fileName)) {
-      addError(
-        'file-naming',
-        filePath,
-        0,
-        `src/${filePath.split('/src/')[1].split('/')[0]} 目录下文件必须使用 camelCase 命名：${fileName} -> 建议：${toCamelCase(nameWithoutExt)}${ext}`
-      )
-    }
-    return
-  }
-
   if (isVueFile) {
-    if (isInComponents) {
-      // 组件文件：PascalCase
-      if (!NAMING_RULES.files.vueComponents.test(fileName)) {
+    if (isInViewsComponents) {
+      // views/components/ 目录下的 Vue 文件：PascalCase
+      if (!NAMING_RULES.files.pascalCase.test(nameWithoutExt)) {
         addError(
           'file-naming',
           filePath,
           0,
-          `组件文件名应使用PascalCase命名：${fileName} -> 建议：${toPascalCase(nameWithoutExt)}.vue`
+          `页面内部组件文件名应使用PascalCase命名：${fileName} -> 建议：${toPascalCase(nameWithoutExt)}.vue`
+        )
+      }
+    } else if (isInViewsViews) {
+      // views/views/ 目录下的 Vue 文件：kebab-case
+      if (!NAMING_RULES.files.kebabCase.test(nameWithoutExt)) {
+        addError(
+          'file-naming',
+          filePath,
+          0,
+          `子页面文件名应使用kebab-case命名：${fileName} -> 建议：${toKebabCase(nameWithoutExt)}.vue`
         )
       }
     } else if (isInViews && fileName !== 'index.vue') {
-      // 页面文件：kebab-case
-      if (!NAMING_RULES.files.vuePages.test(fileName)) {
+      // views 目录下的其他 Vue 文件：kebab-case
+      if (!NAMING_RULES.files.kebabCase.test(nameWithoutExt)) {
         addError(
           'file-naming',
           filePath,
@@ -125,16 +137,46 @@ function checkFileName(filePath, fileName) {
           `页面文件名应使用kebab-case命名：${fileName} -> 建议：${toKebabCase(nameWithoutExt)}.vue`
         )
       }
+    } else if (isInComponents) {
+      // components 目录下的 Vue 文件：PascalCase
+      if (!NAMING_RULES.files.pascalCase.test(nameWithoutExt)) {
+        addError(
+          'file-naming',
+          filePath,
+          0,
+          `全局组件文件名应使用PascalCase命名：${fileName} -> 建议：${toPascalCase(nameWithoutExt)}.vue`
+        )
+      }
     }
   } else if (['.ts', '.js'].includes(ext)) {
-    // 其他目录 TypeScript/JavaScript文件：kebab-case
-    if (!NAMING_RULES.files.scripts.test(fileName)) {
-      addError(
-        'file-naming',
-        filePath,
-        0,
-        `脚本文件名应使用kebab-case命名：${fileName} -> 建议：${toKebabCase(nameWithoutExt)}${ext}`
-      )
+    // 功能模块相关文件：camelCase
+    if (
+      isInApi ||
+      isInHooks ||
+      isInStores ||
+      isInRouter ||
+      isInLocales ||
+      isInUtils ||
+      isInCommon
+    ) {
+      if (!NAMING_RULES.files.camelCase.test(nameWithoutExt)) {
+        addError(
+          'file-naming',
+          filePath,
+          0,
+          `功能模块文件名应使用camelCase命名：${fileName} -> 建议：${toCamelCase(nameWithoutExt)}${ext}`
+        )
+      }
+    } else {
+      // 其他 TypeScript/JavaScript 文件：kebab-case
+      if (!NAMING_RULES.files.kebabCase.test(nameWithoutExt)) {
+        addError(
+          'file-naming',
+          filePath,
+          0,
+          `脚本文件名应使用kebab-case命名：${fileName} -> 建议：${toKebabCase(nameWithoutExt)}${ext}`
+        )
+      }
     }
   }
 }
@@ -143,18 +185,43 @@ function checkFileName(filePath, fileName) {
  * 检查目录名是否符合规范
  */
 function checkDirectoryName(dirPath, dirName) {
+  const normalizedPath = dirPath.replace(/\\/g, '/')
+
   // 特殊目录跳过检查
   const skipDirs = ['node_modules', '.git', '.vscode', '.husky', 'dist', 'coverage', 'public']
 
   if (skipDirs.includes(dirName)) return
 
-  if (!NAMING_RULES.directories.test(dirName)) {
-    addError(
-      'directory-naming',
-      dirPath,
-      0,
-      `目录名应使用kebab-case命名：${dirName} -> 建议：${toKebabCase(dirName)}`
-    )
+  // 判断目录类型
+  const isInViews = normalizedPath.includes('/views/')
+  const isInApi = normalizedPath.includes('/api/')
+  const isInHooks = normalizedPath.includes('/hooks/')
+  const isInStores = normalizedPath.includes('/stores/')
+  const isInRouter = normalizedPath.includes('/router/')
+  const isInLocales = normalizedPath.includes('/locales/')
+  const isInUtils = normalizedPath.includes('/utils/')
+  const isInCommon = normalizedPath.includes('/common/')
+
+  // 功能模块相关目录：camelCase
+  if (isInApi || isInHooks || isInStores || isInRouter || isInLocales || isInUtils || isInCommon) {
+    if (!NAMING_RULES.directories.camelCase.test(dirName)) {
+      addError(
+        'directory-naming',
+        dirPath,
+        0,
+        `功能模块目录名应使用camelCase命名：${dirName} -> 建议：${toCamelCase(dirName)}`
+      )
+    }
+  } else {
+    // 其他目录：kebab-case
+    if (!NAMING_RULES.directories.kebabCase.test(dirName)) {
+      addError(
+        'directory-naming',
+        dirPath,
+        0,
+        `目录名应使用kebab-case命名：${dirName} -> 建议：${toKebabCase(dirName)}`
+      )
+    }
   }
 }
 
@@ -242,11 +309,15 @@ async function scanDirectory(dirPath) {
         checkDirectoryName(itemPath, item)
         await scanDirectory(itemPath)
       } else {
-        checkFileName(itemPath, item)
+        // 只检查 src 目录下的文件
+        const relativePath = itemPath.replace(projectRoot, '').replace(/\\/g, '/')
+        if (relativePath.startsWith('/src/')) {
+          checkFileName(itemPath, item)
 
-        // 检查Vue文件内容
-        if (item.endsWith('.vue')) {
-          await checkVueFileNaming(itemPath)
+          // 检查Vue文件内容
+          if (item.endsWith('.vue')) {
+            await checkVueFileNaming(itemPath)
+          }
         }
       }
     }
@@ -319,8 +390,20 @@ function outputResults() {
  * 主函数
  */
 async function main() {
-  // 扫描src目录
+  console.log('🔍 开始检查项目命名规范...')
+
+  // 只扫描src目录
   const srcPath = join(projectRoot, 'src')
+
+  // 检查src目录是否存在
+  try {
+    await stat(srcPath)
+  } catch (error) {
+    console.error('❌ src目录不存在')
+    process.exit(1)
+  }
+
+  console.log('📁 扫描目录:', srcPath)
   await scanDirectory(srcPath)
 
   // 输出结果

@@ -18,7 +18,8 @@
   <a href="#技术栈">技术栈</a> •
   <a href="#目录结构">目录结构</a> •
   <a href="#开发指南">开发指南</a> •
-  <a href="#部署">部署</a>
+  <a href="#部署">部署</a> •
+  <a href="docs/INDEX.md">📚 文档中心</a>
 </p>
 
 ---
@@ -61,7 +62,7 @@ pnpm install
 ### 启动开发
 
 ```bash
-# 启动开发服务器
+# 启动开发服务器（同时启动命名规范监听）
 pnpm dev
 
 # 构建生产版本
@@ -79,6 +80,7 @@ pnpm check           # 综合检查（类型+ESLint+命名规范）
 pnpm lint            # ESLint 检查并修复
 pnpm type-check      # TypeScript 类型检查
 pnpm naming-check    # 文件命名规范检查
+pnpm naming-watch    # 实时监听文件命名规范
 
 # 代码格式化
 pnpm format          # Prettier 格式化
@@ -291,6 +293,24 @@ const importedModules = autoImportModulesSync(modules)
 - **常量**: SCREAMING_SNAKE_CASE (如 `API_BASE_URL`)
 - **类型接口**: PascalCase (如 `UserInfo`)
 
+#### 4. 实时命名规范检查
+
+项目提供实时监听功能，自动检查文件命名规范：
+
+```bash
+# 启动实时监听
+pnpm naming-watch
+
+# 详细模式（显示更多信息）
+pnpm naming-watch --verbose
+```
+
+监听器会自动检查：
+
+- 新建文件的命名规范
+- 修改文件的内容规范
+- 提供实时的错误提示和建议
+
 ### 开发工作流
 
 #### 1. 功能开发
@@ -299,7 +319,7 @@ const importedModules = autoImportModulesSync(modules)
 # 1. 创建功能分支
 git checkout -b feat/new-feature
 
-# 2. 开发功能
+# 2. 开发功能（自动启动命名规范监听）
 pnpm dev
 
 # 3. 代码检查

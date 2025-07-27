@@ -58,6 +58,9 @@ importers:
       '@tsconfig/node22':
         specifier: ^22.0.2
         version: 22.0.2
+      '@types/chokidar':
+        specifier: ^2.1.7
+        version: 2.1.7
       '@types/crypto-js':
         specifier: ^4.2.2
         version: 4.2.2
@@ -103,6 +106,9 @@ importers:
       '@vue/tsconfig':
         specifier: ^0.7.0
         version: 0.7.0(typescript@5.8.3)(vue@3.5.17(typescript@5.8.3))
+      chokidar:
+        specifier: ^4.0.3
+        version: 4.0.3
       commitizen:
         specifier: ^4.3.1
         version: 4.3.1(@types/node@22.15.34)(typescript@5.8.3)
@@ -1251,6 +1257,10 @@ packages:
 
   '@tsconfig/node22@22.0.2':
     resolution: {integrity: sha512-Kmwj4u8sDRDrMYRoN9FDEcXD8UpBSaPQQ24Gz+Gamqfm7xxn+GBR7ge/Z7pK8OXNGyUzbSwJj+TH6B+DS/epyA==}
+
+  '@types/chokidar@2.1.7':
+    resolution: {integrity: sha512-A7/MFHf6KF7peCzjEC1BBTF8jpmZTokb3vr/A0NxRGfwRLK3Ws+Hq6ugVn6cJIMfM6wkCak/aplWrxbTcu8oig==}
+    deprecated: This is a stub types definition. chokidar provides its own type definitions, so you do not need this installed.
 
   '@types/conventional-commits-parser@5.0.1':
     resolution: {integrity: sha512-7uz5EHdzz2TqoMfV7ee61Egf5y6NkcO4FB/1iCCQnbeiI1F3xzv3vK5dBCXUCLQgGYS+mUeigK1iKQzvED+QnQ==}
@@ -4519,6 +4529,10 @@ snapshots:
   '@tsconfig/node16@1.0.4': {}
 
   '@tsconfig/node22@22.0.2': {}
+
+  '@types/chokidar@2.1.7':
+    dependencies:
+      chokidar: 4.0.3
 
   '@types/conventional-commits-parser@5.0.1':
     dependencies:

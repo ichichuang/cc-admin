@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* eslint-disable */
+
 import { existsSync, readFileSync } from 'fs'
 import { join } from 'path'
 
@@ -106,7 +106,9 @@ const validators: Validators = {
   },
 
   enum: (value: string, options?: string): boolean => {
-    if (!options) return false
+    if (!options) {
+      return false
+    }
     return options.split(',').includes(value)
   },
 
@@ -130,7 +132,9 @@ const validators: Validators = {
 
 /* -------------------- 读取 .env 文件 -------------------- */
 const parseEnvFile = (filePath: string): EnvVariables => {
-  if (!existsSync(filePath)) return {}
+  if (!existsSync(filePath)) {
+    return {}
+  }
 
   return readFileSync(filePath, 'utf8')
     .split('\n')
@@ -145,7 +149,9 @@ const parseEnvFile = (filePath: string): EnvVariables => {
 
 /* -------------------- 读取 env.d.ts 类型 -------------------- */
 const parseEnvTypes = (filePath: string): string[] => {
-  if (!existsSync(filePath)) return []
+  if (!existsSync(filePath)) {
+    return []
+  }
 
   const content = readFileSync(filePath, 'utf8')
   const regex = /readonly\s+(VITE_\w+):\s*[^;\n]+/g
@@ -266,7 +272,9 @@ function checkEnvConfig(): void {
 
   Object.entries(allCurrentVars).forEach(([name, value]: [string, string]) => {
     // 跳过非VITE变量和已废弃变量
-    if (!name.startsWith('VITE_') || validationRules.deprecated.includes(name)) return
+    if (!name.startsWith('VITE_') || validationRules.deprecated.includes(name)) {
+      return
+    }
 
     const errors = validateValue(name, value)
     if (errors.length > 0) {
@@ -300,9 +308,15 @@ function checkEnvConfig(): void {
     log(`⚠️   发现重复定义 ${duplicates.length} 个 (环境覆盖属正常)`, 'yellow')
     duplicates.forEach((name: string) => {
       const sources: string[] = []
-      if (baseVars[name]) sources.push('.env')
-      if (devVars[name]) sources.push('.env.development')
-      if (prodVars[name]) sources.push('.env.production')
+      if (baseVars[name]) {
+        sources.push('.env')
+      }
+      if (devVars[name]) {
+        sources.push('.env.development')
+      }
+      if (prodVars[name]) {
+        sources.push('.env.production')
+      }
       log(`   ${name}: ${sources.join(' + ')}`, 'yellow')
     })
     hasWarning = true
@@ -314,7 +328,9 @@ function checkEnvConfig(): void {
 
   Object.entries({ ...baseVars, ...devVars, ...prodVars }).forEach(
     ([name, value]: [string, string]) => {
-      if (!name.startsWith('VITE_')) return
+      if (!name.startsWith('VITE_')) {
+        return
+      }
 
       // 检查是否包含敏感信息
       const nameLower = name.toLowerCase()
@@ -333,13 +349,14 @@ function checkEnvConfig(): void {
   }
 
   /* ---------- 8. 统计 ---------- */
-  const countVite = (obj: EnvVariables): number =>
+  // 统计函数（可用于调试或扩展功能）
+  const _countVite = (obj: EnvVariables): number =>
     Object.keys(obj).filter((k: string) => k.startsWith('VITE_')).length
-  const countActive = (obj: EnvVariables): number =>
+  const _countActive = (obj: EnvVariables): number =>
     Object.keys(obj).filter(
       (k: string) => k.startsWith('VITE_') && !validationRules.deprecated.includes(k)
     ).length
-  const countDeprecated = (obj: EnvVariables): number =>
+  const _countDeprecated = (obj: EnvVariables): number =>
     Object.keys(obj).filter((k: string) => validationRules.deprecated.includes(k)).length
 
   /* ---------- 结束 ---------- */
@@ -354,8 +371,6 @@ function checkEnvConfig(): void {
 }
 
 /* -------------------- 导出 -------------------- */
-// export { checkEnvConfig, validationRules, validators }
-// export type { Colors, EnvVariables, ValidationRules, Validators }
 export { checkEnvConfig, validationRules, validators }
 
 /* -------------------- 执行 -------------------- */

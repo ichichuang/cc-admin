@@ -98,7 +98,7 @@ export const wrapperEnv = (envConf: Record<string, unknown>): ViteEnv => {
     VITE_DROP_CONSOLE: true,
     VITE_API_TIMEOUT: 10000,
     // rem 适配系统默认值
-    VITE_REM_DESIGN_WIDTH: 1800,
+    VITE_REM_DESIGN_WIDTH: 1920,
     VITE_REM_BASE_FONT_SIZE: 16,
     VITE_REM_MIN_FONT_SIZE: 12,
     VITE_REM_MAX_FONT_SIZE: 24,
