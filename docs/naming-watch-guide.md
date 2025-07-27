@@ -47,13 +47,12 @@ pnpm dev
 
 - `.vue` - Vue 组件文件
 - `.ts` - TypeScript 文件
-- `.js` - JavaScript 文件
-- `.jsx` - JSX 文件
+
 - `.tsx` - TSX 文件
 
 ### 忽略的文件
 
-- `index.vue`、`index.ts`、`index.js`
+- `index.vue`、`index.ts`
 - `types.ts`、`types.d.ts`
 - 系统文件（`.DS_Store` 等）
 

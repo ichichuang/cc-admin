@@ -108,11 +108,11 @@ function shouldWatchFile(filePath: string): boolean {
   const fileName = basename(filePath)
 
   // 只监听特定类型的文件
-  const watchableExtensions = ['.vue', '.ts', '.js', '.jsx', '.tsx']
+  const watchableExtensions = ['.vue', '.ts', '.tsx']
   const isWatchableExt = watchableExtensions.includes(ext)
 
   // 排除特殊文件
-  const skipFiles = ['index.vue', 'index.ts', 'index.js', 'types.ts', 'types.d.ts', '.DS_Store']
+  const skipFiles = ['index.vue', 'index.ts', 'types.ts', 'types.d.ts', '.DS_Store']
 
   return isWatchableExt && !skipFiles.includes(fileName)
 }

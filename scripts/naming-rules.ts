@@ -71,7 +71,7 @@ function checkFileName(filePath, fileName) {
   const skipFiles = [
     'index.vue',
     'index.ts',
-    'index.js',
+
     'README.md',
     'CHANGELOG.md',
     '.gitignore',
@@ -81,7 +81,7 @@ function checkFileName(filePath, fileName) {
     'vite.config.ts',
     'tsconfig.json',
     'eslint.config.ts',
-    'commitlint.config.js',
+    'commitlint.config.ts',
     'types.ts',
   ]
 
@@ -148,7 +148,7 @@ function checkFileName(filePath, fileName) {
         )
       }
     }
-  } else if (['.ts', '.js'].includes(ext)) {
+  } else if (['.ts'].includes(ext)) {
     // 功能模块相关文件：camelCase
     if (
       isInApi ||

@@ -68,7 +68,7 @@
 
 | 文件                      | 作用         | 功能                 |
 | ------------------------- | ------------ | -------------------- |
-| `commitlint.config.js`    | 提交信息规范 | Conventional Commits |
+| `commitlint.config.ts`    | 提交信息规范 | Conventional Commits |
 | `.prettierrc.json`        | 代码格式化   | 统一代码风格         |
 | `scripts/naming-rules.ts` | 命名规范检查 | 自动验证文件命名     |
 

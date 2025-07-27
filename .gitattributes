@@ -1,1 +1,6 @@
 * text=auto eol=lf
+
+# 确保 TypeScript 文件被正确识别
+*.ts linguist-language=TypeScript
+*.tsx linguist-language=TypeScript
+*.vue linguist-language=Vue

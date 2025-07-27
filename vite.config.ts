@@ -40,7 +40,7 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
     logLevel: isDev ? 'info' : 'info',
     resolve: {
       alias,
-      extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
+      extensions: ['.mjs', '.ts', '.tsx', '.json', '.vue'],
     },
     server: {
       port: Number(VITE_PORT),
@@ -97,8 +97,8 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
           index: pathResolve('./index.html', import.meta.url),
         },
         output: {
-          chunkFileNames: 'static/js/[name]-[hash].js',
-          entryFileNames: 'static/js/[name]-[hash].js',
+          chunkFileNames: 'static/ts/[name]-[hash].js',
+          entryFileNames: 'static/ts/[name]-[hash].js',
           assetFileNames: 'static/[ext]/[name]-[hash].[ext]',
           manualChunks: {
             vue: ['vue', 'vue-router', 'pinia'],
