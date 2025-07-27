@@ -22,17 +22,10 @@ CC-Admin 采用现代化的前端开发工具链，提供完整的代码质量�
 
 ### Cursor 配置
 
-```json
-// .cursor/settings.json
-{
-  "typescript.preferences.quoteStyle": "single",
-  "editor.formatOnSave": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
-  },
-  "npm.packageManager": "pnpm"
-}
-```
+- TypeScript 单引号配置
+- 保存时自动格式化
+- ESLint 自动修复
+- pnpm 包管理器配置
 
 ### VS Code 扩展推荐
 
@@ -47,133 +40,60 @@ CC-Admin 采用现代化的前端开发工具链，提供完整的代码质量�
 
 ### ESLint 配置
 
-```javascript
-// eslint.config.ts
-import js from '@eslint/js'
-import typescript from '@typescript-eslint/eslint-plugin'
-import typescriptParser from '@typescript-eslint/parser'
-import vue from 'eslint-plugin-vue'
-
-export default [
-  js.configs.recommended,
-  {
-    files: ['**/*.{js,ts,vue}'],
-    languageOptions: {
-      parser: typescriptParser,
-    },
-    plugins: {
-      '@typescript-eslint': typescript,
-      vue,
-    },
-    rules: {
-      // 自定义规则
-    },
-  },
-]
-```
+- TypeScript 和 Vue 支持
+- 自定义规则配置
+- 自动修复功能
+- 集成到编辑器
 
 ### Prettier 配置
 
-```json
-// .prettierrc
-{
-  "semi": false,
-  "singleQuote": true,
-  "tabWidth": 2,
-  "trailingComma": "es5"
-}
-```
+- 代码格式化规则
+- 与 ESLint 集成
+- 保存时自动格式化
+- 团队代码风格统一
 
 ## 🔍 类型检查
 
 ### TypeScript 配置
 
-```json
-// tsconfig.json
-{
-  "compilerOptions": {
-    "target": "ES2020",
-    "module": "ESNext",
-    "strict": true,
-    "jsx": "preserve",
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "skipLibCheck": true
-  }
-}
-```
+- 严格模式启用
+- 模块解析配置
+- 路径别名支持
+- 类型检查优化
 
 ## 🐙 Git 工作流
 
 ### Husky 配置
 
-```json
-// package.json
-{
-  "scripts": {
-    "prepare": "husky install"
-  },
-  "lint-staged": {
-    "*.{js,ts,vue}": ["eslint --fix", "prettier --write"]
-  }
-}
-```
+- Git Hooks 自动安装
+- 提交前代码检查
+- lint-staged 集成
+- 自动化工作流
 
 ### 提交规范
 
-```bash
-# 提交类型
-feat:     新功能
-fix:      修复问题
-docs:     文档更新
-style:    代码格式调整
-refactor: 代码重构
-test:     测试相关
-chore:    构建过程或辅助工具的变动
-```
+- 语义化提交信息
+- 类型前缀规范
+- 描述信息要求
+- 团队协作标准
 
 ## 📦 包管理
 
 ### pnpm 配置
 
-```bash
-# 安装依赖
-pnpm install
-
-# 添加依赖
-pnpm add package-name
-
-# 开发依赖
-pnpm add -D package-name
-
-# 运行脚本
-pnpm dev
-pnpm build
-pnpm test
-```
+- 快速安装依赖
+- 磁盘空间优化
+- 严格的依赖管理
+- 工作空间支持
 
 ## 🚀 构建工具
 
 ### Vite 配置
 
-```typescript
-// vite.config.ts
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import UnoCSS from 'unocss/vite'
-
-export default defineConfig({
-  plugins: [vue(), UnoCSS()],
-  resolve: {
-    alias: {
-      '@': '/src',
-    },
-  },
-})
-```
+- Vue 3 支持
+- UnoCSS 集成
+- 路径别名配置
+- 开发服务器优化
 
 ## 🔧 开发脚本
 
@@ -229,15 +149,9 @@ pnpm format
 
 ### 调试技巧
 
-```bash
-# 检查 ESLint 配置
-pnpm lint --debug
-
-# 检查 TypeScript 配置
-pnpm tsc --noEmit
-
-# 检查依赖关系
-pnpm why package-name
-```
+- 检查 ESLint 配置
+- 验证 TypeScript 配置
+- 分析依赖关系
+- 查看工具日志
 
 通过这套工具链，CC-Admin 提供了高效的开发体验和代码质量保证。

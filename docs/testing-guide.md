@@ -15,183 +15,74 @@ CC-Admin 采用多层次的测试策略，包括单元测试、组件测试和�
  🔺🔺🔺🔺 Unit Tests (大量)
 ```
 
-### 测试配置
+### 测试类型
 
-```typescript
-// vitest.config.ts
-import { defineConfig } from 'vitest/config'
-import vue from '@vitejs/plugin-vue'
-
-export default defineConfig({
-  plugins: [vue()],
-  test: {
-    environment: 'jsdom',
-    globals: true,
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-    },
-  },
-})
-```
+- **单元测试**: 测试工具函数、Store 模块等独立单元
+- **组件测试**: 测试 Vue 组件的行为和交互
+- **集成测试**: 测试模块间的协作
+- **端到端测试**: 测试完整的用户流程
 
 ## 🔬 单元测试
 
-### 工具函数测试
+### 测试范围
 
-```typescript
-// test/utils/format.test.ts
-import { describe, it, expect } from 'vitest'
-import { formatCurrency } from '@/utils/format'
+- 工具函数和工具类
+- Store 模块的状态管理
+- 组合式函数的逻辑
+- API 接口的封装
 
-describe('formatCurrency', () => {
-  it('should format number to currency', () => {
-    expect(formatCurrency(1234.56)).toBe('¥1,234.56')
-  })
-})
-```
+### 测试工具
 
-### Store 测试
-
-```typescript
-// test/stores/user.test.ts
-import { describe, it, expect } from 'vitest'
-import { setActivePinia, createPinia } from 'pinia'
-import { useUserStore } from '@/stores/modules/user'
-
-describe('User Store', () => {
-  beforeEach(() => {
-    setActivePinia(createPinia())
-  })
-
-  it('should set user info', () => {
-    const store = useUserStore()
-    const user = { id: 1, name: 'Test' }
-
-    store.setUser(user)
-    expect(store.user).toEqual(user)
-  })
-})
-```
+- **Vitest**: 现代化的测试框架
+- **@vue/test-utils**: Vue 组件测试工具
+- **jsdom**: 浏览器环境模拟
 
 ## 🧩 组件测试
 
-### Vue 组件测试
+### 测试重点
 
-```typescript
-// test/components/Button.test.ts
-import { describe, it, expect } from 'vitest'
-import { mount } from '@vue/test-utils'
-import Button from '@/components/ui/Button.vue'
+- 组件渲染正确性
+- 用户交互响应
+- Props 和事件处理
+- 样式和主题应用
 
-describe('Button', () => {
-  it('should render correctly', () => {
-    const wrapper = mount(Button, {
-      props: { type: 'primary' },
-      slots: { default: 'Click me' },
-    })
+### 测试策略
 
-    expect(wrapper.text()).toBe('Click me')
-    expect(wrapper.classes()).toContain('btn-primary')
-  })
-
-  it('should emit click event', async () => {
-    const wrapper = mount(Button)
-
-    await wrapper.trigger('click')
-    expect(wrapper.emitted('click')).toBeTruthy()
-  })
-})
-```
-
-### 组合式函数测试
-
-```typescript
-// test/composables/useCounter.test.ts
-import { describe, it, expect } from 'vitest'
-import { useCounter } from '@/composables/useCounter'
-
-describe('useCounter', () => {
-  it('should increment counter', () => {
-    const { count, increment } = useCounter()
-
-    expect(count.value).toBe(0)
-    increment()
-    expect(count.value).toBe(1)
-  })
-})
-```
+- 使用 `@vue/test-utils` 进行组件挂载
+- 模拟用户交互和事件
+- 验证组件状态变化
+- 测试组件间的通信
 
 ## 🌐 端到端测试
 
-### Playwright 配置
+### 测试工具
 
-```typescript
-// playwright.config.ts
-import { defineConfig } from '@playwright/test'
+- **Playwright**: 现代化的 E2E 测试框架
+- 支持多浏览器测试
+- 自动截图和视频录制
+- 强大的选择器和断言
 
-export default defineConfig({
-  testDir: './tests/e2e',
-  use: {
-    baseURL: 'http://localhost:5173',
-    screenshot: 'only-on-failure',
-  },
-  projects: [
-    {
-      name: 'chromium',
-      use: { browserName: 'chromium' },
-    },
-  ],
-})
-```
+### 测试场景
 
-### E2E 测试示例
-
-```typescript
-// tests/e2e/login.spec.ts
-import { test, expect } from '@playwright/test'
-
-test('user can login', async ({ page }) => {
-  await page.goto('/login')
-
-  await page.fill('[data-testid="username"]', 'admin')
-  await page.fill('[data-testid="password"]', '123456')
-  await page.click('[data-testid="login-button"]')
-
-  await expect(page).toHaveURL('/dashboard')
-})
-```
+- 用户登录流程
+- 页面导航和路由
+- 表单提交和验证
+- 数据展示和交互
 
 ## 📊 测试覆盖率
 
-### 覆盖率配置
+### 覆盖率目标
 
-```typescript
-// vitest.config.ts
-coverage: {
-  provider: 'v8',
-  reporter: ['text', 'json', 'html'],
-  exclude: ['node_modules/', 'dist/', '**/*.d.ts'],
-  thresholds: {
-    global: {
-      branches: 80,
-      functions: 80,
-      lines: 80,
-      statements: 80,
-    },
-  },
-}
-```
+- **全局覆盖率**: 80% 以上
+- **分支覆盖率**: 80% 以上
+- **函数覆盖率**: 80% 以上
+- **行覆盖率**: 80% 以上
 
 ### 覆盖率报告
 
-```bash
-# 运行测试并生成覆盖率报告
-pnpm test:coverage
-
-# 查看 HTML 报告
-open coverage/index.html
-```
+- 生成 HTML 格式报告
+- 集成到 CI/CD 流程
+- 设置覆盖率阈值检查
 
 ## 🚀 测试命令
 
@@ -209,19 +100,6 @@ pnpm test:coverage
 
 # 运行 E2E 测试
 pnpm test:e2e
-
-# 运行特定测试文件
-pnpm test utils/format.test.ts
-```
-
-### 调试测试
-
-```bash
-# 调试模式运行测试
-pnpm test --reporter=verbose
-
-# 运行单个测试
-pnpm test --run utils/format.test.ts
 ```
 
 ## 🎯 最佳实践
@@ -246,12 +124,9 @@ pnpm test --run utils/format.test.ts
 
 ### 4. 异步测试
 
-```typescript
-it('should handle async operations', async () => {
-  const result = await asyncFunction()
-  expect(result).toBeDefined()
-})
-```
+- 正确处理异步操作
+- 使用 async/await 语法
+- 设置合理的超时时间
 
 ## 🔧 故障排除
 
@@ -263,12 +138,8 @@ it('should handle async operations', async () => {
 
 ### 调试技巧
 
-```typescript
-// 调试测试
-it('should work', () => {
-  console.log('Debug info')
-  expect(true).toBe(true)
-})
-```
+- 使用 `console.log` 调试测试逻辑
+- 检查测试环境配置
+- 验证依赖项安装
 
 通过这套测试体系，CC-Admin 确保了代码质量和应用稳定性。
