@@ -33,3 +33,37 @@ img {
   height: 100%;
   vertical-align: middle;
 }
+
+/* 系统默认滚动条设置 （兼容性）
+::-webkit-scrollbar    //滚动条整体部分
+::-webkit-scrollbar-button   //滚动条两端的按钮
+::-webkit-scrollbar-track   // 外层轨道
+::-webkit-scrollbar-track-piece    //内层轨道，滚动条中间部分（除去）
+::-webkit-scrollbar-thumb //滚动条里面可以拖动的那个
+::-webkit-scrollbar-corner   //边角
+::-webkit-resizer   ///定义右下角拖动块的样式
+*/
+
+/* 滚动条轨道及按钮 */
+* {
+  &::-webkit-scrollbar,
+  &::-webkit-scrollbar-button,
+  &::-webkit-scrollbar-track {
+    width: 12px;
+    height: 12px;
+    background: var(--bg200);
+  }
+
+  /* 滚动条滑块 */
+  &::-webkit-scrollbar-thumb {
+    background: var(--bg300);
+    border-radius: var(--rounded);
+    transition: background-color 0.25s ease-in-out;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--primary200);
+  }
+  &::-webkit-scrollbar-thumb:active {
+    background: var(--primary100);
+  }
+}
