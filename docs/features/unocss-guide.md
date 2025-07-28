@@ -1,7 +1,7 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license MIT
-  @description CC-Admin 企业级后台管理框架 - unocss-guide
+  @description cc-admin 企业级后台管理框架 - unocss-guide
   本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
 -->
 
@@ -9,7 +9,7 @@
 
 ## 概述
 
-CC-Admin 使用 UnoCSS 作为原子化 CSS 引擎，提供即时编译、高性能、高度可定制的样式解决方案。完美集成了主题系统、响应式设计和 rem 适配方案。
+cc-admin 使用 UnoCSS 作为原子化 CSS 引擎，提供即时编译、高性能、高度可定制的样式解决方案。完美集成了主题系统、响应式设计和 rem 适配方案。
 
 ## 🚀 核心特性
 
@@ -168,7 +168,7 @@ CC-Admin 使用 UnoCSS 作为原子化 CSS 引擎，提供即时编译、高性�
 
 ## 🎯 总结
 
-UnoCSS 为 CC-Admin 提供了强大而灵活的样式解决方案：
+UnoCSS 为 cc-admin 提供了强大而灵活的样式解决方案：
 
 - ✅ **高性能**: 按需编译，零运行时开销
 - ✅ **易用性**: 兼容 Tailwind 语法，学习成本低

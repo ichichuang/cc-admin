@@ -1,6 +1,6 @@
-# CC-Admin Vue3 国际化规范
+# cc-admin Vue3 国际化规范
 
-CC-Admin 中所有的国际化配置都在 `src/locales` 目录中完成定义，主要分为：类型定义、语言配置和组件使用。
+cc-admin 中所有的国际化配置都在 `src/locales` 目录中完成定义，主要分为：类型定义、语言配置和组件使用。
 
 ## 🏗️ 国际化架构
 
@@ -403,7 +403,7 @@ export const commonZhCN: CommonLocaleMessages = {
   },
 
   system: {
-    title: 'CC-Admin',
+    title: 'cc-admin',
     description: '企业级后台管理系统',
     version: '版本',
     copyright: '版权所有',
@@ -996,7 +996,7 @@ const formattedValues = computed(() => {
 
 ### 从复杂格式化到简化版本
 
-为了减少配置复杂性和提高维护性，CC-Admin 的国际化配置已经简化：
+为了减少配置复杂性和提高维护性，cc-admin 的国际化配置已经简化：
 
 **移除的功能：**
 

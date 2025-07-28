@@ -1,4 +1,4 @@
-name: CC-Admin CI/CD
+name: cc-admin CI/CD
 
 on:
   push:

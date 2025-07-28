@@ -1,13 +1,13 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license MIT
- * @description CC-Admin 企业级后台管理框架 - 构建脚本
+ * @description cc-admin 企业级后台管理框架 - 构建脚本
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
 import { spawn } from 'child_process'
 
-console.log('🚀 启动 CC-Admin 开发环境...')
+console.log('🚀 启动 cc-admin 开发环境...')
 console.log('📝 启动命名规范监听...')
 
 // 启动 Vite 开发服务器

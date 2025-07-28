@@ -1,0 +1,34 @@
+{
+  "name": "@cc/early-bird-ui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.ts",
+  "types": "index.ts",
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "import": "./index.ts"
+    },
+    "./components": {
+      "types": "./components/index.ts",
+      "import": "./components/index.ts"
+    },
+    "./layouts": {
+      "types": "./layouts/index.ts",
+      "import": "./layouts/index.ts"
+    },
+    "./styles": {
+      "types": "./styles/index.ts",
+      "import": "./styles/index.ts"
+    }
+  },
+  "dependencies": {
+    "vue": "^3.5.12",
+    "vue-router": "^4.4.5",
+    "@cc/early-bird-core": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.2"
+  }
+}

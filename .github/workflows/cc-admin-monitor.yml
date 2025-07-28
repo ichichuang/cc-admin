@@ -1,4 +1,4 @@
-name: 🛡️ CC-Admin 框架保护监控
+name: 🛡️ cc-admin 框架保护监控
 
 on:
   schedule:
@@ -17,11 +17,11 @@ on:
           - intensive
 
 env:
-  # CC-Admin 框架特征
-  FRAMEWORK_NAME: 'CC-Admin'
+  # cc-admin 框架特征
+  FRAMEWORK_NAME: 'cc-admin'
   AUTHOR: 'chichuang'
   GITHUB_USERNAME: 'ichichuang'
-  REPO_NAME: 'CC-Admin'
+  REPO_NAME: 'cc-admin'
 
   # 独特技术栈组合
   TECH_STACK_SIGNATURE: 'Vue 3.5 TypeScript 5 UnoCSS 0.66 pnpm 10.12.4'
@@ -29,7 +29,7 @@ env:
 jobs:
   cc-admin-protection:
     runs-on: ubuntu-latest
-    name: 🔍 CC-Admin 框架监控
+    name: 🔍 cc-admin 框架监控
 
     steps:
       - name: 📥 检出代码
@@ -40,17 +40,17 @@ jobs:
         run: |
           echo '🔍 检测版权标识抄袭...'
 
-          # CC-Admin 特有的版权标识 - 更精确的搜索关键词
+          # cc-admin 特有的版权标识 - 更精确的搜索关键词
           COPYRIGHT_SIGNATURES=(
             '@copyright Copyright (c) 2025 chichuang'
-            'CC-Admin 企业级后台管理框架'
+            'cc-admin 企业级后台管理框架'
             '本文件为 chichuang 原创'
             '禁止擅自删除署名或用于商业用途'
-            'chichuang CC-Admin'
+            'chichuang cc-admin'
             'CC-ADMIN-FRAMEWORK-CHICHUANG-2025'
             'chichuang 原创'
             # 移除容易误报的关键词
-            # 'CC-Admin v1.0' - 这个关键词太通用，容易误报
+            # 'cc-admin v1.0' - 这个关键词太通用，容易误报
           )
 
           FOUND_VIOLATIONS=''
@@ -85,19 +85,19 @@ jobs:
         run: |
           echo '🏗️ 检测文件结构抄袭...'
 
-          # CC-Admin 独特的文件结构模式 - 更精确的组合
+          # cc-admin 独特的文件结构模式 - 更精确的组合
           STRUCTURE_PATTERNS=(
             'src/stores/modules index.ts chichuang'
             'src/api/modules index.ts chichuang'
             'src/router/modules index.ts chichuang'
             'unocss/rules unocss/shortcuts chichuang'
-            'scripts/ chichuang CC-Admin'
+            'scripts/ chichuang cc-admin'
             'src/hooks/modules chichuang'
             'src/common/modules chichuang'
             'src/locales/modules chichuang'
             'src/mock/modules chichuang'
             # 添加更独特的组合
-            'CC-Admin 企业级后台管理框架 chichuang'
+            'cc-admin 企业级后台管理框架 chichuang'
             'Vue 3.5+ TypeScript 5+ Vite 7+ chichuang'
             'UnoCSS 0.66 企业级后台 chichuang'
           )
@@ -130,16 +130,16 @@ jobs:
         run: |
           echo '⚡ 检测技术栈抄袭...'
 
-          # CC-Admin 特有的技术栈组合 - 更精确的查询
+          # cc-admin 特有的技术栈组合 - 更精确的查询
           TECHSTACK_QUERIES=(
             'Vue 3.5 TypeScript 5 UnoCSS Vite chichuang'
             'Pinia 3 Alova 3 Vue I18n 10 chichuang'
             'pnpm 10.12.4 Vue3 admin chichuang'
             'UnoCSS 0.66 企业级后台 chichuang'
             'Vue 3.5+ TypeScript 5+ Vite 7+ chichuang'
-            'CC-Admin 企业级后台管理框架 chichuang'
+            'cc-admin 企业级后台管理框架 chichuang'
             # 添加更独特的组合
-            'chichuang CC-Admin 企业级后台管理框架'
+            'chichuang cc-admin 企业级后台管理框架'
             'chichuang Vue 3.5 TypeScript 5 UnoCSS'
             'chichuang Pinia 3 Alova 3 Vue I18n 10'
           )
@@ -191,16 +191,16 @@ jobs:
           echo "star_count=$star_count" >> $GITHUB_OUTPUT
           echo "fork_count=$fork_count" >> $GITHUB_OUTPUT
 
-      - name: 🎯 生成 CC-Admin 保护报告
+      - name: 🎯 生成 cc-admin 保护报告
         run: |
-          echo '🎯 生成 CC-Admin 保护报告...'
+          echo '🎯 生成 cc-admin 保护报告...'
 
           # 创建详细的监控报告
           cat > cc_admin_protection_report.md << EOF
-          # 🛡️ CC-Admin 框架保护监控报告
+          # 🛡️ cc-admin 框架保护监控报告
 
           **监控时间**: $(date '+%Y-%m-%d %H:%M:%S UTC')
-          **框架名称**: CC-Admin 企业级后台管理框架
+          **框架名称**: cc-admin 企业级后台管理框架
           **作者**: chichuang
           **仓库**: $GITHUB_USERNAME/$REPO_NAME
 
@@ -251,7 +251,7 @@ jobs:
           - 📱 考虑设置更频繁的监控频率
 
           ---
-          *CC-Admin 框架保护系统 v1.0 - 由 GitHub Actions 自动生成*
+          *cc-admin 框架保护系统 v1.0 - 由 GitHub Actions 自动生成*
           EOF
 
       - name: 🚨 创建严重问题 Issue
@@ -269,7 +269,7 @@ jobs:
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `🚨 CC-Admin 版权侵犯警报 - ${new Date().toISOString().split('T')[0]}`,
+              title: `🚨 cc-admin 版权侵犯警报 - ${new Date().toISOString().split('T')[0]}`,
               body: reportContent,
               labels: ['urgent', 'copyright', 'security', 'protection']
             });
@@ -282,7 +282,7 @@ jobs:
           server_port: 587
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: '🚨 CC-Admin 框架保护警报 - 发现可疑抄袭行为'
+          subject: '🚨 cc-admin 框架保护警报 - 发现可疑抄袭行为'
           body: file://cc_admin_protection_report.md
           to: ${{ secrets.NOTIFICATION_EMAIL }}
 

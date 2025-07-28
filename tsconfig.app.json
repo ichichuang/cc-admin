@@ -1,14 +1,15 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
   "include": [
-    "src/Types/env.d.ts",
-    "src/**/*",
-    "src/**/*.vue",
+    "apps/admin/src/Types/env.d.ts",
+    "apps/admin/src/**/*",
+    "apps/admin/src/**/*.vue",
+    "packages/**/*",
     "build/**/*",
     "types/**/*",
-    "src/router/utils/helper.ts"
+    "packages/core/router/utils/helper.ts"
   ],
-  "exclude": ["src/**/__tests__/*"],
+  "exclude": ["apps/admin/src/**/__tests__/*"],
   "compilerOptions": {
     "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
@@ -16,17 +17,20 @@
     "paths": {
       "@/*": ["./src/*"],
       "@build/*": ["./build/*"],
-      "@types/*": ["./types/*"],
-      "@assets/*": ["./src/assets/*"],
-      "@components/*": ["./src/components/*"],
-      "@views/*": ["./src/views/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@stores/*": ["./src/stores/*"],
-      "@router/*": ["./src/router/*"],
-      "@api/*": ["./src/api/*"],
-      "@hooks/*": ["./src/hooks/*"],
-      "@common/*": ["./src/common/*"],
-      "@test/*": ["./src/views/test/*"]
+      "@types/*": ["./packages/types/*"],
+      "@assets/*": ["./apps/admin/src/assets/*"],
+      "@components/*": ["./apps/admin/src/components/*"],
+      "@views/*": ["./apps/admin/src/views/*"],
+      "@utils/*": ["./packages/core/utils/*"],
+      "@stores/*": ["./packages/core/stores/*"],
+      "@router/*": ["./packages/core/router/*"],
+      "@api/*": ["./packages/core/api/*"],
+      "@hooks/*": ["./apps/admin/src/hooks/*"],
+      "@common/*": ["./apps/admin/src/common/*"],
+      "@test/*": ["./apps/admin/src/views/test/*"],
+      "@cc/early-bird-core": ["./packages/core"],
+      "@cc/early-bird-ui": ["./packages/ui"],
+      "@cc/early-bird-types": ["./packages/types"]
     }
   }
 }

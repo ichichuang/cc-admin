@@ -1,15 +1,15 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license MIT
-  @description CC-Admin 企业级后台管理框架 - 版权保护指南
+  @description cc-admin 企业级后台管理框架 - 版权保护指南
   本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
 -->
 
-# CC-Admin 版权保护指南
+# cc-admin 版权保护指南
 
 ## 📋 概述
 
-CC-Admin 项目采用完善的版权保护机制，确保项目知识产权得到有效保护。本文档详细说明了版权保护的措施、优化方案和使用方法。
+cc-admin 项目采用完善的版权保护机制，确保项目知识产权得到有效保护。本文档详细说明了版权保护的措施、优化方案和使用方法。
 
 ## 🛡️ 版权保护措施
 
@@ -18,7 +18,7 @@ CC-Admin 项目采用完善的版权保护机制，确保项目知识产权得�
 项目使用 **自定义商业限制许可证**，在根目录的 `LICENSE` 文件中明确声明：
 
 ```text
-CC-Admin 自定义许可证
+cc-admin 自定义许可证
 
 版权所有 (c) 2025 chichuang
 
@@ -38,7 +38,7 @@ CC-Admin 自定义许可证
 
 商业授权：
 如需商业使用，请联系版权所有者获得商业许可证。
-联系方式: https://github.com/ichichuang/CC-Admin/issues
+联系方式: https://github.com/ichichuang/cc-admin/issues
 ```
 
 ### 2. README 版权声明
@@ -60,7 +60,7 @@ CC-Admin 自定义许可证
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license MIT
- * @description CC-Admin 企业级后台管理框架 - 文件描述
+ * @description cc-admin 企业级后台管理框架 - 文件描述
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 ```
@@ -71,7 +71,7 @@ CC-Admin 自定义许可证
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license MIT
-  @description CC-Admin 企业级后台管理框架 - 文件描述
+  @description cc-admin 企业级后台管理框架 - 文件描述
   本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
 -->
 ```
@@ -82,7 +82,7 @@ CC-Admin 自定义许可证
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license MIT
- * @description CC-Admin 企业级后台管理框架 - 文件描述
+ * @description cc-admin 企业级后台管理框架 - 文件描述
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 ```
@@ -267,8 +267,8 @@ const FILE_TYPES = {
 如需商业使用或合作，请联系：
 
 - **作者**: chichuang
-- **项目**: CC-Admin 企业级后台管理框架
-- **联系方式**: [请通过 GitHub Issues 联系](https://github.com/ichichuang/CC-Admin/issues)
+- **项目**: cc-admin 企业级后台管理框架
+- **联系方式**: [请通过 GitHub Issues 联系](https://github.com/ichichuang/cc-admin/issues)
 
 ## 🚀 使用指南
 

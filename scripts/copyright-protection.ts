@@ -1,7 +1,7 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license 自定义商业限制许可证
- * @description CC-Admin 版权保护脚本 v2.1
+ * @description cc-admin 版权保护脚本 v2.1
  * 本文件受版权保护，商业使用需要授权。
  */
 
@@ -25,8 +25,8 @@ const COPYRIGHT_CONFIG: CopyrightConfig = {
   author: 'chichuang',
   year: '2025',
   license: '自定义商业限制许可证',
-  project: 'CC-Admin 企业级后台管理框架',
-  commercialContact: 'https://github.com/ichichuang/CC-Admin/issues',
+  project: 'cc-admin 企业级后台管理框架',
+  commercialContact: 'https://github.com/ichichuang/cc-admin/issues',
 }
 
 // 增强的排除规则

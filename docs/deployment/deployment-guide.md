@@ -1,7 +1,7 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license MIT
-  @description CC-Admin 企业级后台管理框架 - deployment-guide
+  @description cc-admin 企业级后台管理框架 - deployment-guide
   本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
 -->
 
@@ -9,7 +9,7 @@
 
 ## 概述
 
-CC-Admin 支持多种部署方式，包括传统服务器部署、容器化部署、云平台部署等。
+cc-admin 支持多种部署方式，包括传统服务器部署、容器化部署、云平台部署等。
 
 ## 🏗️ 环境准备
 
@@ -23,7 +23,7 @@ CC-Admin 支持多种部署方式，包括传统服务器部署、容器化部�
 
 ```bash
 # .env.production
-VITE_APP_TITLE=CC-Admin
+VITE_APP_TITLE=cc-admin
 VITE_APP_ENV=production
 VITE_API_BASE_URL=https://api.example.com
 VITE_API_TIMEOUT=10000
@@ -191,4 +191,4 @@ app.get('/health', (req, res) => {
 - 使用浏览器开发者工具分析
 - 检查网络请求和响应
 
-通过这套部署体系，CC-Admin 能够实现安全、可靠、高效的生产环境部署。
+通过这套部署体系，cc-admin 能够实现安全、可靠、高效的生产环境部署。

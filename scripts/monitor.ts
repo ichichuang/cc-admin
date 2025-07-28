@@ -3,7 +3,7 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license MIT
- * @description CC-Admin 企业级后台管理框架 - 跨平台监控脚本
+ * @description cc-admin 企业级后台管理框架 - 跨平台监控脚本
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
@@ -149,10 +149,10 @@ class CrossPlatformMonitor {
     console.log('🔍 搜索版权违规...')
 
     const searchQueries = [
-      'CC-Admin chichuang',
-      'CC-Admin framework',
+      'cc-admin chichuang',
+      'cc-admin framework',
       'chichuang admin',
-      'CC-Admin enterprise',
+      'cc-admin enterprise',
     ]
 
     for (const query of searchQueries) {
@@ -300,7 +300,7 @@ class CrossPlatformMonitor {
   private generateMarkdownReport(): string {
     const { copyrightViolations, structureSimilarities, techstackMatches } = this.result
 
-    return `# CC-Admin 框架监控报告
+    return `# cc-admin 框架监控报告
 
 ## 📊 监控概览
 
@@ -339,12 +339,12 @@ ${techstackMatches.length > 0 ? '- 关注技术栈匹配项目，了解竞争情
 
 ---
 *报告生成时间: ${new Date().toLocaleString('zh-CN')}*
-*监控系统: CC-Admin 跨平台监控脚本*
+*监控系统: cc-admin 跨平台监控脚本*
 `
   }
 
   async run(): Promise<void> {
-    console.log('🛡️ CC-Admin 框架代码监控系统 (跨平台版)')
+    console.log('🛡️ cc-admin 框架代码监控系统 (跨平台版)')
     console.log('=======================================')
     console.log(`监控时间: ${new Date().toLocaleString('zh-CN')}`)
     console.log(`框架名称: ${this.config.frameworkName}`)
@@ -392,8 +392,8 @@ const isTestToken = args.includes('--test-token')
 // 使用示例
 const monitor = new CrossPlatformMonitor({
   githubUsername: 'ichichuang',
-  repoName: 'CC-Admin',
-  frameworkName: 'CC-Admin',
+  repoName: 'cc-admin',
+  frameworkName: 'cc-admin',
   outputDir: 'monitor_reports',
 })
 

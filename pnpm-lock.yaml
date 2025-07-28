@@ -179,6 +179,126 @@ importers:
         specifier: ^2.2.10
         version: 2.2.10(typescript@5.8.3)
 
+  apps/admin:
+    dependencies:
+      '@cc/early-bird-core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@cc/early-bird-types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      '@cc/early-bird-ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      alova:
+        specifier: ^3.3.3
+        version: 3.3.3
+      pinia:
+        specifier: ^3.0.3
+        version: 3.0.3(typescript@5.8.3)(vue@3.5.17(typescript@5.8.3))
+      vue:
+        specifier: ^3.5.12
+        version: 3.5.17(typescript@5.8.3)
+      vue-i18n:
+        specifier: ^10.0.8
+        version: 10.0.8(vue@3.5.17(typescript@5.8.3))
+      vue-router:
+        specifier: ^4.4.5
+        version: 4.5.1(vue@3.5.17(typescript@5.8.3))
+    devDependencies:
+      '@intlify/devtools-types':
+        specifier: ^11.1.11
+        version: 11.1.11
+      '@unocss/preset-attributify':
+        specifier: ^66.3.2
+        version: 66.3.2
+      '@unocss/preset-icons':
+        specifier: ^66.3.2
+        version: 66.3.2
+      '@unocss/preset-typography':
+        specifier: ^66.3.2
+        version: 66.3.2
+      '@unocss/preset-uno':
+        specifier: ^66.3.2
+        version: 66.3.2
+      '@unocss/transformer-directives':
+        specifier: ^66.3.2
+        version: 66.3.2
+      '@unocss/transformer-variant-group':
+        specifier: ^66.3.2
+        version: 66.3.2
+      '@vitejs/plugin-vue':
+        specifier: ^6.0.0
+        version: 6.0.0(vite@7.0.0(@types/node@22.15.34)(jiti@2.4.2)(sass@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(vue@3.5.17(typescript@5.8.3))
+      '@vitejs/plugin-vue-jsx':
+        specifier: ^5.0.0
+        version: 5.0.0(vite@7.0.0(@types/node@22.15.34)(jiti@2.4.2)(sass@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(vue@3.5.17(typescript@5.8.3))
+      sass:
+        specifier: ^1.89.2
+        version: 1.89.2
+      typescript:
+        specifier: ^5.6.2
+        version: 5.8.3
+      unocss:
+        specifier: ^66.3.2
+        version: 66.3.2(postcss@8.5.6)(vite@7.0.0(@types/node@22.15.34)(jiti@2.4.2)(sass@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(vue@3.5.17(typescript@5.8.3))
+      vite:
+        specifier: ^7.0.0
+        version: 7.0.0(@types/node@22.15.34)(jiti@2.4.2)(sass@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
+      vue-tsc:
+        specifier: ^2.2.10
+        version: 2.2.10(typescript@5.8.3)
+
+  packages/core:
+    dependencies:
+      alova:
+        specifier: ^3.3.3
+        version: 3.3.3
+      lodash-es:
+        specifier: ^4.17.21
+        version: 4.17.21
+      pinia:
+        specifier: ^3.0.3
+        version: 3.0.3(typescript@5.8.3)(vue@3.5.17(typescript@5.8.3))
+      pinia-plugin-persistedstate:
+        specifier: ^4.4.0
+        version: 4.4.0(pinia@3.0.3(typescript@5.8.3)(vue@3.5.17(typescript@5.8.3)))
+      vue:
+        specifier: ^3.5.12
+        version: 3.5.17(typescript@5.8.3)
+      vue-router:
+        specifier: ^4.4.5
+        version: 4.5.1(vue@3.5.17(typescript@5.8.3))
+    devDependencies:
+      '@types/lodash-es':
+        specifier: ^4.17.12
+        version: 4.17.12
+      typescript:
+        specifier: ^5.6.2
+        version: 5.8.3
+
+  packages/types:
+    devDependencies:
+      typescript:
+        specifier: ^5.6.2
+        version: 5.8.3
+
+  packages/ui:
+    dependencies:
+      '@cc/early-bird-core':
+        specifier: workspace:*
+        version: link:../core
+      vue:
+        specifier: ^3.5.12
+        version: 3.5.17(typescript@5.8.3)
+      vue-router:
+        specifier: ^4.4.5
+        version: 4.5.1(vue@3.5.17(typescript@5.8.3))
+    devDependencies:
+      typescript:
+        specifier: ^5.6.2
+        version: 5.8.3
+
 packages:
 
   '@alova/shared@1.3.1':
@@ -995,12 +1115,28 @@ packages:
     resolution: {integrity: sha512-FoHslNWSoHjdUBLy35bpm9PV/0LVI/DSv9L6Km6J2ad8r/mm0VaGg06C40FqlE8u2ADcGUM60lyoU7Myo4WNZQ==}
     engines: {node: '>= 16'}
 
+  '@intlify/core-base@11.1.11':
+    resolution: {integrity: sha512-1Z0N8jTfkcD2Luq9HNZt+GmjpFe4/4PpZF3AOzoO1u5PTtSuXZcfhwBatywbfE2ieB/B5QHIoOFmCXY2jqVKEQ==}
+    engines: {node: '>= 16'}
+
+  '@intlify/devtools-types@11.1.11':
+    resolution: {integrity: sha512-pjDNEELKggW/sBf+iQId2YPB9gydUIy2AwkGICjpAF3eu+LkOJHk4NMOfnGHPoZv7EHo8MaE3ldIoVKYhjO/cQ==}
+    engines: {node: '>= 16'}
+
   '@intlify/message-compiler@10.0.8':
     resolution: {integrity: sha512-DV+sYXIkHVd5yVb2mL7br/NEUwzUoLBsMkV3H0InefWgmYa34NLZUvMCGi5oWX+Hqr2Y2qUxnVrnOWF4aBlgWg==}
     engines: {node: '>= 16'}
 
+  '@intlify/message-compiler@11.1.11':
+    resolution: {integrity: sha512-7PC6neomoc/z7a8JRjPBbu0T2TzR2MQuY5kn2e049MP7+o32Ve7O8husylkA7K9fQRe4iNXZWTPnDJ6vZdtS1Q==}
+    engines: {node: '>= 16'}
+
   '@intlify/shared@10.0.8':
     resolution: {integrity: sha512-BcmHpb5bQyeVNrptC3UhzpBZB/YHHDoEREOUERrmF2BRxsyOEuRrq+Z96C/D4+2KJb8kuHiouzAei7BXlG0YYw==}
+    engines: {node: '>= 16'}
+
+  '@intlify/shared@11.1.11':
+    resolution: {integrity: sha512-RIBFTIqxZSsxUqlcyoR7iiC632bq7kkOwYvZlvcVObHfrF4NhuKc4FKvu8iPCrEO+e3XsY7/UVpfgzg+M7ETzA==}
     engines: {node: '>= 16'}
 
   '@isaacs/balanced-match@4.0.1':
@@ -4344,12 +4480,29 @@ snapshots:
       '@intlify/message-compiler': 10.0.8
       '@intlify/shared': 10.0.8
 
+  '@intlify/core-base@11.1.11':
+    dependencies:
+      '@intlify/message-compiler': 11.1.11
+      '@intlify/shared': 11.1.11
+
+  '@intlify/devtools-types@11.1.11':
+    dependencies:
+      '@intlify/core-base': 11.1.11
+      '@intlify/shared': 11.1.11
+
   '@intlify/message-compiler@10.0.8':
     dependencies:
       '@intlify/shared': 10.0.8
       source-map-js: 1.2.1
 
+  '@intlify/message-compiler@11.1.11':
+    dependencies:
+      '@intlify/shared': 11.1.11
+      source-map-js: 1.2.1
+
   '@intlify/shared@10.0.8': {}
+
+  '@intlify/shared@11.1.11': {}
 
   '@isaacs/balanced-match@4.0.1': {}
 
