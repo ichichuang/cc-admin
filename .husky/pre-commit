@@ -1,6 +1,8 @@
 # 运行lint-staged检查暂存文件
 pnpm dlx lint-staged
 
+# 添加版权保护
+pnpm copyright:add
 # 检查命名规范
 pnpm check
 
