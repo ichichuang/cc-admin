@@ -1,8 +1,16 @@
+/**
+ * @copyright Copyright (c) 2025 chichuang
+ * @license MIT
+ * @description CC-Admin 企业级后台管理框架 - 状态管理
+ * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+ */
+
 /* 尺寸配置 */
 import store from '@/stores'
+import { env } from '@/utils/env'
 import { defineStore } from 'pinia'
 
-const appTitle = import.meta.env.VITE_APP_TITLE
+const appTitle = env.appTitle
 
 interface AppState {
   title: string
@@ -21,7 +29,7 @@ export const useAppStore = defineStore('app', {
   actions: {},
 
   persist: {
-    key: `${import.meta.env.VITE_PINIA_PERSIST_KEY_PREFIX}-app`,
+    key: `${env.piniaKeyPrefix}-app`,
     storage: localStorage,
   },
 })

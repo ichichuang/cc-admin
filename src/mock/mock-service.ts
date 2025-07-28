@@ -1,3 +1,11 @@
+/**
+ * @copyright Copyright (c) 2025 chichuang
+ * @license MIT
+ * @description CC-Admin 企业级后台管理框架 - mock-service
+ * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+ */
+
+import { env } from '@/utils/env'
 import { mockServices } from './index'
 import type { MockMethod } from './types'
 
@@ -17,7 +25,7 @@ class MockService {
    * 初始化 Mock 服务
    */
   private init() {
-    const isMockEnabled = import.meta.env.VITE_MOCK_ENABLE === 'true'
+    const isMockEnabled = env.mockEnable
 
     if (isMockEnabled) {
       this.isEnabled = true

@@ -1,8 +1,14 @@
-const isDebug = import.meta.env.VITE_DEBUG === 'true'
+/**
+ * @copyright Copyright (c) 2025 chichuang
+ * @license MIT
+ * @description CC-Admin 企业级后台管理框架 - 路由管理
+ * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+ */
 
 // Router 统一管理入口
 import { createDynamicRouteManager, createRouteUtils, sortRoutes } from '@/router/utils'
 import { registerRouterGuards } from '@/router/utils/customs'
+import { env } from '@/utils/env'
 import { autoImportModulesSync } from '@/utils/moduleLoader'
 import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHistory } from 'vue-router'
@@ -24,22 +30,14 @@ const staticRoutes: RouteConfig[] = (Object.values(importedRoutes).flat() as any
 )
 const sortedStaticRoutes = sortRoutes(staticRoutes)
 
-if (isDebug) {
-  console.log('=======================开始初始化路由========================')
-}
-
 // 创建路由工具集（用于菜单渲染、面包屑等）
 export const routeUtils = createRouteUtils(sortedStaticRoutes)
-if (isDebug) {
-  console.log('router-所有静态路由: ', staticRoutes)
-  console.log('router-路由工具集: ', routeUtils)
-}
 
 // 添加根路径重定向
 const rootRedirect: RouteConfig = {
   path: '/',
   name: 'RootRedirect',
-  redirect: import.meta.env.VITE_ROOT_REDIRECT,
+  redirect: env.rootRedirect,
 }
 
 // 合并所有静态路由（包括根重定向）
@@ -53,8 +51,8 @@ const initialRoutes: RouteRecordRaw[] = allStaticRoutesWithRedirect.map(
 // 创建路由实例
 const router = createRouter({
   // history 模式
-  history: createWebHistory(import.meta.env.VITE_PUBLIC_PATH),
-  // history: createWebHashHistory(import.meta.env.VITE_PUBLIC_PATH),
+  history: createWebHistory(env.publicPath),
+  // history: createWebHashHistory(env.publicPath),
   routes: initialRoutes,
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
@@ -72,7 +70,7 @@ export const dynamicRouteManager = createDynamicRouteManager(router)
 registerRouterGuards(router, {
   initDynamicRoutes,
   sortedStaticRoutes,
-  isDebug,
+  isDebug: env.debug,
 })
 
 // 导出初始化、重置等方法（传递router/dynamicRouteManager等参数）

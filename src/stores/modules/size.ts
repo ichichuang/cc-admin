@@ -1,6 +1,14 @@
+/**
+ * @copyright Copyright (c) 2025 chichuang
+ * @license MIT
+ * @description CC-Admin 企业级后台管理框架 - 状态管理
+ * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+ */
+
 /* 尺寸配置 */
 import { deepClone, toKebabCase } from '@/common'
 import store, { useLayoutStoreWithOut } from '@/stores'
+import { env } from '@/utils/env'
 import { defineStore } from 'pinia'
 
 /* 尺寸模式类型 宽松尺寸 > 舒适尺寸 > 紧凑尺寸 */
@@ -368,7 +376,7 @@ export const useSizeStore = defineStore('size', {
   },
 
   persist: {
-    key: `${import.meta.env.VITE_PINIA_PERSIST_KEY_PREFIX}-size`,
+    key: `${env.piniaKeyPrefix}-size`,
     storage: localStorage,
     // 添加序列化配置，确保持久化正确
     serializer: {

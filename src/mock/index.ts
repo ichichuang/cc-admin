@@ -1,3 +1,11 @@
+/**
+ * @copyright Copyright (c) 2025 chichuang
+ * @license MIT
+ * @description CC-Admin 企业级后台管理框架 - index
+ * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+ */
+
+import { env } from '@/utils/env'
 import type { MockMethod } from './types'
 
 // 导入所有 Mock 模块
@@ -16,7 +24,7 @@ export const mockServices: MockMethod[] = [...authMock, ...routerMock, ...exampl
  * 根据环境变量决定是否启用 Mock
  */
 export function initMockService() {
-  const isMockEnabled = import.meta.env.VITE_MOCK_ENABLE === 'true'
+  const isMockEnabled = env.mockEnable
 
   if (isMockEnabled) {
     // 使用自定义 Mock 服务，支持生产环境

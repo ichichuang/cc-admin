@@ -1,6 +1,14 @@
+/**
+ * @copyright Copyright (c) 2025 chichuang
+ * @license MIT
+ * @description CC-Admin 企业级后台管理框架 - 路由管理
+ * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+ */
+
 import { getAuthRoutes } from '@/api'
 import { processAsyncRoutes, transformToVueRoutes } from '@/router/utils'
 import { usePermissionStoreWithOut, useUserStoreWithOut } from '@/stores'
+import { isDev } from '@/utils/env'
 import { computed } from 'vue'
 
 export const initDynamicRoutes = async (
@@ -28,7 +36,7 @@ export const initDynamicRoutes = async (
     if (backendRoutes && backendRoutes.length > 0) {
       const processedRoutes = processAsyncRoutes(backendRoutes as BackendRouteConfig[])
       if (isDebug) {
-        console.log('router-处理后的动态路由: ', processedRoutes)
+        console.log('🔄 处理后的动态路由:', processedRoutes)
       }
       if (!processedRoutes || processedRoutes.length === 0) {
         throw new Error('处理后的动态路由为空')
@@ -47,9 +55,7 @@ export const initDynamicRoutes = async (
         }
       })
       if (isDebug) {
-        console.log(
-          `router-动态路由加载成功，添加了 ${addedCount}/${processedRoutes.length} 个路由`
-        )
+        console.log(`✅ 动态路由加载成功，添加了 ${addedCount}/${processedRoutes.length} 个路由`)
       }
     } else {
       console.warn('后端返回的动态路由为空')
@@ -89,26 +95,26 @@ export const resetRouter = (router: any, dynamicRouteManager: any): void => {
 }
 
 export const validateRouteConfig = (sortedStaticRoutes: any, routeUtils: any) => {
-  if (import.meta.env.DEV) {
+  if (isDev()) {
     console.group('🔍 路由配置验证')
-    console.log('静态路由数量:', sortedStaticRoutes.length)
+    console.log('📊 静态路由数量:', sortedStaticRoutes.length)
     console.log(
-      '静态路由列表:',
+      '📋 静态路由列表:',
       sortedStaticRoutes.map((r: any) => `${r.path} (${String(r.name || '未命名')})`)
     )
     const permissionStore = usePermissionStoreWithOut()
     const userStore = useUserStoreWithOut()
-    console.log('动态路由数量:', permissionStore.dynamicRoutes.length)
+    console.log('📊 动态路由数量:', permissionStore.dynamicRoutes.length)
     console.log(
-      '动态路由列表:',
+      '📋 动态路由列表:',
       permissionStore.dynamicRoutes.map((r: any) => `${r.path} (${String(r.name || '未命名')})`)
     )
-    console.log('路由工具:', {
+    console.log('🛠️ 路由工具:', {
       扁平化路由数量: routeUtils.flatRoutes.length,
       菜单树节点数量: routeUtils.menuTree.length,
       面包屑映射数量: routeUtils.breadcrumbMap.size,
     })
-    console.log('权限配置:', {
+    console.log('🔐 权限配置:', {
       用户信息: !!userStore.getUserInfo,
       动态路由已加载: permissionStore.isRoutesLoaded,
       动态路由数量: permissionStore.dynamicRoutes.length,

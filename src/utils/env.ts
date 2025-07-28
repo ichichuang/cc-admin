@@ -1,4 +1,11 @@
 /**
+ * @copyright Copyright (c) 2025 chichuang
+ * @license MIT
+ * @description CC-Admin 企业级后台管理框架 - 工具函数
+ * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+ */
+
+/**
  * 环境变量工具函数
  * 提供类型安全的环境变量访问和转换
  */
@@ -133,6 +140,38 @@ export const env = {
   get cdn(): boolean {
     return toBool(import.meta.env.VITE_CDN)
   },
+
+  // rem 适配配置
+  get remDesignWidth(): number {
+    return toNumber(import.meta.env.VITE_REM_DESIGN_WIDTH)
+  },
+
+  get remBaseFontSize(): number {
+    return toNumber(import.meta.env.VITE_REM_BASE_FONT_SIZE)
+  },
+
+  get remMinFontSize(): number {
+    return toNumber(import.meta.env.VITE_REM_MIN_FONT_SIZE)
+  },
+
+  get remMaxFontSize(): number {
+    return toNumber(import.meta.env.VITE_REM_MAX_FONT_SIZE)
+  },
+
+  get remMobileFirst(): boolean {
+    return toBool(import.meta.env.VITE_REM_MOBILE_FIRST)
+  },
+
+  get remBreakpoints(): {
+    xs: number
+    sm: number
+    md: number
+    lg: number
+    xl: number
+    xls: number
+  } {
+    return JSON.parse(import.meta.env.VITE_REM_BREAKPOINTS)
+  },
 } as const
 
 /**
@@ -198,15 +237,58 @@ if (isDev()) {
   }
 }
 
-/* rem 适配系统配置 */
-export const remConfig = {
-  designWidth: Number(import.meta.env.VITE_REM_DESIGN_WIDTH) || 1920,
-  baseFontSize: Number(import.meta.env.VITE_REM_BASE_FONT_SIZE) || 16,
-  minFontSize: Number(import.meta.env.VITE_REM_MIN_FONT_SIZE) || 12,
-  maxFontSize: Number(import.meta.env.VITE_REM_MAX_FONT_SIZE) || 24,
-  mobileFirst: import.meta.env.VITE_REM_MOBILE_FIRST === 'true',
-  breakpoints: JSON.parse(
-    import.meta.env.VITE_REM_BREAKPOINTS ||
-      '{"xs":375,"sm":768,"md":1024,"lg":1400,"xl":1660,"xls":1920}'
-  ),
+/**
+ * rem 适配系统默认配置
+ * 统一管理所有 rem 相关的默认值，避免在多个文件中重复定义
+ */
+export const REM_DEFAULT_CONFIG = {
+  designWidth: 1800,
+  baseFontSize: 16,
+  minFontSize: 12,
+  maxFontSize: 24,
+  mobileFirst: false,
+  breakpoints: {
+    xs: 375,
+    sm: 768,
+    md: 1024,
+    lg: 1400,
+    xl: 1660,
+    xls: 1920,
+  },
+} as const
+
+/**
+ * rem 配置类型定义
+ */
+export interface RemConfig {
+  designWidth: number
+  baseFontSize: number
+  minFontSize: number
+  maxFontSize: number
+  mobileFirst: boolean
+  breakpoints: {
+    xs: number
+    sm: number
+    md: number
+    lg: number
+    xl: number
+    xls: number
+  }
 }
+
+/**
+ * 从环境变量解析 rem 配置
+ */
+export const parseRemConfig = (): RemConfig => {
+  return {
+    designWidth: env.remDesignWidth,
+    baseFontSize: env.remBaseFontSize,
+    minFontSize: env.remMinFontSize,
+    maxFontSize: env.remMaxFontSize,
+    mobileFirst: env.remMobileFirst,
+    breakpoints: env.remBreakpoints,
+  }
+}
+
+/* rem 适配系统配置 */
+export const remConfig = parseRemConfig()

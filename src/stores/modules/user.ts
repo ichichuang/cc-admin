@@ -1,6 +1,14 @@
+/**
+ * @copyright Copyright (c) 2025 chichuang
+ * @license MIT
+ * @description CC-Admin 企业级后台管理框架 - 状态管理
+ * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+ */
+
 import { getUserInfo } from '@/api'
 import router from '@/router'
 import store from '@/stores'
+import { env } from '@/utils/env'
 import { defineStore } from 'pinia'
 
 interface UserState {
@@ -33,9 +41,7 @@ export const useUserStore = defineStore('user', {
       this.token = token
       getUserInfo().then(res => {
         this.userInfo = res
-        router.push(
-          (router.currentRoute.value.query.redirect as string) || import.meta.env.VITE_ROOT_REDIRECT
-        )
+        router.push((router.currentRoute.value.query.redirect as string) || env.rootRedirect)
       })
     },
     resetToken() {
@@ -55,7 +61,7 @@ export const useUserStore = defineStore('user', {
   },
 
   persist: {
-    key: `${import.meta.env.VITE_PINIA_PERSIST_KEY_PREFIX}-user`,
+    key: `${env.piniaKeyPrefix}-user`,
     storage: localStorage,
   },
 })

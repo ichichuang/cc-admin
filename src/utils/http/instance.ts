@@ -1,4 +1,12 @@
+/**
+ * @copyright Copyright (c) 2025 chichuang
+ * @license MIT
+ * @description CC-Admin 企业级后台管理框架 - 工具函数
+ * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+ */
+
 // src/utils/http/instance.ts
+import { env } from '@/utils/env'
 import { createAlova } from 'alova'
 import adapterFetch from 'alova/fetch'
 import VueHook from 'alova/vue'
@@ -9,12 +17,11 @@ import { beforeRequest, responseHandler } from './interceptors'
  */
 export const alovaInstance = createAlova({
   // 连接到本地 cc-server
-  baseURL:
-    import.meta.env.VITE_MOCK_ENABLE === 'true'
-      ? '' // Mock 模式下不需要 baseURL 前缀
-      : import.meta.env.VITE_APP_ENV === 'development'
-        ? '/api'
-        : import.meta.env.VITE_API_BASE_URL,
+  baseURL: env.mockEnable
+    ? '' // Mock 模式下不需要 baseURL 前缀
+    : env.appEnv === 'development'
+      ? '/api'
+      : env.apiBaseUrl,
 
   // 使用 fetch 作为请求适配器
   requestAdapter: adapterFetch(),

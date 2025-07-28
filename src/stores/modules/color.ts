@@ -1,5 +1,13 @@
+/**
+ * @copyright Copyright (c) 2025 chichuang
+ * @license MIT
+ * @description CC-Admin 企业级后台管理框架 - 状态管理
+ * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+ */
+
 import { getSystemColorMode, toKebabCase } from '@/common'
 import store from '@/stores'
+import { env } from '@/utils/env'
 import { defineStore } from 'pinia'
 
 /* 主题模式选项类型 */
@@ -607,7 +615,7 @@ export const useColorStore = defineStore('color', {
   },
 
   persist: {
-    key: `${import.meta.env.VITE_PINIA_PERSIST_KEY_PREFIX}-color`,
+    key: `${env.piniaKeyPrefix}-color`,
     storage: localStorage,
   },
 })

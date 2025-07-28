@@ -1,7 +1,14 @@
-const isDebug = import.meta.env.VITE_DEBUG === 'true'
+/**
+ * @copyright Copyright (c) 2025 chichuang
+ * @license MIT
+ * @description CC-Admin 企业级后台管理框架 - 状态管理
+ * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+ */
+
 import store from '@/stores'
 import { useLayoutStoreWithOut } from '@/stores/modules/layout'
 import type { DeviceInfo } from '@/Types/global'
+import { env } from '@/utils/env'
 import { RemAdapter, type RemAdapterConfig, parseRemConfigFromEnv } from '@/utils/remAdapter'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
@@ -62,9 +69,9 @@ export const usePostcssStore = defineStore(
 
         if (shouldUpdateMobileFirst) {
           remConfig.value.mobileFirst = isMobile
-          if (isDebug) {
+          if (env.debug) {
             console.log(
-              `🎯 自动切换适配模式: ${isMobile ? '移动端优先' : '桌面端优先'} (设备: ${deviceInfo.type})`
+              `🔄 自动切换适配模式: ${isMobile ? '移动端优先' : '桌面端优先'} (设备: ${deviceInfo.type})`
             )
           }
         }
@@ -96,9 +103,9 @@ export const usePostcssStore = defineStore(
           const currentIsMobile = latestDeviceInfo.type === 'Mobile'
           if (remConfig.value.mobileFirst !== currentIsMobile) {
             remConfig.value.mobileFirst = currentIsMobile
-            if (isDebug) {
+            if (env.debug) {
               console.log(
-                `🔄 设备类型变化，自动切换适配模式: ${currentIsMobile ? '移动端优先' : '桌面端优先'}`
+                `📱 设备类型变化，自动切换适配模式: ${currentIsMobile ? '移动端优先' : '桌面端优先'}`
               )
             }
 
@@ -128,9 +135,6 @@ export const usePostcssStore = defineStore(
             const newDeviceInfo = layoutStore.deviceInfo
             remAdapter.value.setRootFontSize(newDeviceInfo)
             currentRemBase.value = remAdapter.value.getCurrentFontSize()
-            if (isDebug) {
-              console.log('🎯 主动刷新适配器：', newDeviceInfo.screen.width + 'px')
-            }
           }
         }
 
@@ -148,8 +152,8 @@ export const usePostcssStore = defineStore(
               const newFontSize = remAdapter.value.getCurrentFontSize()
               if (Math.abs(newFontSize - currentRemBase.value) > 0.1) {
                 currentRemBase.value = newFontSize
-                if (isDebug) {
-                  console.log('🎯 检测到根字体变化：', newFontSize + 'px')
+                if (env.debug) {
+                  console.log('📏 检测到根字体变化：', newFontSize + 'px')
                 }
               }
             }
@@ -175,8 +179,8 @@ export const usePostcssStore = defineStore(
           }
         }
 
-        if (isDebug) {
-          console.log('🎯 rem 适配器已初始化 (增强响应)', await getRemAdapterInfoAsync())
+        if (env.debug) {
+          console.log('✅ rem 适配器已初始化')
         }
       } catch (error) {
         console.error('Failed to initialize rem adapter:', error)
@@ -197,7 +201,7 @@ export const usePostcssStore = defineStore(
           const isMobile = deviceInfo.type === 'Mobile'
           if (remConfig.value.mobileFirst !== isMobile) {
             remConfig.value.mobileFirst = isMobile
-            if (isDebug) {
+            if (env.debug) {
               console.log(
                 `🔄 设备变化，自动切换适配模式: ${isMobile ? '移动端优先' : '桌面端优先'} (设备: ${deviceInfo.type})`
               )
@@ -287,9 +291,6 @@ export const usePostcssStore = defineStore(
             })
           )
 
-          if (isDebug) {
-            console.log('🔄 手动刷新适配器完成：', currentRemBase.value + 'px')
-          }
           return true
         }
         return false
@@ -339,7 +340,7 @@ export const usePostcssStore = defineStore(
   },
   {
     persist: {
-      key: `${import.meta.env.VITE_PINIA_PERSIST_KEY_PREFIX}-postcss`,
+      key: `${env.piniaKeyPrefix}-postcss`,
       storage: localStorage,
     },
   }

@@ -1,4 +1,11 @@
 /**
+ * @copyright Copyright (c) 2025 chichuang
+ * @license MIT
+ * @description CC-Admin 企业级后台管理框架 - mock-prod-server
+ * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+ */
+
+/**
  * 生产环境 Mock 服务器设置
  * 用于在生产环境中提供 Mock 数据服务
  * 注意：vite-plugin-mock 在生产环境中的支持有限

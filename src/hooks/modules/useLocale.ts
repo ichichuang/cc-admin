@@ -1,4 +1,11 @@
 /**
+ * @copyright Copyright (c) 2025 chichuang
+ * @license MIT
+ * @description CC-Admin 企业级后台管理框架 - 组合式函数
+ * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+ */
+
+/**
  * 多语言切换的Composable函数
  */
 import { getCurrentLocale, setLocale, supportedLocales } from '@/locales'
@@ -31,7 +38,7 @@ export function useLocale() {
       setLocale(newLocale)
 
       // 通知其他模块语言已切换
-      console.log(`Language switched to: ${newLocale}`)
+      console.log(`🌐 语言切换为: ${newLocale}`)
     } catch (error) {
       console.error('Failed to switch locale:', error)
     }

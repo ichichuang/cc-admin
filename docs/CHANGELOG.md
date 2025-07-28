@@ -1,3 +1,10 @@
+<!--
+  @copyright Copyright (c) 2025 chichuang
+  @license MIT
+  @description CC-Admin 企业级后台管理框架 - CHANGELOG
+  本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+-->
+
 # 文档更新日志
 
 ## 2025-01-XX - Mock 数据简化重构

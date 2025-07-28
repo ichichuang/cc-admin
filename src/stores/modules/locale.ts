@@ -1,8 +1,16 @@
 /**
+ * @copyright Copyright (c) 2025 chichuang
+ * @license MIT
+ * @description CC-Admin 企业级后台管理框架 - 状态管理
+ * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+ */
+
+/**
  * 多语言状态管理
  */
 import { getCurrentLocale, setLocale, supportedLocales } from '@/locales'
 import type { LocaleInfo, SupportedLocale } from '@/locales/types'
+import { env } from '@/utils/env'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
@@ -93,7 +101,7 @@ export const useLocaleStore = defineStore(
   },
   {
     persist: {
-      key: `${import.meta.env.VITE_PINIA_PERSIST_KEY_PREFIX}-locale`,
+      key: `${env.piniaKeyPrefix}-locale`,
       storage: localStorage,
     },
   }

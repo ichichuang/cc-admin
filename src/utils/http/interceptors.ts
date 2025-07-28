@@ -1,5 +1,12 @@
-const isDebug = import.meta.env.VITE_DEBUG === 'true'
+/**
+ * @copyright Copyright (c) 2025 chichuang
+ * @license MIT
+ * @description CC-Admin 企业级后台管理框架 - 工具函数
+ * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+ */
+
 import { useUserStoreWithOut } from '@/stores'
+import { env } from '@/utils/env'
 import type { Method } from 'alova'
 
 /**
@@ -19,8 +26,8 @@ export const beforeRequest = (method: Method) => {
   }
 
   // 开发环境下打印请求信息
-  if (isDebug) {
-    console.log(`🚀 [${method.type}] ${method.url}`, method.data ?? '')
+  if (env.debug) {
+    console.log(`🚀 HTTP 请求: [${method.type}] ${method.url}`, method.data ?? '')
   }
 }
 
@@ -31,8 +38,8 @@ export const responseHandler = async (response: Response, _method: Method) => {
   try {
     const json = await response.json()
 
-    if (isDebug) {
-      console.log('📥 响应数据:', json)
+    if (env.debug) {
+      console.log('📥 HTTP 响应数据:', json)
     }
 
     // 处理 HTTP 状态码错误
@@ -59,7 +66,7 @@ export const responseHandler = async (response: Response, _method: Method) => {
  * 处理 HTTP 状态码错误
  */
 const handleHttpError = (status: number, data: any) => {
-  if (isDebug) {
+  if (env.debug) {
     console.error(`❌ HTTP ${status} 错误:`, data)
   }
 
@@ -89,7 +96,7 @@ const handleHttpError = (status: number, data: any) => {
  * 处理请求错误
  */
 const handleRequestError = (error: Error) => {
-  if (isDebug) {
+  if (env.debug) {
     console.error('❌ 请求错误:', error)
   }
 

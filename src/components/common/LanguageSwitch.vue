@@ -1,3 +1,10 @@
+<!--
+  @copyright Copyright (c) 2025 chichuang
+  @license MIT
+  @description CC-Admin 企业级后台管理框架 - 组件
+  本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+-->
+
 <template>
   <div class="language-switch">
     <div class="current-language">
@@ -68,7 +75,7 @@ const handleLanguageSwitch = async (localeKey: string) => {
     closeDropdown()
 
     // 显示切换成功的消息（使用全局 $t）
-    console.log('Language switched to:', localeKey)
+    console.log('🌐 语言切换为:', localeKey)
   } catch (error) {
     console.error('Failed to switch language:', error)
   }

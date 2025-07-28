@@ -1,10 +1,18 @@
+<!--
+  @copyright Copyright (c) 2025 chichuang
+  @license MIT
+  @description CC-Admin 企业级后台管理框架 - 组件
+  本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+-->
+
 <script setup lang="ts">
 import { toKebabCase } from '@/common'
 import { useLayoutStore } from '@/stores'
+import { env } from '@/utils/env'
 import { computed, onMounted, reactive, ref } from 'vue'
 const layoutStore = useLayoutStore()
 const definitely = computed(() => layoutStore.getDefinitely)
-const loadingSize = import.meta.env.VITE_LOADING_SIZE
+const loadingSize = env.loadingSize
 const props = defineProps<{
   size?: number
   page?: boolean

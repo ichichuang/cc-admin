@@ -1,3 +1,15 @@
+/**
+ * @copyright Copyright (c) 2025 chichuang
+ * @license 自定义商业限制许可证
+ * @description CC-Admin 企业级后台管理框架 - 构建脚本
+ *
+ * 本文件受版权保护，商业使用需要授权。
+ * 联系方式: https://github.com/chichuang/cc-admin/issues
+ *
+ * This file is protected by copyright. Commercial use requires authorization.
+ * Contact: https://github.com/chichuang/cc-admin/issues
+ */
+
 /* eslint-disable */
 
 /**
@@ -356,7 +368,7 @@ function toPascalCase(str) {
  */
 function outputResults() {
   if (errors.length === 0) {
-    console.log('\n✅ 项目命名规范检查完成，一切正常！')
+    console.log('✅ \x1b[32m项目命名规范检查完成，一切正常\x1b[0m')
     return true
   }
 
@@ -390,7 +402,7 @@ function outputResults() {
  * 主函数
  */
 async function main() {
-  console.log('🔍 开始检查项目命名规范...')
+  console.log('\x1b[32m🔍 开始检查项目命名规范...\x1b[0m')
 
   // 只扫描src目录
   const srcPath = join(projectRoot, 'src')
@@ -403,7 +415,7 @@ async function main() {
     process.exit(1)
   }
 
-  console.log('📁 扫描目录:', srcPath)
+  console.log('\x1b[32m📁 扫描目录:\x1b[0m', srcPath)
   await scanDirectory(srcPath)
 
   // 输出结果

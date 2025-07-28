@@ -1,3 +1,10 @@
+<!--
+  @copyright Copyright (c) 2025 chichuang
+  @license MIT
+  @description CC-Admin 企业级后台管理框架 - INDEX
+  本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+-->
+
 # CC-Admin 文档索引
 
 欢迎来到 CC-Admin 项目文档中心！这里包含了项目的所有技术文档和使用指南。

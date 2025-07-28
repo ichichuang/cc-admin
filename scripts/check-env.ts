@@ -1,4 +1,9 @@
-#!/usr/bin/env node
+/**
+ * @copyright Copyright (c) 2025 chichuang
+ * @license MIT
+ * @description CC-Admin 企业级后台管理框架 - 构建脚本
+ * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+ */
 
 import { existsSync, readFileSync } from 'fs'
 import { join } from 'path'
@@ -361,12 +366,12 @@ function checkEnvConfig(): void {
 
   /* ---------- 结束 ---------- */
   if (hasError) {
-    log('\n❌  检查完成，发现错误！请修复后重试。', 'red')
+    log('❌  检查完成，发现错误！请修复后重试。', 'red')
     process.exit(1)
   } else if (hasWarning) {
-    log('\n⚠️   检查完成，有警告但可以继续运行。', 'yellow')
+    log('⚠️   检查完成，有警告但可以继续运行。', 'yellow')
   } else {
-    log('\n✅  .env 环境变量检查完成，一切正常！', 'green')
+    log('✅  .env 环境变量检查完成，一切正常！', 'green')
   }
 }
 

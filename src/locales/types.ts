@@ -1,4 +1,11 @@
 /**
+ * @copyright Copyright (c) 2025 chichuang
+ * @license MIT
+ * @description CC-Admin 企业级后台管理框架 - 国际化
+ * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+ */
+
+/**
  * 国际化类型定义
  * 定义项目中使用的所有语言配置类型
  */

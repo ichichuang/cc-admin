@@ -3,6 +3,30 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "author": "chichuang",
+  "copyright": "Copyright (c) 2025 chichuang",
+  "license": "MIT",
+  "description": "CC-Admin 企业级后台管理框架 - 基于 Vue 3.5+ 和 TypeScript 5+ 的现代化企业级后台管理框架",
+  "keywords": [
+    "vue3",
+    "typescript",
+    "vite",
+    "unocss",
+    "pinia",
+    "alova",
+    "admin",
+    "framework",
+    "cc-admin",
+    "chichuang"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ichichuang/CC-Admin"
+  },
+  "homepage": "https://github.com/ichichuang/CC-Admin#readme",
+  "bugs": {
+    "url": "https://github.com/ichichuang/CC-Admin/issues"
+  },
   "engines": {
     "node": ">=22.x",
     "pnpm": ">=8.0.0"
@@ -22,9 +46,16 @@
     "check": "pnpm type-check && pnpm lint && pnpm naming-check && pnpm env-check",
     "fix": "pnpm format && pnpm lint",
     "env-check": "pnpm exec tsx scripts/check-env.ts",
-    "pre-commit": "pnpm check",
+    "copyright:add": "pnpm exec tsx scripts/copyright-protection.ts",
+    "copyright:check": "pnpm exec tsx scripts/copyright-protection.ts --check",
+    "copyright:validate": "pnpm copyright:check && pnpm env-check",
+    "pre-commit": "pnpm check && pnpm copyright:check",
     "commit": "git-cz",
-    "prepare": "husky"
+    "prepare": "husky",
+    "monitor": "./scripts/cc-admin-monitor.sh",
+    "monitor:quick": "./scripts/advanced-search.sh",
+    "token:test": "./scripts/test-github-token.sh",
+    "monitor:setup": "echo '请确保已设置 GITHUB_TOKEN 环境变量或创建 .env 文件' && echo '详细说明请查看: docs/github-token-guide.md'"
   },
   "lint-staged": {
     "*.{ts,tsx,vue}": [

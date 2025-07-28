@@ -1,3 +1,10 @@
+<!--
+  @copyright Copyright (c) 2025 chichuang
+  @license MIT
+  @description CC-Admin 企业级后台管理框架 - cursor-guidelines
+  本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+-->
+
 # Cursor AI 编码指导规则
 
 这个文件为 Cursor AI 提供项目特定的编码指导，确保生成的代码符合项目的命名规范和最佳实践。

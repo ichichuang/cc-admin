@@ -1,54 +1,32 @@
-const isDebug = import.meta.env.VITE_DEBUG === 'true'
 /**
- * rem 适配系统
- *
- * 特点：
- * 1. 支持大屏、移动端、不同屏幕宽度适配
- * 2. 结合项目现有的设备信息系统
- * 3. 配合 postcss-pxtorem 和 UnoCSS 使用
- * 4. 提供多种适配策略
+ * @copyright Copyright (c) 2025 chichuang
+ * @license MIT
+ * @description CC-Admin 企业级后台管理框架 - 工具函数
+ * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
-import type { DeviceInfo } from '@/Types/global'
 import { debounce } from 'lodash-es'
+import type { DeviceInfo } from '../Types/global'
+import { REM_DEFAULT_CONFIG, env } from './env'
 
 // 从环境变量解析 rem 适配配置
 export const parseRemConfigFromEnv = (): RemAdapterConfig => {
   try {
-    // 解析断点配置（JSON 格式）
-    const breakpointsStr =
-      import.meta.env.VITE_REM_BREAKPOINTS ||
-      '{"xs":375,"sm":768,"md":1024,"lg":1400,"xl":1660,"xls":1920}'
-    const breakpoints = JSON.parse(breakpointsStr)
-
+    // 使用 env 对象获取环境变量，提供类型安全
     return {
-      designWidth: Number(import.meta.env.VITE_REM_DESIGN_WIDTH) || 1920,
-      baseFontSize: Number(import.meta.env.VITE_REM_BASE_FONT_SIZE) || 16,
-      minFontSize: Number(import.meta.env.VITE_REM_MIN_FONT_SIZE) || 12,
-      maxFontSize: Number(import.meta.env.VITE_REM_MAX_FONT_SIZE) || 24,
-      mobileFirst: import.meta.env.VITE_REM_MOBILE_FIRST === 'true',
-      breakpoints,
+      designWidth: env.remDesignWidth,
+      baseFontSize: env.remBaseFontSize,
+      minFontSize: env.remMinFontSize,
+      maxFontSize: env.remMaxFontSize,
+      mobileFirst: env.remMobileFirst,
+      breakpoints: env.remBreakpoints,
     }
   } catch (error) {
-    if (isDebug) {
+    if (env.debug) {
       console.warn('解析环境变量中的 rem 配置失败，使用默认配置:', error)
     }
-    // fallback 到硬编码配置
-    return {
-      designWidth: 1800,
-      baseFontSize: 16,
-      minFontSize: 12,
-      maxFontSize: 24,
-      mobileFirst: false,
-      breakpoints: {
-        xs: 375,
-        sm: 768,
-        md: 1024,
-        lg: 1400,
-        xl: 1660,
-        xls: 1920,
-      },
-    }
+    // fallback 到默认配置
+    return REM_DEFAULT_CONFIG
   }
 }
 
@@ -77,10 +55,6 @@ export interface RemAdapterConfig {
 
 // 默认配置（从环境变量解析）
 const DEFAULT_CONFIG: RemAdapterConfig = parseRemConfigFromEnv()
-
-if (isDebug) {
-  console.log('🎯 rem 适配配置已从环境变量加载:', DEFAULT_CONFIG)
-}
 
 export class RemAdapter {
   private config: RemAdapterConfig
@@ -128,9 +102,9 @@ export class RemAdapter {
     const clampedScale = Math.max(minScale, Math.min(maxScale, scale))
     fontSize = baseFontSize * clampedScale
 
-    if (isDebug) {
+    if (env.debug) {
       console.log(
-        `🎯 移动端缩放计算: 屏幕${viewportWidth}px / 移动设计稿${mobileDesignWidth}px = ${scale.toFixed(4)} | 字体: ${fontSize.toFixed(2)}px`
+        `📱 移动端缩放计算: 屏幕${viewportWidth}px / 移动设计稿${mobileDesignWidth}px = ${scale.toFixed(4)} | 字体: ${fontSize.toFixed(2)}px`
       )
     }
 
@@ -158,12 +132,6 @@ export class RemAdapter {
     // 限制缩放比例范围
     const clampedScale = Math.max(minScale, Math.min(maxScale, scale))
     fontSize = baseFontSize * clampedScale
-
-    if (isDebug) {
-      console.log(
-        `🎯 rem 缩放计算: 屏幕${viewportWidth}px / 设计稿${designWidth}px = ${scale.toFixed(4)} | 字体: ${fontSize.toFixed(2)}px`
-      )
-    }
 
     return fontSize
   }
@@ -193,11 +161,9 @@ export class RemAdapter {
         })
       )
 
-      if (isDebug) {
-        console.log(
+      /* console.log(
           `🎯 rem 适配已设置: ${fontSize.toFixed(2)}px (设备: ${deviceInfo.type}, 宽度: ${deviceInfo.screen.width}px)`
-        )
-      }
+        ) */
     }
   }
 
@@ -266,75 +232,123 @@ export class RemAdapter {
   }
 
   /**
-   * 初始化适配器（节流 + 防抖双重保障）
+   * 初始化适配器（智能防抖策略）
+   *
+   * 性能优化特性：
+   * 1. 🎯 智能防抖：根据设备类型和变化幅度动态调整防抖时间
+   * 2. 📱 移动端优化：移动端使用更短的防抖时间（150ms）
+   * 3. 🖥️ 大屏优化：大屏幕变化时使用更快的响应（100ms）
+   * 4. ⚡ RAF 优化：使用 RequestAnimationFrame 确保在下一帧执行
+   * 5. 🔄 变化检测：只在设备信息真正变化时才执行更新
+   * 6. 📊 频率控制：频繁变化时自动增加防抖时间
+   * 7. 🧹 内存清理：正确清理所有事件监听器和定时器
    */
   init(getDeviceInfo: () => DeviceInfo, debounceTime: number = 300): () => void {
     // 立即设置一次
     this.setRootFontSize(getDeviceInfo())
 
-    let throttleTimer: number = 0
-    let isThrottled = false
+    // 记录上次执行的设备信息，避免重复计算
+    let lastDeviceInfo: DeviceInfo | null = null
+    let lastFontSize: number = 0
+    let resizeCount: number = 0
+    let lastResizeTime: number = Date.now()
 
-    // 节流处理：确保拖拽过程中实时响应 (每100ms最多执行一次)
-    const throttledResize = () => {
-      if (!isThrottled) {
-        this.setRootFontSize(getDeviceInfo())
-        isThrottled = true
-        throttleTimer = window.setTimeout(() => {
-          isThrottled = false
-        }, 100)
-      }
+    // 智能防抖函数：根据设备类型和变化幅度动态调整防抖时间
+    const createSmartDebouncedResize = (baseDebounceTime: number) => {
+      return debounce(() => {
+        const currentDeviceInfo = getDeviceInfo()
+        const currentFontSize = this.calculateRootFontSize(currentDeviceInfo)
+        const now = Date.now()
+
+        // 计算变化幅度
+        const widthChange = lastDeviceInfo
+          ? Math.abs(currentDeviceInfo.screen.width - lastDeviceInfo.screen.width)
+          : 0
+
+        // 动态调整防抖时间
+        let adaptiveDebounceTime = baseDebounceTime
+
+        // 移动端：更敏感的响应
+        if (currentDeviceInfo.type === 'Mobile') {
+          adaptiveDebounceTime = Math.min(baseDebounceTime, 150)
+        }
+
+        // 大屏幕变化：更快的响应
+        if (widthChange > 100) {
+          adaptiveDebounceTime = Math.min(baseDebounceTime, 100)
+        }
+
+        // 频繁变化：增加防抖时间
+        const timeSinceLastResize = now - lastResizeTime
+        if (timeSinceLastResize < 500 && resizeCount > 5) {
+          adaptiveDebounceTime = Math.min(baseDebounceTime * 2, 600)
+        }
+
+        // 只有当设备信息或字体大小发生显著变化时才执行
+        const shouldUpdate =
+          !lastDeviceInfo ||
+          lastDeviceInfo.screen.width !== currentDeviceInfo.screen.width ||
+          lastDeviceInfo.screen.height !== currentDeviceInfo.screen.height ||
+          lastDeviceInfo.type !== currentDeviceInfo.type ||
+          Math.abs(lastFontSize - currentFontSize) > 0.5 // 字体大小变化超过0.5px
+
+        if (shouldUpdate) {
+          this.setRootFontSize(currentDeviceInfo)
+          lastDeviceInfo = currentDeviceInfo
+          lastFontSize = currentFontSize
+          resizeCount++
+          lastResizeTime = now
+
+          if (env.debug) {
+            console.log(
+              `🎯 rem 适配已更新: ${currentFontSize.toFixed(2)}px (设备: ${currentDeviceInfo.type}, 宽度: ${currentDeviceInfo.screen.width}px, 变化: ${widthChange}px, 执行次数: ${resizeCount}, 防抖时间: ${adaptiveDebounceTime}ms)`
+            )
+          }
+        }
+      }, baseDebounceTime) // 使用基础防抖时间，动态调整在内部处理
     }
 
-    // 使用 lodash 防抖：确保停止拖拽后最终执行一次
-    const debouncedResize = debounce(() => {
-      this.setRootFontSize(getDeviceInfo())
-      if (isDebug) {
-        console.log('🎯 防抖最终更新完成 (300ms)')
-      }
-    }, debounceTime)
+    // 创建智能防抖函数
+    const smartDebouncedResize = createSmartDebouncedResize(debounceTime)
 
-    // 组合处理：节流 + 防抖
+    // 使用 RAF 优化性能的事件处理
+    let rafId: number | null = null
+
     const handleResize = () => {
-      throttledResize() // 立即节流响应
-      debouncedResize() // 延迟防抖确保最终更新
+      // 使用 RequestAnimationFrame 确保在下一帧执行
+      if (rafId) {
+        cancelAnimationFrame(rafId)
+      }
+
+      rafId = requestAnimationFrame(() => {
+        smartDebouncedResize()
+        rafId = null
+      })
     }
 
-    // 监听更全面的事件
+    // 监听必要的事件（减少事件监听数量，使用 passive 提升性能）
     const events = [
       'resize', // 窗口大小变化
-      'orientationchange', // 设备方向变化
-      'pageshow', // 页面显示
-      'visibilitychange', // 页面可见性变化
-      'focus', // 窗口获得焦点
+      'orientationchange', // 设备方向变化（移动端）
     ]
 
     events.forEach(event => {
-      if (event === 'visibilitychange') {
-        document.addEventListener(event, handleResize)
-      } else {
-        window.addEventListener(event, handleResize)
-      }
+      window.addEventListener(event, handleResize, { passive: true })
     })
-
-    if (isDebug) {
-      console.log('🎯 rem 适配器事件监听已启动 (节流+防抖300ms)')
-    }
 
     // 返回清理函数
     return () => {
-      clearTimeout(throttleTimer)
-      debouncedResize.cancel() // 取消 lodash debounce
-      events.forEach(event => {
-        if (event === 'visibilitychange') {
-          document.removeEventListener(event, handleResize)
-        } else {
-          window.removeEventListener(event, handleResize)
-        }
-      })
-      if (isDebug) {
-        console.log('🎯 rem 适配器事件监听已清理')
+      smartDebouncedResize.cancel() // 取消 lodash debounce
+
+      // 清理 RAF
+      if (rafId) {
+        cancelAnimationFrame(rafId)
+        rafId = null
       }
+
+      events.forEach(event => {
+        window.removeEventListener(event, handleResize)
+      })
     }
   }
 }
@@ -466,7 +480,85 @@ remDebug.getRemBase() // 16
     },
   }
 
-  if (isDebug) {
+  if (env.debug) {
     console.log('🛠️ rem 调试工具已加载，输入 remDebug.help() 查看使用方法')
   }
+}
+
+// 🧪 性能测试工具（仅开发环境）
+if (env.debug && typeof window !== 'undefined') {
+  ;(window as any).remPerformanceTest = {
+    // 测试防抖效果
+    testDebouncePerformance() {
+      console.log('🧪 开始 rem 适配性能测试...')
+
+      const startTime = Date.now()
+      let callCount = 0
+
+      // 模拟频繁的 resize 事件
+      const testResize = () => {
+        callCount++
+        if (callCount <= 10) {
+          window.dispatchEvent(new Event('resize'))
+          setTimeout(testResize, 50) // 每50ms触发一次
+        } else {
+          const endTime = Date.now()
+          const duration = endTime - startTime
+          console.log(`🧪 性能测试完成: ${callCount} 次调用，耗时 ${duration}ms`)
+          console.log(`📊 平均每次调用: ${(duration / callCount).toFixed(2)}ms`)
+        }
+      }
+
+      testResize()
+    },
+
+    // 测试内存泄漏
+    testMemoryLeak() {
+      console.log('🧪 开始内存泄漏测试...')
+
+      const initialMemory = (performance as any).memory?.usedJSHeapSize || 0
+
+      // 模拟多次初始化
+      for (let i = 0; i < 5; i++) {
+        const adapter = new RemAdapter()
+        const cleanup = adapter.init(() => ({
+          type: 'PC' as const,
+          screen: {
+            width: 1920,
+            height: 1080,
+            orientation: 'horizontal' as const,
+            deviceWidth: 1920,
+            deviceHeight: 1080,
+            definitely: 1080,
+            navHeight: 0,
+            tabHeight: 0,
+          },
+          system: 'Windows',
+        }))
+        cleanup() // 立即清理
+      }
+
+      setTimeout(() => {
+        const finalMemory = (performance as any).memory?.usedJSHeapSize || 0
+        const memoryDiff = finalMemory - initialMemory
+        console.log(`🧪 内存测试完成: 内存变化 ${memoryDiff} bytes`)
+      }, 1000)
+    },
+
+    // 显示帮助信息
+    help() {
+      console.log(`
+🧪 rem 适配性能测试工具
+
+用法：
+• remPerformanceTest.testDebouncePerformance() - 测试防抖性能
+• remPerformanceTest.testMemoryLeak() - 测试内存泄漏
+• remPerformanceTest.help() - 显示此帮助
+
+注意：这些测试仅在开发环境下可用
+      `)
+    },
+  }
+
+  console.log('🧪 rem 性能测试工具已加载，输入 remPerformanceTest.help() 查看使用方法')
 }

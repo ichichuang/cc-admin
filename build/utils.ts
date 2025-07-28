@@ -75,6 +75,17 @@ export interface ViteEnv {
 
 /** 处理环境变量 */
 export const wrapperEnv = (envConf: Record<string, unknown>): ViteEnv => {
+  // rem 适配系统默认配置（与 src/utils/env.ts 保持一致）
+  const REM_DEFAULT_CONFIG = {
+    designWidth: 1800,
+    baseFontSize: 16,
+    minFontSize: 12,
+    maxFontSize: 24,
+    mobileFirst: false,
+    breakpoints: '{"xs":375,"sm":768,"md":1024,"lg":1400,"xl":1660,"xls":1920}',
+    postcssRootValue: 16,
+  }
+
   const ret: ViteEnv = {
     VITE_PORT: 5173,
     VITE_PUBLIC_PATH: '',
@@ -97,14 +108,14 @@ export const wrapperEnv = (envConf: Record<string, unknown>): ViteEnv => {
     VITE_DROP_DEBUGGER: true,
     VITE_DROP_CONSOLE: true,
     VITE_API_TIMEOUT: 10000,
-    // rem 适配系统默认值
-    VITE_REM_DESIGN_WIDTH: 1920,
-    VITE_REM_BASE_FONT_SIZE: 16,
-    VITE_REM_MIN_FONT_SIZE: 12,
-    VITE_REM_MAX_FONT_SIZE: 24,
-    VITE_REM_MOBILE_FIRST: false,
-    VITE_REM_BREAKPOINTS: '{"xs":375,"sm":768,"md":1024,"lg":1400,"xl":1660,"xls":1920}',
-    VITE_POSTCSS_ROOT_VALUE: 16,
+    // rem 适配系统默认值（使用统一配置）
+    VITE_REM_DESIGN_WIDTH: REM_DEFAULT_CONFIG.designWidth,
+    VITE_REM_BASE_FONT_SIZE: REM_DEFAULT_CONFIG.baseFontSize,
+    VITE_REM_MIN_FONT_SIZE: REM_DEFAULT_CONFIG.minFontSize,
+    VITE_REM_MAX_FONT_SIZE: REM_DEFAULT_CONFIG.maxFontSize,
+    VITE_REM_MOBILE_FIRST: REM_DEFAULT_CONFIG.mobileFirst,
+    VITE_REM_BREAKPOINTS: REM_DEFAULT_CONFIG.breakpoints,
+    VITE_POSTCSS_ROOT_VALUE: REM_DEFAULT_CONFIG.postcssRootValue,
   }
 
   for (const envName of Object.keys(envConf)) {

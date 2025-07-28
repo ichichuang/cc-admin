@@ -1,6 +1,14 @@
 /**
+ * @copyright Copyright (c) 2025 chichuang
+ * @license MIT
+ * @description CC-Admin 企业级后台管理框架 - 国际化
+ * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+ */
+
+/**
  * 国际化配置入口文件
  */
+import { env } from '@/utils/env'
 import type { App } from 'vue'
 import { createI18n } from 'vue-i18n'
 import enUS from './lang/en-US'
@@ -74,8 +82,8 @@ export const i18n = createI18n({
   globalInjection: true,
   silentTranslationWarn: true,
   silentFallbackWarn: true,
-  missingWarn: import.meta.env.DEV,
-  fallbackWarn: import.meta.env.DEV,
+  missingWarn: env.devTools,
+  fallbackWarn: env.devTools,
 })
 
 // 安装插件

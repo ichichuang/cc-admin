@@ -1,5 +1,13 @@
+/**
+ * @copyright Copyright (c) 2025 chichuang
+ * @license MIT
+ * @description CC-Admin 企业级后台管理框架 - 工具函数
+ * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+ */
+
 // src/utils/http/methods.ts
 import { useUserStoreWithOut } from '@/stores'
+import { env } from '@/utils/env'
 import { alovaInstance } from './instance'
 import type { RequestConfig, UploadConfig } from './types'
 
@@ -86,7 +94,7 @@ export const uploadFiles = <T = any>(url: string, files: File[], config?: Upload
 export const downloadFile = async (url: string, filename?: string) => {
   try {
     // 使用原生 fetch 来处理文件下载，因为 Alova 的 fetch 适配器不直接支持 blob 响应
-    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${url}`, {
+    const response = await fetch(`${env.apiBaseUrl}${url}`, {
       method: 'GET',
       headers: {
         authorization: `Bearer ${useUserStoreWithOut().getToken}`,

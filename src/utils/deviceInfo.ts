@@ -1,4 +1,11 @@
 /**
+ * @copyright Copyright (c) 2025 chichuang
+ * @license MIT
+ * @description CC-Admin 企业级后台管理框架 - 工具函数
+ * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+ */
+
+/**
  * 获取当前设备与屏幕信息（运行时计算版）
  *
  * 1. **自动判断** 是否为移动端（通过 UA）。
