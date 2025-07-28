@@ -43,7 +43,7 @@
     "format": "prettier --write src/",
     "naming-check": "pnpm exec tsx scripts/naming-rules.ts",
     "naming-watch": "pnpm exec tsx scripts/watch-naming.ts",
-    "check": "pnpm type-check && pnpm lint && pnpm naming-check && pnpm env-check",
+    "check": "pnpm type-check && pnpm lint && pnpm naming-check && pnpm env-check && pnpm copyright:check",
     "fix": "pnpm format && pnpm lint",
     "env-check": "pnpm exec tsx scripts/check-env.ts",
     "copyright:add": "pnpm exec tsx scripts/copyright-protection.ts",
