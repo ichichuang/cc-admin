@@ -94,10 +94,12 @@ src/
 
 ### 核心功能
 
+- [项目初始化](./init-guide.md) - 项目初始化和环境配置
 - [架构设计](./architecture-guide.md) - 项目架构和设计原则
-- [API 管理](./api-guide.md) - HTTP 请求和接口管理
-- [状态管理](./pinia-guide.md) - Pinia 状态管理
-- [路由管理](./router-guide.md) - Vue Router 配置
+- [工具链指南](./toolchain-guide.md) - 开发工具和构建配置
+- [API 管理](../features/api-guide.md) - HTTP 请求和接口管理
+- [状态管理](../features/pinia-guide.md) - Pinia 状态管理
+- [路由管理](../features/router-guide.md) - Vue Router 配置
 - [组件开发](./component-guide.md) - 组件开发规范
 
 ### 开发工具

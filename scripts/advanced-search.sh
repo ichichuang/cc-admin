@@ -11,8 +11,8 @@ UNIQUE_SIGNATURES=(
     "基于 Vue 3.5+ 和 TypeScript 5+ 的现代化企业级后台管理框架"
     "autoImportModulesSync"
     "VUE3_TS_FRAMEWORK_CHUANGGE_2025"
-    "// Created by 闯哥 Vue3 Framework"
-    "defineConfig Vue3 TypeScript 闯哥"
+    "// Created by 池闯 Vue3 Framework"
+    "defineConfig Vue3 TypeScript 池闯"
 )
 
 # CC-Admin 关键文件结构搜索

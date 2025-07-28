@@ -54,8 +54,12 @@
     "prepare": "husky",
     "monitor": "pnpm exec tsx scripts/monitor.ts",
     "monitor:quick": "pnpm exec tsx scripts/quick-search.ts",
+    "monitor:cleanup": "./monitor_reports/cleanup.sh",
+    "monitor:report": "cat monitor_reports/latest/cc_admin_monitor_report.md",
+    "monitor:status": "echo '📊 监控状态:' && echo '最新报告: monitor_reports/latest/' && ls -la monitor_reports/latest/",
     "token:test": "pnpm exec tsx scripts/test-token.ts",
-    "monitor:setup": "echo '请确保已设置 GITHUB_TOKEN 环境变量或创建 .env 文件' && echo '详细说明请查看: docs/github-token-guide.md'"
+    "monitor:setup": "echo '请确保已设置 GITHUB_TOKEN 环境变量或创建 .env 文件' && echo '详细说明请查看: monitor_reports/config.md'",
+    "init:project": "pnpm exec tsx scripts/init.ts"
   },
   "lint-staged": {
     "*.{ts,tsx,vue}": [
