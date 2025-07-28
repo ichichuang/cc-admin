@@ -1,33 +1,59 @@
-CC-Admin 自定义许可证
+License: Custom (Non-Commercial Use Only)
+# CC-Admin License (商业限制许可证)
+Copyright (c) 2025 chichuang
 
-版权所有 (c) 2025 chichuang
+本许可证授予以下非商业用途权利：
+- ✅ 个人学习、研究、教学使用
+- ✅ 在开源项目中的非商业集成
+- ✅ 在保留原始版权声明的前提下可修改和分发
 
-本许可证授予您以下权利和限制：
-
-允许的使用：
-
-1. 个人学习、研究和评估
-2. 开源项目中的非商业使用
-3. 学术研究和教学
-4. 在保留版权声明的前提下修改和分发
-
-禁止的使用：
-
-1. 商业用途（包括但不限于销售、租赁、提供付费服务）
-2. 删除或修改版权声明
-3. 声称为原创作品
-4. 在未获得明确授权的情况下进行大规模分发
+严禁以下用途：
+- ❌ 商业行为（包括销售、SaaS、付费插件/模版）
+- ❌ 删除或修改版权声明
+- ❌ 声称为原创项目或作者
+- ❌ 未授权的批量分发或 Fork 出商业变体
 
 商业授权：
-如需商业使用，请联系版权所有者获得商业许可证。
-联系方式: https://github.com/chichuang/cc-admin/issues
+如需商用许可，请联系作者获取正式授权：
+https://github.com/ichichuang/CC-Admin/issues 或 chichuang@yourdomain.com
 
-保证和责任：
-本软件按"原样"提供，不提供任何明示或暗示的保证。
-在任何情况下，作者不对任何损害承担责任。
+免责声明：
+本软件按“原样”提供，不提供任何明示或暗示的保证。
+作者不对因使用本软件造成的任何损害负责。
 
-违反条款：
-违反本许可证条款将导致许可证自动终止。
+条款违反：
+若违反本协议条款，您的使用授权将自动终止。
 
 许可证版本：1.0
 生效日期：2025年1月1日
+
+
+--- ENGLISH ---
+
+# CC-Admin Custom License
+Copyright (c) 2025 chichuang
+
+You are granted the following rights for non-commercial use:
+- ✅ Personal learning, research, and teaching
+- ✅ Integration into open source (non-commercial) projects
+- ✅ Modify and distribute with original copyright notice
+
+You are NOT permitted to:
+- ❌ Use for commercial purposes (selling, SaaS, paid services, etc.)
+- ❌ Remove or alter copyright notices
+- ❌ Claim the project as your original work
+- ❌ Mass distribute or repackage without permission
+
+Commercial Use:
+To use this project commercially, please obtain a commercial license from the author:
+https://github.com/ichichuang/CC-Admin/issues or chichuang@yourdomain.com
+
+Disclaimer:
+This software is provided “as-is” without warranties.
+The author is not liable for any damages caused by use.
+
+Violation:
+Violation of these terms will result in automatic termination of this license.
+
+Version: 1.0
+Effective Date: Jan 1, 2025

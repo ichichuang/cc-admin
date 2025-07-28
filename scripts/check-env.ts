@@ -366,12 +366,12 @@ function checkEnvConfig(): void {
 
   /* ---------- 结束 ---------- */
   if (hasError) {
-    log('❌  检查完成，发现错误！请修复后重试。', 'red')
+    log('❌ 检查完成，发现错误，请修复后重试', 'red')
     process.exit(1)
   } else if (hasWarning) {
-    log('⚠️   检查完成，有警告但可以继续运行。', 'yellow')
+    log('⚠️ 检查完成，有警告但可以继续运行', 'yellow')
   } else {
-    log('✅  .env 环境变量检查完成，一切正常！', 'green')
+    log('✅ .env 环境变量检查完成，一切正常', 'green')
   }
 }
 

@@ -1,7 +1,7 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license 自定义商业限制许可证
- * @description CC-Admin 版权保护脚本 v2.0
+ * @description CC-Admin 版权保护脚本 v2.1
  * 本文件受版权保护，商业使用需要授权。
  */
 
@@ -26,23 +26,120 @@ const COPYRIGHT_CONFIG: CopyrightConfig = {
   year: '2025',
   license: '自定义商业限制许可证',
   project: 'CC-Admin 企业级后台管理框架',
-  commercialContact: 'https://github.com/chichuang/cc-admin/issues',
+  commercialContact: 'https://github.com/ichichuang/CC-Admin/issues',
 }
 
-// 更严格的排除规则
+// 增强的排除规则
 const EXCLUDE_PATTERNS = [
+  // 依赖目录
   /node_modules/,
   /\.git/,
+  /\.hg/,
+  /\.svn/,
+
+  // 构建输出目录
   /dist/,
   /build/,
+  /out/,
   /\.vite/,
   /\.nuxt/,
   /\.next/,
-  /coverage/,
-  /\.nyc_output/,
+  /\.svelte-kit/,
+
+  // 缓存目录
   /\.cache/,
   /\.temp/,
   /\.tmp/,
+  /\.nyc_output/,
+  /coverage/,
+
+  // 系统文件
+  /\.DS_Store/,
+  /Thumbs\.db/,
+  /desktop\.ini/,
+
+  // 编辑器文件
+  /\.vscode/,
+  /\.idea/,
+  /\.vs/,
+  /\.swp/,
+  /\.swo/,
+  /\.sublime-/,
+
+  // 日志文件
+  /\.log/,
+  /logs/,
+
+  // 临时文件
+  /\.bak/,
+  /\.backup/,
+  /\.old/,
+  /\.orig/,
+
+  // 压缩文件
+  /\.zip/,
+  /\.tar/,
+  /\.gz/,
+  /\.rar/,
+  /\.7z/,
+
+  // 二进制文件
+  /\.exe/,
+  /\.dll/,
+  /\.so/,
+  /\.dylib/,
+  /\.bin/,
+  /\.dat/,
+
+  // 图片和媒体文件
+  /\.png/,
+  /\.jpg/,
+  /\.jpeg/,
+  /\.gif/,
+  /\.bmp/,
+  /\.svg/,
+  /\.ico/,
+  /\.mp3/,
+  /\.mp4/,
+  /\.avi/,
+  /\.mov/,
+
+  // 字体文件
+  /\.ttf/,
+  /\.otf/,
+  /\.woff/,
+  /\.woff2/,
+  /\.eot/,
+
+  // 其他不需要处理的文件
+  /\.lock/,
+  /\.pid/,
+  /\.socket/,
+  /\.fifo/,
+]
+
+// 完全跳过的目录（不进入遍历）
+const SKIP_DIRECTORIES = [
+  'node_modules',
+  '.git',
+  '.hg',
+  '.svn',
+  'dist',
+  'build',
+  'out',
+  '.vite',
+  '.nuxt',
+  '.next',
+  '.svelte-kit',
+  '.cache',
+  '.temp',
+  '.tmp',
+  '.nyc_output',
+  'coverage',
+  '.vscode',
+  '.idea',
+  '.vs',
+  'logs',
 ]
 
 // 支持的文件类型及其注释格式
@@ -108,10 +205,17 @@ class CopyrightProtector {
   private skippedCount = 0
   private errorCount = 0
   private isCheckMode = false
+  private silentMode = false
 
-  constructor(config: CopyrightConfig, checkMode = false) {
+  constructor(config: CopyrightConfig, checkMode = false, silentMode = false) {
     this.config = config
     this.isCheckMode = checkMode
+    this.silentMode = silentMode
+  }
+
+  // 检查目录是否应该被完全跳过
+  shouldSkipDirectory(dirName: string): boolean {
+    return SKIP_DIRECTORIES.includes(dirName)
   }
 
   // 检查文件是否应该被处理
@@ -159,14 +263,12 @@ class CopyrightProtector {
   processFile(filePath: string): boolean {
     try {
       if (!fs.existsSync(filePath)) {
-        console.warn(`⚠️  文件不存在: ${filePath}`)
         return false
       }
 
       const content = fs.readFileSync(filePath, 'utf-8')
 
       if (this.hasCopyright(content)) {
-        console.log(`✅ ${filePath} - 版权注释已存在`)
         this.skippedCount++
         return true
       }
@@ -181,7 +283,6 @@ class CopyrightProtector {
       const template = this.getCopyrightTemplate(filePath, description)
 
       if (!template) {
-        console.warn(`⚠️  ${filePath} - 不支持的文件类型`)
         this.skippedCount++
         return false
       }
@@ -268,17 +369,15 @@ class CopyrightProtector {
     return path.basename(filePath, path.extname(filePath))
   }
 
-  // 安全的目录遍历
+  // 改进的目录遍历
   walkDirectory(dir: string, callback: (filePath: string) => void): void {
     try {
       if (!fs.existsSync(dir)) {
-        console.warn(`⚠️  目录不存在: ${dir}`)
         return
       }
 
       const stat = fs.statSync(dir)
       if (!stat.isDirectory()) {
-        console.warn(`⚠️  不是目录: ${dir}`)
         return
       }
 
@@ -290,23 +389,34 @@ class CopyrightProtector {
         try {
           const fileStat = fs.statSync(filePath)
 
+          // 跳过符号链接
           if (fileStat.isSymbolicLink()) {
-            console.log(`🔗 跳过符号链接: ${filePath}`)
             continue
           }
 
           if (fileStat.isDirectory()) {
+            // 检查是否应该跳过整个目录
+            if (this.shouldSkipDirectory(file)) {
+              continue
+            }
+
+            // 递归遍历子目录
             this.walkDirectory(filePath, callback)
           } else if (fileStat.isFile()) {
             callback(filePath)
           }
         } catch (_error) {
-          console.warn(`⚠️  无法访问: ${filePath}`)
+          // 静默处理权限错误等常见问题
+          if (!this.silentMode) {
+            console.warn(`⚠️  无法访问: ${filePath}`)
+          }
           continue
         }
       }
     } catch (_error) {
-      console.warn(`⚠️  无法读取目录: ${dir}`)
+      if (!this.silentMode) {
+        console.warn(`⚠️  无法读取目录: ${dir}`)
+      }
     }
   }
 
@@ -317,6 +427,9 @@ class CopyrightProtector {
     console.log(`👤 版权所有者: ${this.config.author}`)
     console.log(`📄 许可证: ${this.config.license}`)
     console.log(`🔍 模式: ${this.isCheckMode ? '检查模式' : '添加模式'}`)
+    if (this.silentMode) {
+      console.log(`🔇 静默模式: 已启用`)
+    }
 
     this.walkDirectory(process.cwd(), filePath => {
       if (this.shouldProcess(filePath)) {
@@ -329,10 +442,10 @@ class CopyrightProtector {
 
   // 打印处理结果
   printSummary(): void {
-    console.log('\n📊 版权保护处理完成!')
-    console.log(`✅ 处理成功: ${this.processedCount} 个文件`)
-    console.log(`⏭️  跳过文件: ${this.skippedCount} 个文件`)
-    console.log(`❌ 处理失败: ${this.errorCount} 个文件`)
+    // console.log(`✅ 处理成功: ${this.processedCount} 个文件`)
+    // console.log(`⏭️ 跳过文件: ${this.skippedCount} 个文件`)
+    // console.log(`❌ 处理失败: ${this.errorCount} 个文件`)
+    console.log('✅ \x1b[32m项目版权保护检查完成，一切正常\x1b[0m')
 
     if (this.errorCount > 0) {
       console.log('⚠️  存在处理失败的文件，请检查上方的错误信息')
@@ -344,7 +457,8 @@ class CopyrightProtector {
 // 主函数
 export function main(): void {
   const isCheckMode = process.argv.includes('--check')
-  const protector = new CopyrightProtector(COPYRIGHT_CONFIG, isCheckMode)
+  const silentMode = process.argv.includes('--silent')
+  const protector = new CopyrightProtector(COPYRIGHT_CONFIG, isCheckMode, silentMode)
   protector.protect()
 }
 

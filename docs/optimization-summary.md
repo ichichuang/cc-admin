@@ -4,10 +4,10 @@
   @description CC-Admin 企业级后台管理框架 - 文档
 
   本文件受版权保护，商业使用需要授权。
-  联系方式: https://github.com/chichuang/cc-admin/issues
+  联系方式: https://github.com/ichichuang/CC-Admin/issues
 
   This file is protected by copyright. Commercial use requires authorization.
-  Contact: https://github.com/chichuang/cc-admin/issues
+  Contact: https://github.com/ichichuang/CC-Admin/issues
 -->
 
 # 🎯 CC-Admin 代码监控系统优化总结

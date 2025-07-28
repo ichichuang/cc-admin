@@ -35,7 +35,7 @@ CC-Admin 自定义许可证
 
 商业授权：
 如需商业使用，请联系版权所有者获得商业许可证。
-联系方式: https://github.com/chichuang/cc-admin/issues
+联系方式: https://github.com/ichichuang/CC-Admin/issues
 ```
 
 #### ✅ 统一版权声明
