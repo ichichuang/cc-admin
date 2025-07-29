@@ -6,8 +6,8 @@
 -->
 
 <script setup lang="ts">
-import { useLayoutStore, usePostcssStore } from '@cc-admin/core/stores'
-import type { RemAdapterConfig } from '@cc-admin/core/utils'
+import { useLayoutStore, usePostcssStore } from '@cc/early-bird-core/stores'
+import type { RemAdapterConfig } from '@cc/early-bird-core/utils'
 import { computed, getCurrentInstance, onMounted, reactive } from 'vue'
 // 临时创建parseRemConfigFromEnv函数
 const parseRemConfigFromEnv = () => ({

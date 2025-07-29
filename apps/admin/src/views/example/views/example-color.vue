@@ -6,7 +6,7 @@
 -->
 
 <script setup lang="ts">
-import { useColorStore, type Mode, type ThemeColor } from '@cc-admin/core/stores'
+import { useColorStore, type Mode, type ThemeColor } from '@cc/early-bird-core/stores'
 import { computed } from 'vue'
 
 interface ColorItem {

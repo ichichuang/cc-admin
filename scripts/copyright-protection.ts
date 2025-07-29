@@ -1,7 +1,7 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license 自定义商业限制许可证
- * @description cc-admin 版权保护脚本 v2.1
+ * @description cc-early-bird 版权保护脚本 v2.1
  * 本文件受版权保护，商业使用需要授权。
  */
 
@@ -25,8 +25,8 @@ const COPYRIGHT_CONFIG: CopyrightConfig = {
   author: 'chichuang',
   year: '2025',
   license: '自定义商业限制许可证',
-  project: 'cc-admin 企业级后台管理框架',
-  commercialContact: 'https://github.com/ichichuang/cc-admin/issues',
+  project: 'cc-early-bird 企业级后台管理框架',
+  commercialContact: 'https://github.com/ichichuang/cc-early-bird/issues',
 }
 
 // 增强的排除规则
@@ -316,6 +316,13 @@ class CopyrightProtector {
       ['tsconfig.json', 'TypeScript 配置'],
       ['LICENSE', '许可证文件'],
       ['README.md', '项目说明文档'],
+      ['MONOREPO_COMPLETION_REPORT.md', 'Monorepo 完成报告'],
+      ['MONOREPO_FIX_REPORT.md', 'Monorepo 修复报告'],
+      ['MONOREPO_MIGRATION_SUMMARY.md', 'Monorepo 迁移总结'],
+      ['RENAME_SUMMARY.md', '项目重命名总结'],
+      ['SCRIPT_STATUS_REPORT.md', '脚本状态报告'],
+      ['apps/admin/vite.config.ts', 'Vite 构建配置'],
+      ['docs/monorepo-guide.md', 'Monorepo 架构指南'],
     ])
 
     if (specialDescriptions.has(relativePath)) {

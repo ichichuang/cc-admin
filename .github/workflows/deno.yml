@@ -1,4 +1,4 @@
-name: cc-admin CI/CD
+name: cc-early-bird CI/CD
 
 on:
   push:

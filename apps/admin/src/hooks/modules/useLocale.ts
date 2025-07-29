@@ -13,7 +13,7 @@ import {
   setLocale,
   supportedLocales,
   type SupportedLocale,
-} from '@cc-admin/core/utils'
+} from '@cc/early-bird-core/utils'
 import { computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 

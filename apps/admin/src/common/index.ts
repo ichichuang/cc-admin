@@ -6,7 +6,7 @@
  */
 
 // 公共模块统一管理入口
-import { autoImportModulesSync } from '@cc-admin/core/utils'
+import { autoImportModulesSync } from '@cc/early-bird-core/utils'
 
 // 自动导入所有公共模块
 const commonModules = import.meta.glob('./modules/**/*.ts', { eager: true })

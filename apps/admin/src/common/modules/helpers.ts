@@ -6,7 +6,13 @@
  */
 
 // 从 core utils 导入公共工具函数
-import { debounce, deepClone, formatDate, formatFileSize, throttle } from '@cc-admin/core/utils'
+import {
+  debounce,
+  deepClone,
+  formatDate,
+  formatFileSize,
+  throttle,
+} from '@cc/early-bird-core/utils'
 
 // 重新导出公共工具函数以保持向后兼容
 export { debounce, deepClone, formatDate, formatFileSize, throttle }

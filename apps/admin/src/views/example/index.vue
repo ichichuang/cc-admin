@@ -49,8 +49,8 @@
             <h3>🔄 代码共享</h3>
             <p>展示跨包模块复用和类型共享</p>
             <div class="demo-code">
-              <pre><code>import { store, router } from '@cc-admin/core'
-import { Loading } from '@cc-admin/ui'</code></pre>
+              <pre><code>import { store, router } from '@cc/early-bird-core'
+import { Loading } from '@cc/early-bird-ui'</code></pre>
             </div>
           </div>
 
@@ -58,7 +58,7 @@ import { Loading } from '@cc-admin/ui'</code></pre>
             <h3>🛡️ 类型安全</h3>
             <p>展示完整的 TypeScript 类型支持</p>
             <div class="demo-code">
-              <pre><code>import type { UserInfo } from '@cc-admin/types'</code></pre>
+              <pre><code>import type { UserInfo } from '@cc/early-bird-types'</code></pre>
             </div>
           </div>
         </div>

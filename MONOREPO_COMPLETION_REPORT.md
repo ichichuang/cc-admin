@@ -1,4 +1,11 @@
-# early-bird Monorepo 重构完成报告
+<!--
+  @copyright Copyright (c) 2025 chichuang
+  @license MIT
+  @description cc-early-bird 企业级后台管理框架 - Monorepo 完成报告
+  本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+-->
+
+# Monorepo 架构完成报告
 
 ## 🎉 重构完成状态
 

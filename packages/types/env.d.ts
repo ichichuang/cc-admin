@@ -81,6 +81,9 @@ declare interface ImportMetaEnv {
   /** loading 组件大小 - 控制 loading 组件的大小 (屏幕最小宽度 / VITE_LOADING_SIZE) */
   readonly VITE_LOADING_SIZE: NumberString
 
+  /** 是否启用 debug 模式 - 控制调试信息 */
+  readonly VITE_DEBUG: BooleanString
+
   /**
    * ==========================================
    * API 接口配置
@@ -107,9 +110,6 @@ declare interface ImportMetaEnv {
 
   /** 是否启用控制台日志 - 控制 console.log 等调试信息的输出 */
   readonly VITE_CONSOLE_LOG: BooleanString
-
-  /** 是否启用 debug 模式 - 控制调试信息 */
-  readonly VITE_DEBUG: BooleanString
 
   /**
    * ==========================================

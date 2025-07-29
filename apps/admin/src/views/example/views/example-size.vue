@@ -12,7 +12,7 @@ import {
   type GapOptions,
   type RoundedOptions,
   type SizeOptions,
-} from '@cc-admin/core/stores'
+} from '@cc/early-bird-core/stores'
 import { computed } from 'vue'
 
 const sizeStore = useSizeStore()

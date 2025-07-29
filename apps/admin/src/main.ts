@@ -9,7 +9,7 @@ import App from '@/App.vue'
 import { createApp } from 'vue'
 
 // 导入核心包
-import { router, store } from '@cc-admin/core'
+import { router, store } from '@cc/early-bird-core'
 
 // 导入样式
 import 'virtual:uno.css'

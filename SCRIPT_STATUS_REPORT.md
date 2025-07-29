@@ -1,4 +1,11 @@
-# early-bird 脚本命令状态报告
+<!--
+  @copyright Copyright (c) 2025 chichuang
+  @license MIT
+  @description cc-early-bird 企业级后台管理框架 - 脚本状态报告
+  本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
+-->
+
+# 脚本状态报告
 
 ## 📊 脚本命令测试结果
 

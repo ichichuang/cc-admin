@@ -340,11 +340,19 @@ async function scanDirectory(dirPath) {
       if (stats.isDirectory()) {
         const relativePath = itemPath.replace(projectRoot, '').replace(/\\/g, '/')
 
-        // 排除node_modules、.git和src/Types目录
+        // 排除node_modules、.git、dist等目录
         if (
           relativePath.includes('/node_modules') ||
           relativePath.includes('/.git') ||
-          relativePath.includes('/src/Types')
+          relativePath.includes('/dist') ||
+          relativePath.includes('/coverage') ||
+          relativePath.includes('/.vite') ||
+          relativePath.includes('/.nuxt') ||
+          relativePath.includes('/.next') ||
+          relativePath.includes('/.svelte-kit') ||
+          relativePath.includes('/.cache') ||
+          relativePath.includes('/.temp') ||
+          relativePath.includes('/.tmp')
         )
           continue
 
@@ -354,6 +362,21 @@ async function scanDirectory(dirPath) {
         // 检查apps和packages目录下的文件
         const relativePath = itemPath.replace(projectRoot, '').replace(/\\/g, '/')
         if (relativePath.startsWith('/apps/') || relativePath.startsWith('/packages/')) {
+          // 跳过构建产物文件
+          if (
+            relativePath.includes('/dist/') ||
+            relativePath.includes('/coverage/') ||
+            relativePath.includes('/.vite/') ||
+            relativePath.includes('/.nuxt/') ||
+            relativePath.includes('/.next/') ||
+            relativePath.includes('/.svelte-kit/') ||
+            relativePath.includes('/.cache/') ||
+            relativePath.includes('/.temp/') ||
+            relativePath.includes('/.tmp/')
+          ) {
+            continue
+          }
+
           // 跳过.d.ts文件检查
           if (!item.endsWith('.d.ts')) {
             checkFileName(itemPath, item)

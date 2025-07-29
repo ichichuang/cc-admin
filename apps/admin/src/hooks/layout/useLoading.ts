@@ -5,7 +5,7 @@
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
-import { useLayoutStoreWithOut } from '@cc-admin/core/stores'
+import { useLayoutStoreWithOut } from '@cc/early-bird-core/stores'
 
 export const useLoading = () => {
   const loadingStart = () => {

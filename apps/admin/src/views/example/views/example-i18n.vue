@@ -8,7 +8,7 @@
 <script setup lang="ts">
 import { useLocale } from '@/hooks/modules/useLocale'
 import type { SupportedLocale } from '@/locales/types'
-import { useLocaleStore } from '@cc-admin/core/stores'
+import { useLocaleStore } from '@cc/early-bird-core/stores'
 import { computed } from 'vue'
 
 interface I18nExample {

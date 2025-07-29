@@ -6,10 +6,15 @@
 -->
 
 <script setup lang="ts">
-import { useColorStore, useLayoutStore, usePostcssStore, useSizeStore } from '@cc-admin/core/stores'
-import type { RemAdapterConfig } from '@cc-admin/core/utils'
-import { env } from '@cc-admin/core/utils'
-import LayoutManager from '@cc-admin/ui/layouts'
+import {
+  useColorStore,
+  useLayoutStore,
+  usePostcssStore,
+  useSizeStore,
+} from '@cc/early-bird-core/stores'
+import type { RemAdapterConfig } from '@cc/early-bird-core/utils'
+import { env } from '@cc/early-bird-core/utils'
+import LayoutManager from '@cc/early-bird-ui/layouts'
 import { computed, onBeforeUnmount, onMounted, reactive } from 'vue'
 
 const colorStore = useColorStore()
