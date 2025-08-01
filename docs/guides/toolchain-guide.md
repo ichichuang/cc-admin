@@ -1,7 +1,7 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license MIT
-  @description CC-Admin 企业级后台管理框架 - toolchain-guide
+  @description cc-admin 企业级后台管理框架 - toolchain-guide
   本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
 -->
 
@@ -9,7 +9,7 @@
 
 ## 概述
 
-CC-Admin 采用现代化的前端开发工具链，提供完整的代码质量保证和开发体验优化。
+cc-admin 采用现代化的前端开发工具链，提供完整的代码质量保证和开发体验优化。
 
 ## 🛠️ 工具链架构
 
@@ -161,4 +161,4 @@ pnpm format
 - 分析依赖关系
 - 查看工具日志
 
-通过这套工具链，CC-Admin 提供了高效的开发体验和代码质量保证。
+通过这套工具链，cc-admin 提供了高效的开发体验和代码质量保证。

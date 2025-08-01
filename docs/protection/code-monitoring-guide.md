@@ -1,21 +1,21 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license MIT
-  @description CC-Admin 企业级后台管理框架 - 代码监控指南
+  @description cc-admin 企业级后台管理框架 - 代码监控指南
   本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
 -->
 
-# 🔍 CC-Admin 框架代码监控指南
+# 🔍 cc-admin 框架代码监控指南
 
 ## 📋 概述
 
-CC-Admin 框架配备了完整的代码监控系统，用于检测潜在的代码抄袭行为。本指南详细介绍如何配置和使用代码监控功能，以及验证监控系统是否正常工作。
+cc-admin 框架配备了完整的代码监控系统，用于检测潜在的代码抄袭行为。本指南详细介绍如何配置和使用代码监控功能，以及验证监控系统是否正常工作。
 
 ## 🎯 监控原理
 
 ### 独特标识符检测
 
-CC-Admin 框架包含以下独特标识符，用于识别抄袭行为：
+cc-admin 框架包含以下独特标识符，用于识别抄袭行为：
 
 #### 版权声明
 
@@ -23,14 +23,14 @@ CC-Admin 框架包含以下独特标识符，用于识别抄袭行为：
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license MIT
- * @description CC-Admin 企业级后台管理框架
+ * @description cc-admin 企业级后台管理框架
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 ```
 
 #### 项目特征
 
-- **项目名称**: `CC-Admin 企业级后台管理框架`
+- **项目名称**: `cc-admin 企业级后台管理框架`
 - **作者标识**: `chichuang`
 - **技术栈标识**: `Vue 3.5+` + `TypeScript 5+` + `UnoCSS 0.66+` + `pnpm 10.12.4`
 - **框架标识**: `CC-ADMIN-FRAMEWORK-CHICHUANG-2025`
@@ -74,9 +74,9 @@ scripts/               # 自定义脚本
 
 ```yaml
 env:
-  FRAMEWORK_NAME: 'CC-Admin'
+  FRAMEWORK_NAME: 'cc-admin'
   FRAMEWORK_AUTHOR: 'chichuang'
-  FRAMEWORK_SIGNATURE: 'CC-Admin 企业级后台管理框架'
+  FRAMEWORK_SIGNATURE: 'cc-admin 企业级后台管理框架'
   YOUR_GITHUB_USERNAME: 'ichichuang' # 你的GitHub用户名
   REPO_NAME: 'cc-admin'
 ```
@@ -86,7 +86,7 @@ env:
 #### 使用 GitHub Actions
 
 1. 进入 GitHub 仓库的 Actions 页面
-2. 选择 "🛡️ CC-Admin 框架保护监控" 工作流
+2. 选择 "🛡️ cc-admin 框架保护监控" 工作流
 3. 点击 "Run workflow" 手动触发
 
 #### 使用本地脚本
@@ -125,7 +125,7 @@ pnpm token:test
 🔍 测试 Token 权限...
 ✅ Token 有效，用户: ichichuang
 🔍 测试仓库访问权限...
-✅ 可以访问仓库: CC-Admin
+✅ 可以访问仓库: cc-admin
 🔍 测试搜索API权限...
 ✅ 搜索API权限正常
 🔍 检查Token权限范围...
@@ -146,19 +146,19 @@ pnpm monitor
 **预期结果：**
 
 ```
-🛡️ CC-Admin 框架代码监控系统
+🛡️ cc-admin 框架代码监控系统
 ========================================
 监控时间: 2025-07-28 11:33:02
-框架名称: CC-Admin
+框架名称: cc-admin
 GitHub用户: ichichuang
-仓库名称: CC-Admin
+仓库名称: cc-admin
 ========================================
 ✅ 环境检查通过
 
 🔍 1. 检测版权侵犯...
   🔍 搜索: @copyright Copyright (c) 2025 chichuang
     ✅ 未发现侵权
-  🔍 搜索: CC-Admin 企业级后台管理框架
+  🔍 搜索: cc-admin 企业级后台管理框架
     ✅ 未发现侵权
   ...
 🏗️ 2. 检测文件结构抄袭...
@@ -184,7 +184,7 @@ GitHub用户: ichichuang
 🍴 项目Forks: 0
 
 📝 详细报告已保存到: monitor_reports/20250728_113302/cc_admin_monitor_report.md
-✅ CC-Admin 框架监控完成
+✅ cc-admin 框架监控完成
 ```
 
 ### 3. 报告文件验证 ✅
@@ -221,7 +221,7 @@ monitor_reports/
 系统会搜索以下版权标识符：
 
 - `@copyright Copyright (c) 2025 chichuang`
-- `CC-Admin 企业级后台管理框架`
+- `cc-admin 企业级后台管理框架`
 - `本文件为 chichuang 原创`
 - `禁止擅自删除署名或用于商业用途`
 
@@ -262,7 +262,7 @@ monitor_reports/
 # 版权关键词
 COPYRIGHT_KEYWORDS=(
   "@copyright Copyright (c) 2025 chichuang"
-  "CC-Admin 企业级后台管理框架"
+  "cc-admin 企业级后台管理框架"
   "本文件为 chichuang 原创"
 )
 
@@ -317,7 +317,7 @@ fi
 #### 详细监控报告
 
 ```markdown
-# CC-Admin 框架监控报告
+# cc-admin 框架监控报告
 
 ## 监控时间
 
@@ -375,7 +375,7 @@ fi
 ### GitHub Actions 配置
 
 ```yaml
-name: CC-Admin 框架保护监控
+name: cc-admin 框架保护监控
 
 on:
   schedule:
@@ -445,7 +445,7 @@ A: 首先联系相关方要求删除，必要时寻求法律帮助，保留所�
 
 ## 🎯 总结
 
-CC-Admin 框架的代码监控系统提供了全面的知识产权保护：
+cc-admin 框架的代码监控系统提供了全面的知识产权保护：
 
 1. **多维度检测**：版权、结构、技术栈全方位监控
 2. **自动化运行**：支持定时和手动触发

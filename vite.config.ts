@@ -1,7 +1,7 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license MIT
- * @description CC-Admin 企业级后台管理框架 - vite.config
+ * @description early-bird 企业级后台管理框架 - vite.config
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
@@ -9,7 +9,7 @@ import postcssPxToRem from 'postcss-pxtorem'
 import { type ConfigEnv, defineConfig, loadEnv, type UserConfigExport } from 'vite'
 import { exclude, include } from './build/optimize'
 import { getPluginsList } from './build/plugins'
-import { __APP_INFO__, alias, pathResolve, root, wrapperEnv } from './build/utils'
+import { __APP_INFO__, pathResolve, root, wrapperEnv } from './build/utils'
 
 // 移除本地ViteEnv类型声明
 
@@ -43,10 +43,15 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
 
   return defineConfig({
     base: VITE_PUBLIC_PATH,
-    root,
+    root: pathResolve('./apps/admin'), // 修改为admin应用目录
     logLevel: isDev ? 'info' : 'info',
     resolve: {
-      alias,
+      alias: {
+        '@': pathResolve('./src'),
+        '@cc/early-bird-core': pathResolve('./packages/core'),
+        '@cc/early-bird-ui': pathResolve('./packages/ui'),
+        '@cc/early-bird-types': pathResolve('./packages/types'),
+      },
       extensions: ['.mjs', '.ts', '.tsx', '.json', '.vue'],
     },
     server: {
@@ -101,7 +106,7 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
       },
       rollupOptions: {
         input: {
-          index: pathResolve('./index.html', import.meta.url),
+          index: pathResolve('./apps/admin/index.html', import.meta.url), // 修改为admin应用入口
         },
         output: {
           chunkFileNames: 'static/ts/[name]-[hash].js',

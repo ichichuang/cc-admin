@@ -12,14 +12,20 @@
     "paths": {
       "@/*": ["./src/*"],
       "@build/*": ["./build/*"],
-      "@types/*": ["./types/*"],
-      "@assets/*": ["./src/assets/*"],
-      "@components/*": ["./src/components/*"],
-      "@views/*": ["./src/views/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@stores/*": ["./src/stores/*"],
-      "@router/*": ["./src/router/*"],
-      "@test/*": ["./src/views/test/*"]
+      "@types/*": ["./packages/types/*"],
+      "@assets/*": ["./apps/admin/src/assets/*"],
+      "@components/*": ["./apps/admin/src/components/*"],
+      "@views/*": ["./apps/admin/src/views/*"],
+      "@utils/*": ["./packages/core/utils/*"],
+      "@stores/*": ["./packages/core/stores/*"],
+      "@router/*": ["./packages/core/router/*"],
+      "@api/*": ["./packages/core/api/*"],
+      "@hooks/*": ["./apps/admin/src/hooks/*"],
+      "@common/*": ["./apps/admin/src/common/*"],
+      "@test/*": ["./apps/admin/src/views/test/*"],
+      "@cc/early-bird-core": ["./packages/core"],
+      "@cc/early-bird-ui": ["./packages/ui"],
+      "@cc/early-bird-types": ["./packages/types"]
     }
   }
 }

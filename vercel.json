@@ -1,6 +1,7 @@
 {
   "buildCommand": "pnpm install --no-frozen-lockfile && pnpm build",
   "installCommand": "pnpm install --no-frozen-lockfile",
+  "outputDirectory": "apps/admin/dist",
   "rewrites": [
     {
       "source": "/(.*)",

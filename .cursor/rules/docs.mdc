@@ -1,4 +1,4 @@
-# CC-Admin 项目文档规范
+# cc-admin 项目文档规范
 
 ## 📘 基本要求
 
@@ -221,7 +221,7 @@ const users = computed(() => userStore.userList)
  * 用户信息接口
  * @description 包含用户的基本信息和权限数据
  * @version 1.0.0
- * @author CC-Admin Team
+ * @author cc-admin Team
  */
 interface UserInfo {
   /** 用户唯一标识 */
@@ -261,7 +261,7 @@ interface Props {
 
 ## 📚 项目特定规范
 
-### CC-Admin 架构文档
+### cc-admin 架构文档
 
 - **技术栈**: Vue 3.5+, TypeScript 5+, Vite 7+, UnoCSS, Pinia
 - **目录结构**: 详细说明 `index.ts + modules/` 模式

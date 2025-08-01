@@ -1,7 +1,7 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license MIT
-  @description CC-Admin 企业级后台管理框架 - architecture-guide
+  @description cc-admin 企业级后台管理框架 - architecture-guide
   本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
 -->
 
@@ -9,7 +9,7 @@
 
 ## 概述
 
-CC-Admin 采用模块化、工程化的架构设计，基于 Vue 3.5+ 生态系统构建现代化企业级后台管理框架。
+cc-admin 采用模块化、工程化的架构设计，基于 Vue 3.5+ 生态系统构建现代化企业级后台管理框架。
 
 ## 🏗️ 整体架构
 

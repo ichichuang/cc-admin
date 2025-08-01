@@ -1,7 +1,7 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license MIT
- * @description CC-Admin 企业级后台管理框架 - 构建脚本
+ * @description cc-admin 企业级后台管理框架 - 构建脚本
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
@@ -215,7 +215,7 @@ function checkEnvConfig(): void {
   const baseVars = parseEnvFile(join(root, '.env'))
   const devVars = parseEnvFile(join(root, '.env.development'))
   const prodVars = parseEnvFile(join(root, '.env.production'))
-  const typeVars = parseEnvTypes(join(root, 'src/Types/env.d.ts'))
+  const typeVars = parseEnvTypes(join(root, 'packages/types/env.d.ts'))
 
   /* 当前环境 */
   const currentEnv = process.env.NODE_ENV === 'production' ? 'production' : 'development'

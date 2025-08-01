@@ -322,7 +322,7 @@ export function createBundleAnalyzerPlugin(open = false): Plugin {
             gzipSize: true,
             brotliSize: true,
             template: 'treemap',
-            title: 'CC-Admin 构建分析报告',
+            title: 'cc-admin 构建分析报告',
           })
 
           console.log('📊 构建分析报告已生成: dist/report.html')

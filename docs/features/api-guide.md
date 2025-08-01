@@ -1,7 +1,7 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license MIT
-  @description CC-Admin 企业级后台管理框架 - api-guide
+  @description cc-admin 企业级后台管理框架 - api-guide
   本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
 -->
 
@@ -9,7 +9,7 @@
 
 ## 概述
 
-CC-Admin 基于 Alova 构建了现代化的 API 管理系统，采用模块化设计，支持请求/响应拦截、错误处理、类型安全、缓存管理等企业级功能。
+cc-admin 基于 Alova 构建了现代化的 API 管理系统，采用模块化设计，支持请求/响应拦截、错误处理、类型安全、缓存管理等企业级功能。
 
 ## 🏗️ 架构设计
 

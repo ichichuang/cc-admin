@@ -2,7 +2,7 @@
 
 ## 📋 概述
 
-CC-Admin 项目使用 GitHub Actions 进行持续集成和持续部署（CI/CD），确保代码质量和自动化部署。
+cc-admin 项目使用 GitHub Actions 进行持续集成和持续部署（CI/CD），确保代码质量和自动化部署。
 
 ## 🚀 工作流文件
 

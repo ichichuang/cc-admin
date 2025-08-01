@@ -1,20 +1,20 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license 自定义商业限制许可证
-  @description CC-Admin 企业级后台管理框架 - 文档
+  @description cc-admin 企业级后台管理框架 - 文档
 
   本文件受版权保护，商业使用需要授权。
-  联系方式: https://github.com/ichichuang/CC-Admin/issues
+  联系方式: https://github.com/ichichuang/cc-admin/issues
 
   This file is protected by copyright. Commercial use requires authorization.
-  Contact: https://github.com/ichichuang/CC-Admin/issues
+  Contact: https://github.com/ichichuang/cc-admin/issues
 -->
 
-# CC-Admin 项目初始化指南
+# cc-admin 项目初始化指南
 
 ## 概述
 
-CC-Admin 项目提供了一个完整的初始化脚本，用于自动化执行所有必要的初始化步骤，确保项目环境正确配置并符合项目规范。
+cc-admin 项目提供了一个完整的初始化脚本，用于自动化执行所有必要的初始化步骤，确保项目环境正确配置并符合项目规范。
 
 ## 快速开始
 
@@ -124,7 +124,7 @@ pnpm prepare
 ### 成功输出示例
 
 ```
-🚀 CC-Admin 项目初始化脚本
+🚀 cc-admin 项目初始化脚本
 ==================================================
 
 🔍 检查项目环境...

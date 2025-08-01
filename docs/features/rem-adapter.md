@@ -1,7 +1,7 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license MIT
-  @description CC-Admin 企业级后台管理框架 - REM适配指南
+  @description cc-admin 企业级后台管理框架 - REM适配指南
   本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
 -->
 
@@ -9,7 +9,7 @@
 
 ## 📋 概述
 
-CC-Admin 框架提供了完整的 REM 适配解决方案，支持大屏、移动端、不同屏幕宽度的自适应布局。本文档详细说明了 REM 适配的配置、使用方法和重构优化。
+cc-admin 框架提供了完整的 REM 适配解决方案，支持大屏、移动端、不同屏幕宽度的自适应布局。本文档详细说明了 REM 适配的配置、使用方法和重构优化。
 
 ## 🎯 特点
 
@@ -23,7 +23,7 @@ CC-Admin 框架提供了完整的 REM 适配解决方案，支持大屏、移动
 
 ### 问题背景
 
-在 CC-Admin 框架中，`VITE_REM_DESIGN_WIDTH` 等 REM 相关配置在多个文件中重复定义，导致维护困难：
+在 cc-admin 框架中，`VITE_REM_DESIGN_WIDTH` 等 REM 相关配置在多个文件中重复定义，导致维护困难：
 
 #### 发现的问题
 

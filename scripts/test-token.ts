@@ -3,7 +3,7 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license MIT
- * @description CC-Admin 企业级后台管理框架 - GitHub Token 测试脚本
+ * @description cc-admin 企业级后台管理框架 - GitHub Token 测试脚本
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
@@ -147,14 +147,14 @@ class GitHubTokenTester {
         `Authorization: token ${this.githubToken}`,
         '-H',
         'Accept: application/vnd.github.v3+json',
-        'https://api.github.com/repos/ichichuang/CC-Admin',
+        'https://api.github.com/repos/ichichuang/cc-admin',
       ])
 
       const repoData = JSON.parse(repoResponse)
       if (repoData.name) {
         console.log(`✅ 可以访问仓库: ${repoData.name}`)
       } else {
-        console.log('⚠️ 无法访问 CC-Admin 仓库，可能仓库不存在或权限不足')
+        console.log('⚠️ 无法访问 cc-admin 仓库，可能仓库不存在或权限不足')
         console.log('响应:', repoResponse)
       }
 

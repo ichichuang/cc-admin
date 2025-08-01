@@ -1,13 +1,13 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license 自定义商业限制许可证
- * @description CC-Admin 企业级后台管理框架 - 构建脚本
+ * @description cc-admin 企业级后台管理框架 - 构建脚本
  *
  * 本文件受版权保护，商业使用需要授权。
- * 联系方式: https://github.com/ichichuang/CC-Admin/issues
+ * 联系方式: https://github.com/ichichuang/cc-admin/issues
  *
  * This file is protected by copyright. Commercial use requires authorization.
- * Contact: https://github.com/ichichuang/CC-Admin/issues
+ * Contact: https://github.com/ichichuang/cc-admin/issues
  */
 
 /* eslint-disable */
@@ -97,6 +97,9 @@ function checkFileName(filePath, fileName) {
     'types.ts',
   ]
 
+  // 跳过.d.ts文件检查
+  if (ext === '.d.ts') return
+
   // 国际化文件名规则（允许语言代码格式如 en-US.ts）
   const isI18nFile =
     normalizedPath.includes('/locales/lang/') && /^[a-z]{2}-[A-Z]{2}\.ts$/.test(fileName)
@@ -160,7 +163,7 @@ function checkFileName(filePath, fileName) {
         )
       }
     }
-  } else if (['.ts'].includes(ext)) {
+  } else if (['.ts', '.js'].includes(ext)) {
     // 功能模块相关文件：camelCase
     if (
       isInApi ||
@@ -264,6 +267,17 @@ async function checkVueFileNaming(filePath) {
                 `常量名应使用SCREAMING_SNAKE_CASE：${varName}`
               )
             }
+          } else if (varName.startsWith('_')) {
+            // 以下划线开头的未使用变量，检查剩余部分是否符合camelCase
+            const remainingName = varName.slice(1)
+            if (remainingName && !NAMING_RULES.variables.test(remainingName)) {
+              addError(
+                'variable-naming',
+                filePath,
+                lineNumber,
+                `未使用变量名应使用camelCase：${varName} -> 建议：_${toCamelCase(remainingName)}`
+              )
+            }
           } else {
             if (!NAMING_RULES.variables.test(varName)) {
               addError(
@@ -285,7 +299,18 @@ async function checkVueFileNaming(filePath) {
             .replace(/(?:function\s+|const\s+)/, '')
             .replace(/\s*(?:\(|=).*/, '')
 
-          if (!NAMING_RULES.functions.test(funcName)) {
+          if (funcName.startsWith('_')) {
+            // 以下划线开头的未使用函数，检查剩余部分是否符合camelCase
+            const remainingName = funcName.slice(1)
+            if (remainingName && !NAMING_RULES.functions.test(remainingName)) {
+              addError(
+                'function-naming',
+                filePath,
+                lineNumber,
+                `未使用函数名应使用camelCase：${funcName} -> 建议：_${toCamelCase(remainingName)}`
+              )
+            }
+          } else if (!NAMING_RULES.functions.test(funcName)) {
             addError(
               'function-naming',
               filePath,
@@ -315,16 +340,47 @@ async function scanDirectory(dirPath) {
       if (stats.isDirectory()) {
         const relativePath = itemPath.replace(projectRoot, '').replace(/\\/g, '/')
 
-        // 排除 src/Types 目录（大小写敏感）
-        if (relativePath.includes('/src/Types')) continue
+        // 排除node_modules、.git、dist等目录
+        if (
+          relativePath.includes('/node_modules') ||
+          relativePath.includes('/.git') ||
+          relativePath.includes('/dist') ||
+          relativePath.includes('/coverage') ||
+          relativePath.includes('/.vite') ||
+          relativePath.includes('/.nuxt') ||
+          relativePath.includes('/.next') ||
+          relativePath.includes('/.svelte-kit') ||
+          relativePath.includes('/.cache') ||
+          relativePath.includes('/.temp') ||
+          relativePath.includes('/.tmp')
+        )
+          continue
 
         checkDirectoryName(itemPath, item)
         await scanDirectory(itemPath)
       } else {
-        // 只检查 src 目录下的文件
+        // 检查apps和packages目录下的文件
         const relativePath = itemPath.replace(projectRoot, '').replace(/\\/g, '/')
-        if (relativePath.startsWith('/src/')) {
-          checkFileName(itemPath, item)
+        if (relativePath.startsWith('/apps/') || relativePath.startsWith('/packages/')) {
+          // 跳过构建产物文件
+          if (
+            relativePath.includes('/dist/') ||
+            relativePath.includes('/coverage/') ||
+            relativePath.includes('/.vite/') ||
+            relativePath.includes('/.nuxt/') ||
+            relativePath.includes('/.next/') ||
+            relativePath.includes('/.svelte-kit/') ||
+            relativePath.includes('/.cache/') ||
+            relativePath.includes('/.temp/') ||
+            relativePath.includes('/.tmp/')
+          ) {
+            continue
+          }
+
+          // 跳过.d.ts文件检查
+          if (!item.endsWith('.d.ts')) {
+            checkFileName(itemPath, item)
+          }
 
           // 检查Vue文件内容
           if (item.endsWith('.vue')) {
@@ -404,19 +460,19 @@ function outputResults() {
 async function main() {
   console.log('\x1b[32m🔍 开始检查项目命名规范...\x1b[0m')
 
-  // 只扫描src目录
-  const srcPath = join(projectRoot, 'src')
+  // 扫描apps和packages目录
+  const directories = [join(projectRoot, 'apps'), join(projectRoot, 'packages')]
 
-  // 检查src目录是否存在
-  try {
-    await stat(srcPath)
-  } catch (error) {
-    console.error('❌ src目录不存在')
-    process.exit(1)
+  for (const dirPath of directories) {
+    // 检查目录是否存在
+    try {
+      await stat(dirPath)
+      console.log('\x1b[32m📁 扫描目录:\x1b[0m', dirPath)
+      await scanDirectory(dirPath)
+    } catch (error) {
+      console.warn(`⚠️ 目录不存在: ${dirPath}`)
+    }
   }
-
-  console.log('\x1b[32m📁 扫描目录:\x1b[0m', srcPath)
-  await scanDirectory(srcPath)
 
   // 输出结果
   const isValid = outputResults()

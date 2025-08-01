@@ -1,7 +1,7 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license MIT
-  @description CC-Admin 企业级后台管理框架 - performance-guide
+  @description cc-admin 企业级后台管理框架 - performance-guide
   本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
 -->
 
@@ -9,7 +9,7 @@
 
 ## 概述
 
-CC-Admin 采用多层次的性能优化策略，从构建优化、运行时优化、网络优化到用户体验优化，全方位提升应用性能。
+cc-admin 采用多层次的性能优化策略，从构建优化、运行时优化、网络优化到用户体验优化，全方位提升应用性能。
 
 ## 🚀 构建优化
 
@@ -184,7 +184,7 @@ CC-Admin 采用多层次的性能优化策略，从构建优化、运行时优�
 
 ## 🎯 总结
 
-CC-Admin 的性能优化体系具有以下特点：
+cc-admin 的性能优化体系具有以下特点：
 
 - ✅ **全方位优化**: 构建、运行时、网络、用户体验全面优化
 - ✅ **数据驱动**: 基于性能监控数据的优化决策

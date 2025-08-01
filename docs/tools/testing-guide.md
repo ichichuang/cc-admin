@@ -1,7 +1,7 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license MIT
-  @description CC-Admin 企业级后台管理框架 - testing-guide
+  @description cc-admin 企业级后台管理框架 - testing-guide
   本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
 -->
 
@@ -9,7 +9,7 @@
 
 ## 概述
 
-CC-Admin 采用多层次的测试策略，包括单元测试、组件测试和端到端测试，确保代码质量和应用稳定性。
+cc-admin 采用多层次的测试策略，包括单元测试、组件测试和端到端测试，确保代码质量和应用稳定性。
 
 ## 🧪 测试策略
 
@@ -149,4 +149,4 @@ pnpm test:e2e
 - 检查测试环境配置
 - 验证依赖项安装
 
-通过这套测试体系，CC-Admin 确保了代码质量和应用稳定性。
+通过这套测试体系，cc-admin 确保了代码质量和应用稳定性。

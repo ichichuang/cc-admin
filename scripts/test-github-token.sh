@@ -68,13 +68,13 @@ echo -e "${YELLOW}🔍 测试仓库访问权限...${NC}"
 
 REPO_RESPONSE=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
     -H "Accept: application/vnd.github.v3+json" \
-    "https://api.github.com/repos/$USERNAME/CC-Admin")
+    "https://api.github.com/repos/$USERNAME/cc-admin")
 
 if echo "$REPO_RESPONSE" | jq -e '.name' > /dev/null 2>&1; then
     REPO_NAME=$(echo "$REPO_RESPONSE" | jq -r '.name')
     echo -e "${GREEN}✅ 可以访问仓库: $REPO_NAME${NC}"
 else
-    echo -e "${YELLOW}⚠️ 无法访问 CC-Admin 仓库，可能仓库不存在或权限不足${NC}"
+    echo -e "${YELLOW}⚠️ 无法访问 cc-admin 仓库，可能仓库不存在或权限不足${NC}"
     echo "响应: $REPO_RESPONSE"
 fi
 

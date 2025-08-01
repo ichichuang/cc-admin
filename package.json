@@ -1,12 +1,12 @@
 {
-  "name": "cc-admin",
+  "name": "cc-early-bird",
   "version": "0.0.0",
   "private": true,
   "type": "module",
   "author": "chichuang",
   "copyright": "Copyright (c) 2025 chichuang",
   "license": "Custom (Non-Commercial Use Only)",
-  "description": "CC-Admin 企业级后台管理框架 - 基于 Vue 3.5+ 和 TypeScript 5+ 的现代化企业级后台管理框架",
+  "description": "Early Bird · 由池闯打造的 Vue3 前端框架 - 基于 Vue 3.5+ 和 TypeScript 5+ 的现代化企业级后台管理框架",
   "keywords": [
     "vue3",
     "typescript",
@@ -16,16 +16,17 @@
     "alova",
     "admin",
     "framework",
-    "cc-admin",
-    "chichuang"
+    "early-bird",
+    "chichuang",
+    "cc-early-bird"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ichichuang/CC-Admin"
+    "url": "https://github.com/ichichuang/cc-early-bird"
   },
-  "homepage": "https://github.com/ichichuang/CC-Admin#readme",
+  "homepage": "https://github.com/ichichuang/cc-early-bird#readme",
   "bugs": {
-    "url": "https://github.com/ichichuang/CC-Admin/issues"
+    "url": "https://github.com/ichichuang/cc-early-bird/issues"
   },
   "engines": {
     "node": ">=22.x",
@@ -33,14 +34,15 @@
   },
   "packageManager": "pnpm@10.12.4",
   "scripts": {
-    "dev": "pnpm exec tsx scripts/dev-parallel.ts",
-    "build": "vue-tsc --noEmit && vite build",
-    "build:analyze": "vue-tsc --noEmit && vite build --mode analyze",
-    "preview": "vite preview",
+    "dev": "pnpm --filter @cc/early-bird-app-admin dev",
+    "dev:admin": "pnpm --filter @cc/early-bird-app-admin dev",
+    "build": "pnpm --filter @cc/early-bird-app-admin build",
+    "build:analyze": "pnpm --filter @cc/early-bird-app-admin build --mode analyze",
+    "preview": "pnpm --filter @cc/early-bird-app-admin preview",
     "report": "npx vite-bundle-analyzer dist/stats.html",
-    "type-check": "vue-tsc --noEmit",
+    "type-check": "pnpm --filter @cc/early-bird-app-admin type-check",
     "lint": "eslint . --fix",
-    "format": "prettier --write src/",
+    "format": "prettier --write .",
     "naming-check": "pnpm exec tsx scripts/naming-rules.ts",
     "naming-watch": "pnpm exec tsx scripts/watch-naming.ts",
     "check": "pnpm type-check && pnpm lint && pnpm naming-check && pnpm env-check && pnpm copyright:check",
@@ -55,11 +57,16 @@
     "monitor": "pnpm exec tsx scripts/monitor.ts",
     "monitor:quick": "pnpm exec tsx scripts/quick-search.ts",
     "monitor:cleanup": "./monitor_reports/cleanup.sh",
-    "monitor:report": "cat monitor_reports/latest/cc_admin_monitor_report.md",
+    "monitor:report": "cat monitor_reports/latest/cc_early_bird_monitor_report.md",
     "monitor:status": "echo '📊 监控状态:' && echo '最新报告: monitor_reports/latest/' && ls -la monitor_reports/latest/",
     "token:test": "pnpm exec tsx scripts/test-token.ts",
     "monitor:setup": "echo '请确保已设置 GITHUB_TOKEN 环境变量或创建 .env 文件' && echo '详细说明请查看: monitor_reports/config.md'",
-    "init:project": "pnpm exec tsx scripts/init.ts"
+    "init:project": "pnpm exec tsx scripts/init.ts",
+    "workspace:install": "pnpm install",
+    "workspace:clean": "pnpm -r exec rm -rf node_modules && pnpm install",
+    "workspace:build": "pnpm -r build",
+    "workspace:dev": "pnpm -r dev",
+    "workspace:type-check": "pnpm -r type-check"
   },
   "lint-staged": {
     "*.{ts,tsx,vue}": [

@@ -1,7 +1,7 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license MIT
-  @description CC-Admin 企业级后台管理框架 - mock-guide
+  @description cc-admin 企业级后台管理框架 - mock-guide
   本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
 -->
 
@@ -9,7 +9,7 @@
 
 ## 概述
 
-CC-Admin 使用自定义 Mock 服务提供接口模拟功能，支持开发和生产环境，包含认证、路由、用户管理等核心功能的 Mock 数据。
+cc-admin 使用自定义 Mock 服务提供接口模拟功能，支持开发和生产环境，包含认证、路由、用户管理等核心功能的 Mock 数据。
 
 ## 环境配置
 
