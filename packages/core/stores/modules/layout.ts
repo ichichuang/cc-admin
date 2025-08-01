@@ -6,13 +6,78 @@
  */
 
 /* 尺寸配置 */
+import { piniaKeyPrefix } from '@cc/early-bird-core/constants'
+import store, { useSizeStoreWithOut } from '@cc/early-bird-core/stores'
 import { debounce } from 'lodash-es'
 import { defineStore } from 'pinia'
-import type { DeviceInfo } from '../../../types/global'
-import { getDeviceInfo } from '../../utils/deviceInfo'
-import { env } from '../../utils/env'
-import store from '../index'
-import { useSizeStoreWithOut } from './size'
+
+// 本地定义函数，避免循环依赖
+/**
+ * 获取设备信息
+ */
+const getDeviceInfo = () => {
+  if (typeof window === 'undefined') {
+    return {
+      type: 'PC' as const,
+      screen: {
+        width: 1920,
+        height: 1080,
+        orientation: 'horizontal' as const,
+        deviceWidth: 1920,
+        deviceHeight: 1080,
+        definitely: 1,
+        navHeight: 0,
+        tabHeight: 0,
+      },
+      system: 'unknown',
+    }
+  }
+
+  const { innerWidth, innerHeight, screen } = window
+  const { width, height, availWidth } = screen
+
+  // 判断设备类型
+  let type: 'Mobile' | 'Tablet' | 'PC' = 'PC'
+  if (innerWidth <= 768) {
+    type = 'Mobile'
+  } else if (innerWidth <= 1024) {
+    type = 'Tablet'
+  }
+
+  // 判断方向
+  const orientation: 'horizontal' | 'vertical' =
+    innerWidth > innerHeight ? 'horizontal' : 'vertical'
+
+  return {
+    type,
+    screen: {
+      width: innerWidth,
+      height: innerHeight,
+      orientation,
+      deviceWidth: width,
+      deviceHeight: height,
+      definitely: availWidth / width,
+      navHeight: 0, // 移动端导航栏高度
+      tabHeight: 0, // 移动端标签栏高度
+    },
+    system: navigator.platform,
+  }
+}
+// 本地定义类型，避免循环依赖
+interface DeviceInfo {
+  type: 'Mobile' | 'Tablet' | 'PC'
+  screen: {
+    width: number
+    height: number
+    orientation: 'horizontal' | 'vertical'
+    deviceWidth: number
+    deviceHeight: number
+    definitely: number
+    navHeight: number
+    tabHeight: number
+  }
+  system: string
+}
 
 /* 布局配置 */
 // 布局配置
@@ -221,7 +286,7 @@ export const useLayoutStore = defineStore('layout', {
   },
 
   persist: {
-    key: `${env.piniaKeyPrefix}-layout`,
+    key: `${piniaKeyPrefix}-layout`,
     storage: localStorage,
   },
 })

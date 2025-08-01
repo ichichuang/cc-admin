@@ -11,7 +11,7 @@ const login = async (_data: any) => {
   return { token: 'mock-token', userInfo: { userId: 'mock-user' } }
 }
 
-import { useUserStoreWithOut } from '@cc/early-bird-core/stores'
+import { useUserStoreWithOut } from '@/stores'
 import { ref } from 'vue'
 
 const userStore = useUserStoreWithOut()

@@ -6,10 +6,11 @@
  */
 
 /* 尺寸配置 */
-import store, { useLayoutStoreWithOut } from '@cc/early-bird-core/stores'
-import { deepClone, toKebabCase } from '@cc/early-bird-core/utils'
+import { cloneDeep, toKebabCase } from '@cc/early-bird-core/common'
+import { piniaKeyPrefix } from '@cc/early-bird-core/constants'
+import store from '@cc/early-bird-core/stores'
+import { getDeviceInfo } from '@cc/early-bird-core/utils'
 import { defineStore } from 'pinia'
-import { env } from '../../utils/env'
 
 /* 尺寸模式类型 宽松尺寸 > 舒适尺寸 > 紧凑尺寸 */
 export type Size = 'compact' | 'comfortable' | 'loose'
@@ -171,7 +172,7 @@ export const useSizeStore = defineStore('size', {
     size: 'comfortable',
     sizeOptions,
 
-    sizes: deepClone(comfortableSizes),
+    sizes: cloneDeep(comfortableSizes),
 
     gap: 'md',
     rounded: 'smooth',
@@ -241,35 +242,22 @@ export const useSizeStore = defineStore('size', {
     /* 内容高度计算 */
     // 计算内容区域高度
     calculateContentHeight() {
-      const layoutStore = useLayoutStoreWithOut()
-      const screenHeight = layoutStore.getHeight
+      const deviceInfo = getDeviceInfo()
+      const screenHeight = deviceInfo.screen.height
 
       let contentOccupiedHeight = 0 // contentHeight 占用的高度
       let contentsOccupiedHeight = 0 // contentsHeight 占用的高度
 
-      // 如果显示头部
-      if (layoutStore.getShowHeader) {
-        contentOccupiedHeight += this.sizes.layout.headerHeight
-        contentsOccupiedHeight += this.sizes.layout.headerHeight
-      }
+      // 这里应该由具体的应用来实现布局相关的逻辑
+      // 暂时使用固定值，应用可以通过重写这个方法来定制
+      const headerHeight = this.sizes.layout.headerHeight
+      const tabsHeight = this.sizes.layout.tabsHeight
+      const footerHeight = this.sizes.layout.footerHeight
+      const breadcrumbHeight = this.sizes.layout.breadcrumbHeight
 
-      // 如果显示标签页
-      if (layoutStore.getShowTabs) {
-        contentOccupiedHeight += this.sizes.layout.tabsHeight
-        // contentsHeight 包含标签页，所以不加入 contentsOccupiedHeight
-      }
-
-      // 如果显示底部
-      if (layoutStore.getShowFooter) {
-        contentOccupiedHeight += this.sizes.layout.footerHeight
-        contentsOccupiedHeight += this.sizes.layout.footerHeight
-      }
-
-      // 如果显示面包屑
-      if (layoutStore.getShowBreadcrumb) {
-        contentOccupiedHeight += this.sizes.layout.breadcrumbHeight
-        // contentsHeight 包含面包屑，所以不加入 contentsOccupiedHeight
-      }
+      // 默认显示所有元素
+      contentOccupiedHeight += headerHeight + tabsHeight + footerHeight + breadcrumbHeight
+      contentsOccupiedHeight += headerHeight + footerHeight
 
       // 计算两种内容高度
       this.sizes.layout.contentHeight = screenHeight - contentOccupiedHeight
@@ -305,7 +293,7 @@ export const useSizeStore = defineStore('size', {
         return
       }
 
-      this.sizes = deepClone(targetSizePreset)
+      this.sizes = cloneDeep(targetSizePreset)
 
       // 立即更新 CSS 变量
       this.setCssVariables()
@@ -370,13 +358,13 @@ export const useSizeStore = defineStore('size', {
       this.size = 'comfortable'
       this.gap = 'md'
       this.rounded = 'smooth'
-      this.sizes = deepClone(comfortableSizes)
+      this.sizes = cloneDeep(comfortableSizes)
       this.setCssVariables()
     },
   },
 
   persist: {
-    key: `${env.piniaKeyPrefix}-size`,
+    key: `${piniaKeyPrefix}-size`,
     storage: localStorage,
     // 添加序列化配置，确保持久化正确
     serializer: {

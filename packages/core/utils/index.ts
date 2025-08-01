@@ -5,24 +5,20 @@
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
-// 导出公共工具函数
-export * from './common'
-
-// 导出环境工具
-export { env } from './env'
-
 // 导出设备信息工具
-export { getDeviceInfo } from './deviceInfo'
+export * from './modules/deviceInfo'
 
 // 导出模块加载器
-export { autoImportModulesSync } from './moduleLoader'
+export * from './modules/moduleLoader'
 
 // 导出REM适配器
-export { remAdapter } from './remAdapter'
-export type { RemAdapterConfig } from './remAdapter'
+export * from './modules/remAdapter'
 
 // 导出国际化工具
-export * from './locale'
+export * from './modules/locale'
 
 // 导出HTTP工具
-export * from './http'
+export * from './modules/http.js'
+
+// 导出PostCSS配置
+export * from './modules/postcssConfig'

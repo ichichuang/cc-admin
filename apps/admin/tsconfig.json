@@ -5,13 +5,18 @@
     "module": "ESNext",
     "target": "ESNext",
     "moduleResolution": "bundler",
+    "skipLibCheck": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@cc/early-bird-core": ["../../packages/core"],
-      "@cc/early-bird-ui": ["../../packages/ui"],
-      "@cc/early-bird-types": ["../../packages/types"]
+      "@build/*": ["./build/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@components/*": ["./src/components/*"],
+      "@views/*": ["./src/views/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@common/*": ["./src/common/*"],
+      "@test/*": ["./src/views/test/*"]
     }
   },
-  "include": ["src/**/*", "../../packages/**/*"],
+  "include": ["src/**/*", "build/**/*", "../../packages/core/stores/modules/locale.ts"],
   "exclude": ["node_modules", "dist"]
 }

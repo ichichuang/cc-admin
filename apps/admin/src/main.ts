@@ -5,47 +5,38 @@
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
-import App from '@/App.vue'
+import '@cc/early-bird-types'
+import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 
-// 导入核心包
-import { router, store } from '@cc/early-bird-core'
+// 导入应用配置
+import App from './App.vue'
+import i18n from './locales'
+import router from './router'
 
 // 导入样式
-import 'virtual:uno.css'
+import 'uno.css'
 import './assets/styles/reset.scss'
 
-// 导入Mock服务
-import '@/mock'
+// 导入 HTTP 配置
+import { setHttpConfig } from '@cc/early-bird-core/utils'
+
+// 初始化 HTTP 配置
+setHttpConfig({
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3003',
+  timeout: Number(import.meta.env.VITE_API_TIMEOUT) || 10000,
+  headers: {
+    xProject: 'admin',
+  },
+})
 
 // 创建应用实例
 const app = createApp(App)
 
-// 全局错误处理
-app.config.errorHandler = (err: unknown, instance, info) => {
-  // 过滤掉浏览器扩展相关的错误
-  const errorMessage = err instanceof Error ? err.message : String(err)
-  if (errorMessage.includes('message port closed') || errorMessage.includes('runtime.lastError')) {
-    console.warn('浏览器扩展相关错误，已忽略:', errorMessage)
-    return
-  }
-
-  console.error('应用错误:', err, info)
-}
-
-// 全局警告处理
-app.config.warnHandler = (msg, instance, trace) => {
-  // 过滤掉一些常见的无害警告
-  if (msg.includes('message port closed') || msg.includes('runtime.lastError')) {
-    return
-  }
-
-  console.warn('应用警告:', msg, trace)
-}
-
-// 使用插件
-app.use(store)
+// 注册插件
+app.use(createPinia())
 app.use(router)
+app.use(i18n)
 
 // 挂载应用
 app.mount('#app')

@@ -5,15 +5,19 @@
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
+import { piniaKeyPrefix } from '@cc/early-bird-core/constants'
+import store from '@cc/early-bird-core/stores'
+import {
+  type DeviceInfo,
+  getDeviceInfo,
+  parseRemConfigFromEnv,
+  RemAdapter,
+  type RemAdapterConfig,
+} from '@cc/early-bird-core/utils'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { env } from '../../utils/env'
-import { RemAdapter, type RemAdapterConfig, parseRemConfigFromEnv } from '../../utils/remAdapter'
-import store from '../index'
-import { useLayoutStoreWithOut } from './layout'
 
 // 导入全局类型
-import type { DeviceInfo } from '../../../types/global'
 
 /* PostCSS rem 适配 store */
 export const usePostcssStore = defineStore(
@@ -62,8 +66,7 @@ export const usePostcssStore = defineStore(
     const initRemAdapter = async () => {
       try {
         // 获取设备信息
-        const layoutStore = useLayoutStoreWithOut()
-        const deviceInfo = layoutStore.deviceInfo
+        const deviceInfo = getDeviceInfo()
 
         // 🎯 根据设备类型自动设置移动端优先模式
         const isMobile = deviceInfo.type === 'Mobile'
@@ -71,11 +74,6 @@ export const usePostcssStore = defineStore(
 
         if (shouldUpdateMobileFirst) {
           remConfig.value.mobileFirst = isMobile
-          if (env.debug) {
-            console.log(
-              `🔄 自动切换适配模式: ${isMobile ? '移动端优先' : '桌面端优先'} (设备: ${deviceInfo.type})`
-            )
-          }
         }
 
         // 设置全局变量供调试工具使用
@@ -92,24 +90,15 @@ export const usePostcssStore = defineStore(
         // 创建新的适配器实例
         remAdapter.value = new RemAdapter(remConfig.value)
 
-        // 立即设置一次根字体大小
-        remAdapter.value.setRootFontSize(deviceInfo)
-        currentRemBase.value = remAdapter.value.getCurrentFontSize()
-
         // 初始化适配器并保存清理函数
         remCleanupFn.value = remAdapter.value.init(() => {
           // 获取最新的设备信息
-          const latestDeviceInfo = layoutStore.deviceInfo
+          const latestDeviceInfo = getDeviceInfo()
 
           // 🎯 检测设备类型变化，动态调整适配模式
           const currentIsMobile = latestDeviceInfo.type === 'Mobile'
           if (remConfig.value.mobileFirst !== currentIsMobile) {
             remConfig.value.mobileFirst = currentIsMobile
-            if (env.debug) {
-              console.log(
-                `📱 设备类型变化，自动切换适配模式: ${currentIsMobile ? '移动端优先' : '桌面端优先'}`
-              )
-            }
 
             // 重新创建适配器实例以应用新配置
             if (remAdapter.value) {
@@ -122,7 +111,7 @@ export const usePostcssStore = defineStore(
             currentRemBase.value = remAdapter.value.getCurrentFontSize()
           }
           return latestDeviceInfo
-        }, 300) // 使用 300ms 防抖延迟
+        })
 
         // 添加自定义事件监听，用于同步状态
         const handleFontSizeChange = (_event: CustomEvent) => {
@@ -131,11 +120,10 @@ export const usePostcssStore = defineStore(
           }
         }
 
-        // 添加主动刷新机制：监听 layout store 的变化
+        // 添加主动刷新机制：监听设备变化
         const handleLayoutChange = () => {
-          if (remAdapter.value && typeof remAdapter.value.setRootFontSize === 'function') {
-            const newDeviceInfo = layoutStore.deviceInfo
-            remAdapter.value.setRootFontSize(newDeviceInfo)
+          if (remAdapter.value && typeof remAdapter.value.forceRefresh === 'function') {
+            remAdapter.value.forceRefresh(getDeviceInfo)
             currentRemBase.value = remAdapter.value.getCurrentFontSize()
           }
         }
@@ -154,9 +142,6 @@ export const usePostcssStore = defineStore(
               const newFontSize = remAdapter.value.getCurrentFontSize()
               if (Math.abs(newFontSize - currentRemBase.value) > 0.1) {
                 currentRemBase.value = newFontSize
-                if (env.debug) {
-                  console.log('📏 检测到根字体变化：', newFontSize + 'px')
-                }
               }
             }
           })
@@ -180,10 +165,6 @@ export const usePostcssStore = defineStore(
             rootFontObserver.disconnect()
           }
         }
-
-        if (env.debug) {
-          console.log('✅ rem 适配器已初始化')
-        }
       } catch (error) {
         console.error('Failed to initialize rem adapter:', error)
       }
@@ -192,28 +173,22 @@ export const usePostcssStore = defineStore(
     const updateRemAdapter = async () => {
       if (
         remAdapter.value &&
-        typeof remAdapter.value.setRootFontSize === 'function' &&
+        typeof remAdapter.value.forceRefresh === 'function' &&
         typeof remAdapter.value.getCurrentFontSize === 'function'
       ) {
         try {
-          const layoutStore = useLayoutStoreWithOut()
-          const deviceInfo = layoutStore.deviceInfo
+          const deviceInfo = getDeviceInfo()
 
           // 🎯 检测设备类型变化，自动调整适配模式
           const isMobile = deviceInfo.type === 'Mobile'
           if (remConfig.value.mobileFirst !== isMobile) {
             remConfig.value.mobileFirst = isMobile
-            if (env.debug) {
-              console.log(
-                `🔄 设备变化，自动切换适配模式: ${isMobile ? '移动端优先' : '桌面端优先'} (设备: ${deviceInfo.type})`
-              )
-            }
 
             // 重新创建适配器实例以应用新配置
             remAdapter.value = new RemAdapter(remConfig.value)
           }
 
-          remAdapter.value.setRootFontSize(deviceInfo)
+          remAdapter.value.forceRefresh(getDeviceInfo)
           currentRemBase.value = remAdapter.value.getCurrentFontSize()
         } catch (error) {
           console.warn('Failed to update rem adapter:', error)
@@ -252,8 +227,7 @@ export const usePostcssStore = defineStore(
     const getRemAdapterInfoAsync = async () => {
       if (remAdapter.value && typeof remAdapter.value.getAdapterInfo === 'function') {
         try {
-          const layoutStore = useLayoutStoreWithOut()
-          return remAdapter.value.getAdapterInfo(layoutStore.deviceInfo)
+          return remAdapter.value.getAdapterInfo(getDeviceInfo())
         } catch (error) {
           console.warn('Failed to get adapter info:', error)
           return null
@@ -264,8 +238,7 @@ export const usePostcssStore = defineStore(
 
     const getCurrentBreakpointAsync = async (): Promise<string> => {
       try {
-        const layoutStore = useLayoutStoreWithOut()
-        return getCurrentBreakpoint.value(layoutStore.deviceInfo)
+        return getCurrentBreakpoint.value(getDeviceInfo())
       } catch (error) {
         console.warn('Failed to get current breakpoint:', error)
         return 'desktop'
@@ -275,11 +248,10 @@ export const usePostcssStore = defineStore(
     // 手动刷新适配器（强制更新）
     const forceRefreshAdapter = async () => {
       try {
-        const layoutStore = useLayoutStoreWithOut()
-        const deviceInfo = layoutStore.deviceInfo
+        const deviceInfo = getDeviceInfo()
 
-        if (remAdapter.value && typeof remAdapter.value.setRootFontSize === 'function') {
-          remAdapter.value.setRootFontSize(deviceInfo)
+        if (remAdapter.value && typeof remAdapter.value.forceRefresh === 'function') {
+          remAdapter.value.forceRefresh(getDeviceInfo)
           currentRemBase.value = remAdapter.value.getCurrentFontSize()
 
           // 触发自定义事件通知其他组件
@@ -342,7 +314,7 @@ export const usePostcssStore = defineStore(
   },
   {
     persist: {
-      key: `${env.piniaKeyPrefix}-postcss`,
+      key: `${piniaKeyPrefix}-postcss`,
       storage: localStorage,
     },
   }

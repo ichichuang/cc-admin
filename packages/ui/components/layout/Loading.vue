@@ -6,12 +6,12 @@
 -->
 
 <script setup lang="ts">
+import { toKebabCase } from '@cc/early-bird-core/common'
 import { useLayoutStore } from '@cc/early-bird-core/stores'
-import { env, toKebabCase } from '@cc/early-bird-core/utils'
 import { computed, onMounted, reactive, ref } from 'vue'
 const layoutStore = useLayoutStore()
 const definitely = computed(() => layoutStore.getDefinitely)
-const loadingSize = env.loadingSize
+const loadingSize = 100
 const props = defineProps<{
   size?: number
   page?: boolean

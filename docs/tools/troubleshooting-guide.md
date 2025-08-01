@@ -24,7 +24,7 @@
 
 ## 🎨 样式问题
 
-- UnoCSS 不生效：检查 uno.config.ts 配置和插件加载，重启开发服务器。
+- UnoCSS 不生效：检查 uno-config.ts 配置和插件加载，重启开发服务器。
 - 主题切换无效：检查 Pinia store、CSS 变量和切换逻辑。
 
 ## 🔐 认证与权限问题

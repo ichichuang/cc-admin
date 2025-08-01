@@ -6,6 +6,7 @@
 -->
 
 <script setup lang="ts">
+import LayoutManager from '@/layouts'
 import {
   useColorStore,
   useLayoutStore,
@@ -13,8 +14,6 @@ import {
   useSizeStore,
 } from '@cc/early-bird-core/stores'
 import type { RemAdapterConfig } from '@cc/early-bird-core/utils'
-import { env } from '@cc/early-bird-core/utils'
-import LayoutManager from '@cc/early-bird-ui/layouts'
 import { computed, onBeforeUnmount, onMounted, reactive } from 'vue'
 
 const colorStore = useColorStore()
@@ -39,18 +38,16 @@ const tempConfig = reactive<RemAdapterConfig>({
   ...postcssStore.getRemConfig,
 })
 
-if (env.debug) {
-  console.log('=======================应用初始化 start =======================')
-  console.log('📱 当前断点:', currentBreakpoint.value)
-  console.log('📏 当前 rem 基准值:', currentRemBase.value)
-  console.log('🎨 设计稿宽度:', tempConfig.designWidth)
-  console.log('📐 基准字体大小:', tempConfig.baseFontSize)
-  console.log('📏 最小字体大小:', tempConfig.minFontSize)
-  console.log('📏 最大字体大小:', tempConfig.maxFontSize)
-  console.log('📱 是否启用移动端优先策略:', tempConfig.mobileFirst)
-  console.log('⚙️ 自定义断点配置:', tempConfig.breakpoints)
-  console.log('=======================应用初始化 end =======================')
-}
+console.log('=======================应用初始化 start =======================')
+console.log('📱 当前断点:', currentBreakpoint.value)
+console.log('📏 当前 rem 基准值:', currentRemBase.value)
+console.log('🎨 设计稿宽度:', tempConfig.designWidth)
+console.log('📐 基准字体大小:', tempConfig.baseFontSize)
+console.log('📏 最小字体大小:', tempConfig.minFontSize)
+console.log('📏 最大字体大小:', tempConfig.maxFontSize)
+console.log('📱 是否启用移动端优先策略:', tempConfig.mobileFirst)
+console.log('⚙️ 自定义断点配置:', tempConfig.breakpoints)
+console.log('=======================应用初始化 end =======================')
 
 onMounted(async () => {
   await postcssStore.initRemAdapter()

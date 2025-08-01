@@ -6,9 +6,9 @@
  */
 
 /* 尺寸配置 */
+import { piniaKeyPrefix } from '@cc/early-bird-core/constants'
+import store from '@cc/early-bird-core/stores'
 import { defineStore } from 'pinia'
-import { env } from '../../utils/env'
-import store from '../index'
 
 interface PermissionState {
   // 静态路由
@@ -54,7 +54,7 @@ export const usePermissionStore = defineStore('permission', {
   },
 
   persist: {
-    key: `${env.piniaKeyPrefix}-permission`,
+    key: `${piniaKeyPrefix}-permission`,
     storage: localStorage,
   },
 })

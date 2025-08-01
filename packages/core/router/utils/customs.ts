@@ -100,8 +100,7 @@ export function registerRouterGuards(
     loadingStart()
     try {
       const appStore = useAppStoreWithOut()
-      const env = import.meta.env
-      const title = env.VITE_APP_TITLE || appStore.getTitle
+      const title = appStore.getTitle
       if (to.meta?.title) {
         document.title = `${to.meta.title} - ${title}`
       } else {

@@ -310,7 +310,7 @@ class CopyrightProtector {
       ['src/main.ts', '应用程序入口'],
       ['src/App.vue', '根组件'],
       ['vite.config.ts', 'Vite 构建配置'],
-      ['uno.config.ts', 'UnoCSS 配置'],
+      ['uno-config.ts', 'UnoCSS 配置'],
       ['eslint.config.ts', 'ESLint 配置'],
       ['package.json', '项目配置'],
       ['tsconfig.json', 'TypeScript 配置'],

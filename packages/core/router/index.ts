@@ -10,11 +10,14 @@ import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHistory } from 'vue-router'
 
 // 导入路由模块
-import { autoImportModulesSync } from '../utils/moduleLoader'
+import { autoImportModulesSync } from '@cc/early-bird-core/utils'
 
 // 自动导入所有路由模块
 const routerModules = import.meta.glob('./modules/**/*.ts', { eager: true })
 const importedRouters = autoImportModulesSync(routerModules)
+
+// 导出所有路由模块
+export { importedRouters }
 
 // 合并所有路由
 const routes: RouteRecordRaw[] = []
@@ -36,4 +39,4 @@ const router = createRouter({
 export default router
 
 // 导出路由工具
-export * from './utils/index'
+export * from './utils'

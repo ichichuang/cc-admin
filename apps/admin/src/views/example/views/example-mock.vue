@@ -1,398 +1,201 @@
-<!--
-  @copyright Copyright (c) 2025 chichuang
-  @license MIT
-  @description cc-admin 企业级后台管理框架 - 页面组件
-  本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
--->
-
-<script setup lang="ts">
-import type { CreateUserRequest, MockUser } from '@/mock/modules/types'
-import { onMounted, reactive, ref } from 'vue'
-
-// 响应式数据
-const users = ref<MockUser[]>([])
-const loading = ref(false)
-const message = ref('')
-
-// 表单数据
-const formData = reactive<CreateUserRequest>({
-  username: '',
-  email: '',
-  role: 'user',
-  status: 'active',
-})
-
-// 编辑状态
-const editingUser = ref<MockUser | null>(null)
-const isEditing = ref(false)
-
-// 获取用户列表
-const getUsers = async () => {
-  loading.value = true
-  message.value = ''
-
-  try {
-    const response = await fetch('/api/users')
-    const result = await response.json()
-
-    if (result.code === 200) {
-      users.value = result.data
-      message.value = result.message
-    } else {
-      message.value = `获取失败: ${result.message}`
-    }
-  } catch (error) {
-    message.value = `请求失败: ${error}`
-  } finally {
-    loading.value = false
-  }
-}
-
-// 获取单个用户
-const getUser = async (id: number) => {
-  loading.value = true
-  message.value = ''
-
-  try {
-    const response = await fetch(`/api/users/${id}`)
-    const result = await response.json()
-
-    if (result.code === 200) {
-      message.value = `获取用户成功: ${result.data.username}`
-    } else {
-      message.value = `获取失败: ${result.message}`
-    }
-  } catch (error) {
-    message.value = `请求失败: ${error}`
-  } finally {
-    loading.value = false
-  }
-}
-
-// 创建用户
-const createUser = async () => {
-  loading.value = true
-  message.value = ''
-
-  try {
-    const response = await fetch('/api/users', {
-      method: 'POST',
-      body: JSON.stringify(formData),
-    })
-    response.headers.set('Content-Type', 'application/json')
-    const result = await response.json()
-
-    if (result.code === 201) {
-      message.value = result.message
-      // 重置表单
-      Object.assign(formData, {
-        username: '',
-        email: '',
-        role: 'user',
-        status: 'active',
-      })
-      // 刷新列表
-      await getUsers()
-    } else {
-      message.value = `创建失败: ${result.message}`
-    }
-  } catch (error) {
-    message.value = `请求失败: ${error}`
-  } finally {
-    loading.value = false
-  }
-}
-
-// 更新用户
-const updateUser = async () => {
-  if (!editingUser.value) {
-    return
-  }
-
-  loading.value = true
-  message.value = ''
-
-  try {
-    const response = await fetch(`/api/users/${editingUser.value.id}`, {
-      method: 'PUT',
-      body: JSON.stringify(formData),
-    })
-    response.headers.set('Content-Type', 'application/json')
-    const result = await response.json()
-
-    if (result.code === 200) {
-      message.value = result.message
-      // 重置编辑状态
-      editingUser.value = null
-      isEditing.value = false
-      Object.assign(formData, {
-        username: '',
-        email: '',
-        role: 'user',
-        status: 'active',
-      })
-      // 刷新列表
-      await getUsers()
-    } else {
-      message.value = `更新失败: ${result.message}`
-    }
-  } catch (error) {
-    message.value = `请求失败: ${error}`
-  } finally {
-    loading.value = false
-  }
-}
-
-// 删除用户
-const deleteUser = async (id: number) => {
-  if (!confirm('确定要删除这个用户吗？')) {
-    return
-  }
-
-  loading.value = true
-  message.value = ''
-
-  try {
-    const response = await fetch(`/api/users/${id}`, {
-      method: 'DELETE',
-    })
-    const result = await response.json()
-
-    if (result.code === 200) {
-      message.value = result.message
-      // 刷新列表
-      await getUsers()
-    } else {
-      message.value = `删除失败: ${result.message}`
-    }
-  } catch (error) {
-    message.value = `请求失败: ${error}`
-  } finally {
-    loading.value = false
-  }
-}
-
-// 开始编辑
-const startEdit = (user: MockUser) => {
-  editingUser.value = user
-  isEditing.value = true
-  Object.assign(formData, {
-    username: user.username,
-    email: user.email,
-    role: user.role,
-    status: user.status,
-  })
-}
-
-// 取消编辑
-const cancelEdit = () => {
-  editingUser.value = null
-  isEditing.value = false
-  Object.assign(formData, {
-    username: '',
-    email: '',
-    role: 'user',
-    status: 'active',
-  })
-}
-
-// 格式化日期
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleString('zh-CN')
-}
-
-// 获取状态标签样式
-const getStatusClass = (status: string) => {
-  return status === 'active' ? 'color-successColor' : 'color-errorColor'
-}
-
-onMounted(() => {
-  getUsers()
-})
-</script>
+/** * @copyright Copyright (c) 2025 chichuang * @license MIT * @description cc-admin
+企业级后台管理框架 - Mock 示例页面 * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。 */
 
 <template>
   <div class="example-mock">
-    <!-- 操作说明 -->
-    <div class="bg-bg200 color-primary100 border p-gap mb-gap sticky top-0 left-0 right-0">
-      <div class="center-col gap-gap">
-        <div class="text-lg font-bold">Mock 接口使用示例</div>
-        <div class="text-sm color-text200">
-          演示 CRUD 操作：获取用户列表、获取单个用户、创建用户、更新用户、删除用户
-        </div>
-        <div class="text-xs color-text200">基于自定义 Mock 服务，支持生产环境使用</div>
+    <h1>HTTP 请求示例</h1>
+
+    <div class="demo-section">
+      <h2>基础 HTTP 方法</h2>
+      <div class="button-group">
+        <button @click="testGet">测试 GET 请求</button>
+        <button @click="testPost">测试 POST 请求</button>
+        <button @click="testPut">测试 PUT 请求</button>
+        <button @click="testDelete">测试 DELETE 请求</button>
+      </div>
+      <div
+        class="result"
+        v-if="result"
+      >
+        <h3>请求结果：</h3>
+        <pre>{{ JSON.stringify(result, null, 2) }}</pre>
       </div>
     </div>
 
-    <!-- 消息提示 -->
-    <div
-      v-if="message"
-      class="bg-bg100 border border-bg300 p-gap rounded mb-gap"
-      :class="message.includes('失败') ? 'color-errorColor' : 'color-successColor'"
-    >
-      {{ message }}
-    </div>
-
-    <!-- 表单区域 -->
-    <div class="card mb-gap">
-      <div class="center mb-gap">
-        {{ isEditing ? '编辑用户' : '创建用户' }}
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-gap mb-gap">
-        <div>
-          <label class="text-sm color-text200">用户名</label>
-          <input
-            v-model="formData.username"
-            type="text"
-            class="input-base w-full"
-            placeholder="请输入用户名"
-          />
-        </div>
-        <div>
-          <label class="text-sm color-text200">邮箱</label>
-          <input
-            v-model="formData.email"
-            type="email"
-            class="input-base w-full"
-            placeholder="请输入邮箱"
-          />
-        </div>
-        <div>
-          <label class="text-sm color-text200">角色</label>
-          <select
-            v-model="formData.role"
-            class="input-base w-full"
-          >
-            <option value="user">普通用户</option>
-            <option value="admin">管理员</option>
-          </select>
-        </div>
-        <div>
-          <label class="text-sm color-text200">状态</label>
-          <select
-            v-model="formData.status"
-            class="input-base w-full"
-          >
-            <option value="active">激活</option>
-            <option value="inactive">禁用</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="between">
-        <div class="between gap-gap">
-          <button
-            @click="isEditing ? updateUser() : createUser()"
-            class="btn-primary"
-            :disabled="loading"
-          >
-            {{ loading ? '处理中...' : isEditing ? '更新' : '创建' }}
-          </button>
-          <button
-            v-if="isEditing"
-            @click="cancelEdit"
-            class="btn-info"
-            :disabled="loading"
-          >
-            取消
-          </button>
-        </div>
-        <button
-          @click="getUsers"
-          class="btn-success"
-          :disabled="loading"
-        >
-          {{ loading ? '刷新中...' : '刷新列表' }}
-        </button>
+    <div class="demo-section">
+      <h2>自定义配置 HTTP 方法</h2>
+      <div class="button-group">
+        <button @click="testCustomHttp">测试自定义配置</button>
+        <button @click="testMultipleServices">测试多服务</button>
       </div>
     </div>
 
-    <!-- 用户列表 -->
-    <div class="card">
-      <div class="center mb-gap">用户列表</div>
-
-      <div
-        v-if="loading"
-        class="center p-gap color-text200"
-      >
-        加载中...
-      </div>
-
-      <div
-        v-else-if="users.length === 0"
-        class="center p-gap color-text200"
-      >
-        暂无用户数据
-      </div>
-
-      <div
-        v-else
-        class="space-y-gap"
-      >
-        <div
-          v-for="user in users"
-          :key="user.id"
-          class="bg-bg100 border border-bg300 p-gap rounded"
-        >
-          <div class="between mb-gap">
-            <div class="font-bold color-primaryColor">{{ user.username }}</div>
-            <div class="text-sm color-text200">ID: {{ user.id }}</div>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-gap mb-gap text-sm">
-            <div>
-              <span class="color-text200">邮箱:</span>
-              <span class="ml-gaps">{{ user.email }}</span>
-            </div>
-            <div>
-              <span class="color-text200">角色:</span>
-              <span class="ml-gaps">{{ user.role === 'admin' ? '管理员' : '普通用户' }}</span>
-            </div>
-            <div>
-              <span class="color-text200">状态:</span>
-              <span
-                class="ml-gaps"
-                :class="getStatusClass(user.status)"
-              >
-                {{ user.status === 'active' ? '激活' : '禁用' }}
-              </span>
-            </div>
-            <div>
-              <span class="color-text200">创建时间:</span>
-              <span class="ml-gaps">{{ formatDate(user.createdAt) }}</span>
-            </div>
-          </div>
-
-          <div class="between">
-            <div class="between gap-gap">
-              <button
-                @click="getUser(user.id)"
-                class="btn-info text-sm"
-                :disabled="loading"
-              >
-                获取详情
-              </button>
-              <button
-                @click="startEdit(user)"
-                class="btn-warning text-sm"
-                :disabled="loading"
-              >
-                编辑
-              </button>
-              <button
-                @click="deleteUser(user.id)"
-                class="btn-error text-sm"
-                :disabled="loading"
-              >
-                删除
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="demo-section">
+      <h2>当前 HTTP 配置</h2>
+      <pre>{{ JSON.stringify(httpConfig, null, 2) }}</pre>
     </div>
   </div>
 </template>
 
-<style lang="scss" scope></style>
+<script setup lang="ts">
+import {
+  createHttpMethods,
+  del,
+  get,
+  getHttpConfig,
+  post,
+  put,
+} from '@cc/early-bird-core/utils/http'
+import { ref } from 'vue'
+
+// 响应式数据
+const result = ref<any>(null)
+const httpConfig = ref(getHttpConfig())
+
+// 基础 HTTP 方法测试
+const testGet = async () => {
+  try {
+    result.value = await get('/api/users', { page: 1, size: 10 })
+  } catch (error) {
+    result.value = { error: error.message }
+  }
+}
+
+const testPost = async () => {
+  try {
+    result.value = await post('/api/users', {
+      name: '测试用户',
+      email: 'test@example.com',
+    })
+  } catch (error) {
+    result.value = { error: error.message }
+  }
+}
+
+const testPut = async () => {
+  try {
+    result.value = await put('/api/users/1', {
+      name: '更新用户',
+      email: 'updated@example.com',
+    })
+  } catch (error) {
+    result.value = { error: error.message }
+  }
+}
+
+const testDelete = async () => {
+  try {
+    result.value = await del('/api/users/1')
+  } catch (error) {
+    result.value = { error: error.message }
+  }
+}
+
+// 自定义配置 HTTP 方法测试
+const testCustomHttp = async () => {
+  try {
+    // 创建自定义配置的 HTTP 方法
+    const customHttp = createHttpMethods({
+      baseURL: 'http://custom-api.example.com',
+      timeout: 15000,
+      headers: {
+        'X-API-Version': 'v2',
+        'X-Custom-Header': 'custom-value',
+      },
+    })
+
+    result.value = await customHttp.get('/api/data')
+  } catch (error) {
+    result.value = { error: error.message }
+  }
+}
+
+// 多服务测试
+const testMultipleServices = async () => {
+  try {
+    // 用户服务
+    const userHttp = createHttpMethods({
+      baseURL: 'http://user-api.example.com',
+      headers: { 'X-Service': 'user' },
+    })
+
+    // 订单服务
+    const orderHttp = createHttpMethods({
+      baseURL: 'http://order-api.example.com',
+      headers: { 'X-Service': 'order' },
+    })
+
+    // 并行请求多个服务
+    const [userResult, orderResult] = await Promise.all([
+      userHttp.get('/users'),
+      orderHttp.get('/orders'),
+    ])
+
+    result.value = {
+      userService: userResult,
+      orderService: orderResult,
+    }
+  } catch (error) {
+    result.value = { error: error.message }
+  }
+}
+</script>
+
+<style scoped>
+.example-mock {
+  padding: 20px;
+}
+
+.demo-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.button-group button {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.button-group button:hover {
+  background-color: #0056b3;
+}
+
+.result {
+  margin-top: 15px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  border: 1px solid #e9ecef;
+}
+
+.result pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-size: 12px;
+  color: #333;
+}
+
+pre {
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #e9ecef;
+  font-size: 12px;
+  overflow-x: auto;
+}
+</style>

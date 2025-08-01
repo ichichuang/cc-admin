@@ -20,7 +20,7 @@ cc-admin 基于 Vite 7+ 构建现代化的前端工程化体系，提供高性�
 
 - `vite.config.ts` - Vite 主配置文件
 - `tsconfig.json` - TypeScript 配置
-- `uno.config.ts` - UnoCSS 配置
+- `uno-config.ts` - UnoCSS 配置
 - `eslint.config.ts` - ESLint 配置
 
 ## ⚙️ 核心配置

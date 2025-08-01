@@ -14,21 +14,19 @@
       "types": "./components/index.ts",
       "import": "./components/index.ts"
     },
-    "./layouts": {
-      "types": "./layouts/index.ts",
-      "import": "./layouts/index.ts"
-    },
     "./styles": {
       "types": "./styles/index.ts",
       "import": "./styles/index.ts"
+    },
+    "./icons": {
+      "types": "./icons/index.ts",
+      "import": "./icons/index.ts"
     }
   },
   "dependencies": {
-    "vue": "^3.5.12",
-    "vue-router": "^4.4.5",
     "@cc/early-bird-core": "workspace:*"
   },
   "devDependencies": {
-    "typescript": "^5.6.2"
+    "typescript": "^5.8.3"
   }
 }

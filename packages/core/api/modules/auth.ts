@@ -5,7 +5,29 @@
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
-import { get, post } from '../../utils/http'
+// 本地定义 HTTP 方法，避免循环依赖
+const get = async (url: string, config?: any) => {
+  // 简单的 GET 请求实现
+  const response = await fetch(url, {
+    method: 'GET',
+    ...config,
+  })
+  return response.json()
+}
+
+const post = async (url: string, data?: any, config?: any) => {
+  // 简单的 POST 请求实现
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...config?.headers,
+    },
+    body: JSON.stringify(data),
+    ...config,
+  })
+  return response.json()
+}
 
 // API 响应类型定义
 interface ApiResponse<T = any> {

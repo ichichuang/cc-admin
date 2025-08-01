@@ -7,5 +7,5 @@
 
 // UI包统一导出
 export * from './components'
-export * from './layouts'
-export * from './styles'
+// 注意：layouts 模块已迁移到 apps/admin/src/layouts/
+// 注意：styles 模块已迁移到 apps/admin/src/assets/styles/

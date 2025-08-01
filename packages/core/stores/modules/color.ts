@@ -5,10 +5,11 @@
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
-import { env, toKebabCase } from '@cc/early-bird-core/utils'
+import { getSystemColorMode, toKebabCase } from '@cc/early-bird-core/common'
+import { piniaKeyPrefix } from '@cc/early-bird-core/constants'
+import store from '@cc/early-bird-core/stores'
+
 import { defineStore } from 'pinia'
-import { getSystemColorMode } from '../../../../apps/admin/src/common/modules/function'
-import store from '../index'
 
 /* 主题模式选项类型 */
 export type Mode = 'light' | 'dark' | 'auto'
@@ -615,7 +616,7 @@ export const useColorStore = defineStore('color', {
   },
 
   persist: {
-    key: `${env.piniaKeyPrefix}-color`,
+    key: `${piniaKeyPrefix}-color`,
     storage: localStorage,
   },
 })

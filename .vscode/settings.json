@@ -129,7 +129,7 @@
     "*.ts": "typescript",
 
     "*.json": "jsonc",
-    "uno.config.ts": "typescript"
+    "uno-config.ts": "typescript"
   },
   "workbench.iconTheme": "material-icon-theme",
   "editor.suggest.showKeywords": true,
@@ -171,7 +171,7 @@
 
   // === UnoCSS 相关配置 ===
   "unocss.root": "./",
-  "unocss.configFile": "uno.config.ts",
+  "unocss.configFile": "uno-config.ts",
   "unocss.remToPxPreview": true,
   "unocss.colorPreview": true,
   "unocss.enableIntelliSense": true,

@@ -8,3 +8,6 @@
 // 组件包统一导出
 export { default as LanguageSwitch } from './common/LanguageSwitch.vue'
 export { default as Loading } from './layout/Loading.vue'
+
+export * from './common/LanguageSwitch.vue'
+export * from './layout/Loading.vue'

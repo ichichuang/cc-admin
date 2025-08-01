@@ -50,11 +50,11 @@ export function isProd(): boolean {
 export const env = {
   // 应用基础配置
   get appTitle(): string {
-    return import.meta.env.VITE_APP_TITLE || 'cc-admin'
+    return import.meta.env.VITE_APP_TITLE || 'CC-Admin'
   },
 
   get appVersion(): string {
-    return import.meta.env.VITE_APP_VERSION || '1.0.0'
+    return import.meta.env.VITE_APP_VERSION || '2.0.0'
   },
 
   get appEnv(): 'development' | 'production' {
@@ -66,11 +66,7 @@ export const env = {
   },
 
   get port(): number {
-    return toNumber(import.meta.env.VITE_PORT || '3000')
-  },
-
-  get piniaKeyPrefix(): string {
-    return import.meta.env.VITE_PINIA_PERSIST_KEY_PREFIX || 'cc-admin'
+    return toNumber(import.meta.env.VITE_PORT || '8888')
   },
 
   get rootRedirect(): string {
@@ -78,12 +74,12 @@ export const env = {
   },
 
   get loadingSize(): number {
-    return toNumber(import.meta.env.VITE_LOADING_SIZE || '4')
+    return toNumber(import.meta.env.VITE_LOADING_SIZE || '5')
   },
 
   // API 配置
   get apiBaseUrl(): string {
-    return import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'
+    return import.meta.env.VITE_API_BASE_URL || 'http://localhost:3003'
   },
 
   get apiTimeout(): number {
@@ -134,51 +130,5 @@ export const env = {
 
   get cdn(): boolean {
     return toBool(import.meta.env.VITE_CDN || 'false')
-  },
-
-  // rem 适配配置
-  get remDesignWidth(): number {
-    return toNumber(import.meta.env.VITE_REM_DESIGN_WIDTH || '1800')
-  },
-
-  get remBaseFontSize(): number {
-    return toNumber(import.meta.env.VITE_REM_BASE_FONT_SIZE || '16')
-  },
-
-  get remMinFontSize(): number {
-    return toNumber(import.meta.env.VITE_REM_MIN_FONT_SIZE || '12')
-  },
-
-  get remMaxFontSize(): number {
-    return toNumber(import.meta.env.VITE_REM_MAX_FONT_SIZE || '24')
-  },
-
-  get remMobileFirst(): boolean {
-    return toBool(import.meta.env.VITE_REM_MOBILE_FIRST || 'false')
-  },
-
-  get remBreakpoints(): {
-    xs: number
-    sm: number
-    md: number
-    lg: number
-    xl: number
-    xls: number
-  } {
-    try {
-      return JSON.parse(
-        import.meta.env.VITE_REM_BREAKPOINTS ||
-          '{"xs":375,"sm":768,"md":1024,"lg":1400,"xl":1660,"xls":1920}'
-      )
-    } catch {
-      return {
-        xs: 375,
-        sm: 768,
-        md: 1024,
-        lg: 1400,
-        xl: 1660,
-        xls: 1920,
-      }
-    }
   },
 } as const

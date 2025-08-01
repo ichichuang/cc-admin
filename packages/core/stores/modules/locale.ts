@@ -8,11 +8,11 @@
 /**
  * 多语言状态管理
  */
+import { piniaKeyPrefix } from '@cc/early-bird-core/constants'
+import type { SupportedLocale } from '@cc/early-bird-core/utils'
+import { getCurrentLocale, setLocale, supportedLocales } from '@cc/early-bird-core/utils'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { env } from '../../utils/env'
-import type { SupportedLocale } from '../../utils/locale'
-import { getCurrentLocale, setLocale, supportedLocales } from '../../utils/locale'
 
 // 临时定义LocaleInfo类型
 interface LocaleInfo {
@@ -108,7 +108,7 @@ export const useLocaleStore = defineStore(
   },
   {
     persist: {
-      key: `${env.piniaKeyPrefix}-locale`,
+      key: `${piniaKeyPrefix}-locale`,
       storage: localStorage,
     },
   }
