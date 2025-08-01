@@ -288,16 +288,6 @@ src/
 
 ### 详细文档位置
 
-- **架构总览**: `docs/ARCHITECTURE_SUMMARY.md`
-- **目录结构**: `docs/DIRECTORY_STRUCTURE.md`
-- **路由系统**: `docs/ROUTER_GUIDE.md`
-- **状态管理**: `docs/PINIA_PERSISTED_GUIDE.md`
-- **样式系统**: `docs/UNOCSS_GUIDE.md`
-- **主题配置**: `docs/THEME_VARIABLES_GUIDE.md`
-- **命名规范**: `docs/NAMING_CONVENTIONS.md`
-- **环境变量**: `docs/ENVIRONMENT_VARIABLES.md`
-- **布局系统**: `docs/LAYOUT_SYSTEM_GUIDE.md`
-
 ### 配置更新流程
 
 1. **修改配置**: 更新相关配置文件

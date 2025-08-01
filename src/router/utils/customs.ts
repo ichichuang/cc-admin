@@ -5,12 +5,46 @@
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
+import { errorPages, routeWhiteList } from '@/constants'
 import { useLoading } from '@/hooks'
+import { t } from '@/locales'
 import { recordUnauthorizedAccess } from '@/router/utils'
 import { useAppStoreWithOut, usePermissionStoreWithOut, useUserStoreWithOut } from '@/stores'
 import type { Router } from 'vue-router'
 
 const { loadingStart, loadingDone } = useLoading()
+
+/**
+ * 获取路由页面标题（支持多语言）
+ * @param route 路由对象
+ * @param appTitle 应用标题
+ * @returns 页面标题
+ */
+export const getRouteTitle = (route: any, appTitle: string): string => {
+  if (route.meta?.titleKey) {
+    // 使用 titleKey 获取多语言标题
+    return `${t(route.meta.titleKey)} - ${appTitle}`
+  } else if (route.meta?.title) {
+    // 兼容直接设置 title 的情况
+    return `${route.meta.title} - ${appTitle}`
+  }
+  return appTitle
+}
+
+/**
+ * 更新当前页面标题（支持语言切换时动态更新）
+ */
+export const updateCurrentPageTitle = (router: Router) => {
+  const appStore = useAppStoreWithOut()
+  const env = import.meta.env
+  const title = env.VITE_APP_TITLE || appStore.getTitle
+
+  // 获取当前路由
+  const currentRoute = router.currentRoute.value
+
+  // 更新页面标题
+  document.title = getRouteTitle(currentRoute, title)
+}
 
 /**
  * 检查用户是否有访问路由的权限
@@ -69,10 +103,10 @@ export function registerRouterGuards(
     isDebug: boolean
   }
 ) {
-  // 路由白名单
-  const whiteList = ['/login', '/register']
-  // 错误页面
-  const errorPages = ['/404', '/403', '/500']
+  // 监听语言切换事件，动态更新页面标题
+  window.addEventListener('locale-changed', () => {
+    updateCurrentPageTitle(router)
+  })
 
   router.beforeEach(async (to, from, next) => {
     loadingStart()
@@ -80,16 +114,15 @@ export function registerRouterGuards(
       const appStore = useAppStoreWithOut()
       const env = import.meta.env
       const title = env.VITE_APP_TITLE || appStore.getTitle
-      if (to.meta?.title) {
-        document.title = `${to.meta.title} - ${title}`
-      } else {
-        document.title = title
-      }
-      if (errorPages.includes(to.path)) {
+
+      // 使用工具函数处理页面标题多语言
+      document.title = getRouteTitle(to, title)
+
+      if (errorPages.includes(to.path as any)) {
         next()
         return
       }
-      if (whiteList.includes(to.path)) {
+      if (routeWhiteList.includes(to.path as any)) {
         next()
         return
       }
@@ -134,7 +167,7 @@ export function registerRouterGuards(
         return
       }
       const routeExists = router.hasRoute(to.name as string)
-      if (to.name && !routeExists && !errorPages.includes(to.path)) {
+      if (to.name && !routeExists && !errorPages.includes(to.path as any)) {
         next('/404')
         return
       }

@@ -36,7 +36,6 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
     VITE_COMPRESSION,
     VITE_LEGACY,
     VITE_CDN,
-    VITE_API_TIMEOUT,
   } = env
 
   const isDev = mode === 'development'
@@ -68,7 +67,7 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
           target: VITE_API_BASE_URL,
           changeOrigin: true,
           rewrite: path => path.replace(/^\/api/, ''),
-          timeout: Number(VITE_API_TIMEOUT) || 10000,
+          timeout: 10000,
         },
       },
     },

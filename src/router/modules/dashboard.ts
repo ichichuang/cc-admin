@@ -5,14 +5,13 @@
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
-import { t } from '@/locales'
 const homeRoutes: RouteConfig[] = [
   {
     path: '/dashboard',
     name: 'Dashboard',
     component: () => import('@/views/dashboard/index.vue'),
     meta: {
-      title: t('router.dashboard.dashboard'),
+      titleKey: 'router.dashboard.dashboard',
       rank: 1,
       roles: ['admin', 'user'],
     },

@@ -102,6 +102,18 @@ export const commonZhCN: CommonLocaleMessages = {
     forbidden: '访问被拒绝',
     notFound: '页面不存在',
   },
+
+  // 页面标题测试相关
+  currentLanguage: '当前语言',
+  languageSwitch: '语言切换',
+  testSection: '测试区域',
+  currentTitle: '当前标题',
+  browserTitle: '浏览器标题',
+  refreshTitle: '刷新标题',
+  instructions: '使用说明',
+  step1: '点击上方按钮切换语言',
+  step2: '观察浏览器标签页标题是否实时更新',
+  step3: '如果标题没有更新，点击"刷新标题"按钮',
 }
 
 /** 英文配置 */
@@ -196,6 +208,18 @@ export const commonEnUS: CommonLocaleMessages = {
     forbidden: 'Access denied',
     notFound: 'Page not found',
   },
+
+  // 页面标题测试相关
+  currentLanguage: 'Current Language',
+  languageSwitch: 'Language Switch',
+  testSection: 'Test Section',
+  currentTitle: 'Current Title',
+  browserTitle: 'Browser Title',
+  refreshTitle: 'Refresh Title',
+  instructions: 'Instructions',
+  step1: 'Click the buttons above to switch language',
+  step2: 'Observe if the browser tab title updates in real-time',
+  step3: 'If the title does not update, click the "Refresh Title" button',
 }
 
 /** 繁体中文配置 */
@@ -290,4 +314,16 @@ export const commonZhTW: CommonLocaleMessages = {
     forbidden: '存取被拒絕',
     notFound: '頁面不存在',
   },
+
+  // 页面标题测试相关
+  currentLanguage: '當前語言',
+  languageSwitch: '語言切換',
+  testSection: '測試區域',
+  currentTitle: '當前標題',
+  browserTitle: '瀏覽器標題',
+  refreshTitle: '刷新標題',
+  instructions: '使用說明',
+  step1: '點擊上方按鈕切換語言',
+  step2: '觀察瀏覽器標籤頁標題是否實時更新',
+  step3: '如果標題沒有更新，點擊"刷新標題"按鈕',
 }

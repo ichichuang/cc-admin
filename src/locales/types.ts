@@ -120,6 +120,18 @@ export interface CommonLocaleMessages {
     forbidden: string
     notFound: string
   }
+
+  // 页面标题测试相关
+  currentLanguage: string
+  languageSwitch: string
+  testSection: string
+  currentTitle: string
+  browserTitle: string
+  refreshTitle: string
+  instructions: string
+  step1: string
+  step2: string
+  step3: string
 }
 
 /** 认证模块语言配置 */

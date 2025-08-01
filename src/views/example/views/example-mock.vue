@@ -78,8 +78,10 @@ const createUser = async () => {
     const response = await fetch('/api/users', {
       method: 'POST',
       body: JSON.stringify(formData),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
-    response.headers.set('Content-Type', 'application/json')
     const result = await response.json()
 
     if (result.code === 201) {
@@ -116,8 +118,10 @@ const updateUser = async () => {
     const response = await fetch(`/api/users/${editingUser.value.id}`, {
       method: 'PUT',
       body: JSON.stringify(formData),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
-    response.headers.set('Content-Type', 'application/json')
     const result = await response.json()
 
     if (result.code === 200) {

@@ -10,6 +10,8 @@
  */
 import { getCurrentLocale, setLocale, supportedLocales } from '@/locales'
 import type { SupportedLocale } from '@/locales/types'
+import router from '@/router'
+import { useAppStoreWithOut } from '@/stores'
 import { computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -62,8 +64,29 @@ export function useLocale() {
   // 监听语言变化，更新相关状态
   watch(
     () => getCurrentLocale(),
-    _newLocale => {
-      // console.log('Locale changed to:', newLocale)
+    newLocale => {
+      // 语言切换时触发标题更新
+      window.dispatchEvent(
+        new CustomEvent('locale-changed', {
+          detail: { locale: newLocale },
+        })
+      )
+
+      // 直接更新当前页面标题
+      const currentRoute = router?.currentRoute?.value
+      if (currentRoute) {
+        const appStore = useAppStoreWithOut()
+        const env = import.meta.env
+        const title = env.VITE_APP_TITLE || appStore.getTitle
+
+        let pageTitle = title
+        if (currentRoute.meta?.titleKey) {
+          pageTitle = `${t(currentRoute.meta.titleKey)} - ${title}`
+        } else if (currentRoute.meta?.title) {
+          pageTitle = `${currentRoute.meta.title} - ${title}`
+        }
+        document.title = pageTitle
+      }
     },
     { immediate: true }
   )

@@ -62,30 +62,12 @@ export interface ViteEnv {
   VITE_DEBUG: boolean
   VITE_DROP_DEBUGGER: boolean
   VITE_DROP_CONSOLE: boolean
-  VITE_API_TIMEOUT: number
-  // rem 适配系统配置
-  VITE_REM_DESIGN_WIDTH: number
-  VITE_REM_BASE_FONT_SIZE: number
-  VITE_REM_MIN_FONT_SIZE: number
-  VITE_REM_MAX_FONT_SIZE: number
-  VITE_REM_MOBILE_FIRST: boolean
-  VITE_REM_BREAKPOINTS: string
+  // PostCSS 配置
   VITE_POSTCSS_ROOT_VALUE: number
 }
 
 /** 处理环境变量 */
 export const wrapperEnv = (envConf: Record<string, unknown>): ViteEnv => {
-  // rem 适配系统默认配置（与 src/utils/env.ts 保持一致）
-  const REM_DEFAULT_CONFIG = {
-    designWidth: 1800,
-    baseFontSize: 16,
-    minFontSize: 12,
-    maxFontSize: 24,
-    mobileFirst: false,
-    breakpoints: '{"xs":375,"sm":768,"md":1024,"lg":1400,"xl":1660,"xls":1920}',
-    postcssRootValue: 16,
-  }
-
   const ret: ViteEnv = {
     VITE_PORT: 5173,
     VITE_PUBLIC_PATH: '',
@@ -107,15 +89,8 @@ export const wrapperEnv = (envConf: Record<string, unknown>): ViteEnv => {
     VITE_DEBUG: false,
     VITE_DROP_DEBUGGER: true,
     VITE_DROP_CONSOLE: true,
-    VITE_API_TIMEOUT: 10000,
-    // rem 适配系统默认值（使用统一配置）
-    VITE_REM_DESIGN_WIDTH: REM_DEFAULT_CONFIG.designWidth,
-    VITE_REM_BASE_FONT_SIZE: REM_DEFAULT_CONFIG.baseFontSize,
-    VITE_REM_MIN_FONT_SIZE: REM_DEFAULT_CONFIG.minFontSize,
-    VITE_REM_MAX_FONT_SIZE: REM_DEFAULT_CONFIG.maxFontSize,
-    VITE_REM_MOBILE_FIRST: REM_DEFAULT_CONFIG.mobileFirst,
-    VITE_REM_BREAKPOINTS: REM_DEFAULT_CONFIG.breakpoints,
-    VITE_POSTCSS_ROOT_VALUE: REM_DEFAULT_CONFIG.postcssRootValue,
+    // PostCSS 配置
+    VITE_POSTCSS_ROOT_VALUE: 16,
   }
 
   for (const envName of Object.keys(envConf)) {
@@ -133,11 +108,6 @@ export const wrapperEnv = (envConf: Record<string, unknown>): ViteEnv => {
     if (
       envName === 'VITE_PORT' ||
       envName === 'VITE_LOADING_SIZE' ||
-      envName === 'VITE_API_TIMEOUT' ||
-      envName === 'VITE_REM_DESIGN_WIDTH' ||
-      envName === 'VITE_REM_BASE_FONT_SIZE' ||
-      envName === 'VITE_REM_MIN_FONT_SIZE' ||
-      envName === 'VITE_REM_MAX_FONT_SIZE' ||
       envName === 'VITE_POSTCSS_ROOT_VALUE'
     ) {
       realName = Number(realName)

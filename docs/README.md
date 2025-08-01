@@ -1,21 +1,22 @@
 <!--
-  Copyright (c) 2025 chichuang
-  Licensed under Custom (Non-Commercial Use Only)
+  @copyright Copyright (c) 2025 chichuang
+  @license MIT
+  @description CC-Admin 企业级后台管理框架 - 主文档
+  本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
 -->
 
-# CC-Admin
+# CC-Admin 企业级后台管理框架
 
-CC-Admin 企业级后台管理框架 - 基于 Vue 3.5+ 和 TypeScript 5+ 的现代化企业级后台管理框架
+基于 Vue 3.5+ 和 TypeScript 5+ 的现代化企业级后台管理框架
 
 ## 🚀 特性
 
-- **现代技术栈**: Vue 3.5+ 和 TypeScript 5+
-- **原子化CSS**: 使用 UnoCSS 进行样式管理
-- **响应式设计**: 支持多端适配
-- **国际化支持**: 多语言切换
-- **权限管理**: 基于角色的权限控制系统
-- **数据可视化**: 丰富的图表组件
-- **开发工具链**: 完善的开发工具链
+- **现代技术栈**: Vue 3.5+ + TypeScript 5+ + Vite 7+ + UnoCSS
+- **企业级架构**: 完整的后台管理系统解决方案
+- **开发体验优先**: 自动化模块导入、热更新、类型安全
+- **高性能**: Vite构建、按需加载、打包优化
+- **可维护性**: 统一目录结构、代码规范、自动化检查
+- **国际化**: 支持多语言、主题切换、响应式设计
 
 ## 📦 技术栈
 
@@ -90,13 +91,12 @@ pnpm preview
 
 ## 📚 文档导航
 
-- [📖 主文档](./docs/README.md) - 完整的项目介绍和使用指南
-- [🧩 组件文档](./docs/components/README.md) - 组件使用指南和API文档
-- [🔌 API文档](./docs/api/README.md) - API接口文档和最佳实践
-- [🛣️ 路由文档](./docs/router/README.md) - 路由配置和权限控制
-- [📊 状态管理](./docs/stores/README.md) - Pinia状态管理指南
-- [🎨 样式指南](./docs/styles/README.md) - UnoCSS样式系统
-- [⚙️ 开发规范](./docs/development/README.md) - 开发规范和最佳实践
+- [组件文档](./components/README.md) - 组件使用指南
+- [API文档](./api/README.md) - API接口文档
+- [路由文档](./router/README.md) - 路由配置指南
+- [状态管理](./stores/README.md) - Pinia状态管理
+- [样式指南](./styles/README.md) - UnoCSS样式系统
+- [开发规范](./development/README.md) - 开发规范和最佳实践
 
 ## 🎨 设计系统
 
@@ -107,7 +107,7 @@ pnpm preview
 
 ## 🤝 贡献指南
 
-请查看 [贡献指南](./docs/development/README.md) 了解如何参与项目开发。
+请查看 [贡献指南](./CONTRIBUTING.md) 了解如何参与项目开发。
 
 ## 📄 许可证
 

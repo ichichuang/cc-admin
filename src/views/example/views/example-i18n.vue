@@ -132,6 +132,12 @@ const i18nExamples: I18nExample[] = [
         value: 'common.table.page',
         params: { page: 1 },
       },
+      {
+        name: '删除确认',
+        key: 'user.management.deleteConfirm',
+        value: 'user.management.deleteConfirm',
+        params: { username: 'admin' },
+      },
     ],
   },
   {

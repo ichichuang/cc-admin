@@ -91,10 +91,6 @@ export const env = {
     return import.meta.env.VITE_API_BASE_URL
   },
 
-  get apiTimeout(): number {
-    return toNumber(import.meta.env.VITE_API_TIMEOUT)
-  },
-
   // 开发环境配置
   get devTools(): boolean {
     return toBool(import.meta.env.VITE_DEV_TOOLS)
@@ -142,35 +138,8 @@ export const env = {
   },
 
   // rem 适配配置
-  get remDesignWidth(): number {
-    return toNumber(import.meta.env.VITE_REM_DESIGN_WIDTH)
-  },
-
-  get remBaseFontSize(): number {
-    return toNumber(import.meta.env.VITE_REM_BASE_FONT_SIZE)
-  },
-
-  get remMinFontSize(): number {
-    return toNumber(import.meta.env.VITE_REM_MIN_FONT_SIZE)
-  },
-
-  get remMaxFontSize(): number {
-    return toNumber(import.meta.env.VITE_REM_MAX_FONT_SIZE)
-  },
-
-  get remMobileFirst(): boolean {
-    return toBool(import.meta.env.VITE_REM_MOBILE_FIRST)
-  },
-
-  get remBreakpoints(): {
-    xs: number
-    sm: number
-    md: number
-    lg: number
-    xl: number
-    xls: number
-  } {
-    return JSON.parse(import.meta.env.VITE_REM_BREAKPOINTS)
+  get postcssRootValue(): number {
+    return toNumber(import.meta.env.VITE_POSTCSS_ROOT_VALUE)
   },
 } as const
 
@@ -205,11 +174,6 @@ export class EnvValidator {
     // 验证端口范围
     if (env.port < 1024 || env.port > 65535) {
       throw new Error(`VITE_PORT 超出有效范围 (1024-65535): ${env.port}`)
-    }
-
-    // 验证超时时间
-    if (env.apiTimeout < 1000 || env.apiTimeout > 60000) {
-      throw new Error(`VITE_API_TIMEOUT 超出有效范围 (1000-60000): ${env.apiTimeout}`)
     }
 
     // 验证 loading 大小
@@ -257,38 +221,5 @@ export const REM_DEFAULT_CONFIG = {
   },
 } as const
 
-/**
- * rem 配置类型定义
- */
-export interface RemConfig {
-  designWidth: number
-  baseFontSize: number
-  minFontSize: number
-  maxFontSize: number
-  mobileFirst: boolean
-  breakpoints: {
-    xs: number
-    sm: number
-    md: number
-    lg: number
-    xl: number
-    xls: number
-  }
-}
-
-/**
- * 从环境变量解析 rem 配置
- */
-export const parseRemConfig = (): RemConfig => {
-  return {
-    designWidth: env.remDesignWidth,
-    baseFontSize: env.remBaseFontSize,
-    minFontSize: env.remMinFontSize,
-    maxFontSize: env.remMaxFontSize,
-    mobileFirst: env.remMobileFirst,
-    breakpoints: env.remBreakpoints,
-  }
-}
-
-/* rem 适配系统配置 */
-export const remConfig = parseRemConfig()
+// 注意：rem 配置现在统一从 src/constants/modules/rem.ts 获取
+// 不再需要从环境变量解析，避免配置重复和不一致

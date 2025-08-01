@@ -228,7 +228,8 @@ async function main() {
   process.exit(isValid ? 0 : 1)
 }
 
-if (require.main === module) {
+// ES 模块方式检查是否是主模块
+if (import.meta.url === `file://${process.argv[1]}`) {
   main().catch(error => {
     console.error('❌ 程序执行失败:', error)
     process.exit(1)

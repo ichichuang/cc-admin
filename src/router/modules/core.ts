@@ -5,15 +5,13 @@
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
-import { t } from '@/locales'
-
 const coreRoutes: RouteConfig[] = [
   {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/login/index.vue'),
     meta: {
-      title: t('router.core.login'),
+      titleKey: 'router.core.login',
       rank: 1,
       parent: 'fullscreen',
     },

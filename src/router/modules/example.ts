@@ -5,7 +5,6 @@
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
-import { t } from '@/locales'
 const exampleRoutes: RouteConfig[] = [
   {
     path: '/example',
@@ -13,7 +12,7 @@ const exampleRoutes: RouteConfig[] = [
     component: () => import('@/views/example/index.vue'),
     redirect: '/example/color',
     meta: {
-      title: t('router.example.example'),
+      titleKey: 'router.example.example',
       rank: 1,
       parent: 'fullscreen',
     },
@@ -23,7 +22,7 @@ const exampleRoutes: RouteConfig[] = [
         name: 'ExampleColor',
         component: () => import('@/views/example/views/example-color.vue'),
         meta: {
-          title: t('router.example.color'),
+          titleKey: 'router.example.color',
           rank: 1,
         },
       },
@@ -32,7 +31,7 @@ const exampleRoutes: RouteConfig[] = [
         name: 'ExampleSize',
         component: () => import('@/views/example/views/example-size.vue'),
         meta: {
-          title: t('router.example.size'),
+          titleKey: 'router.example.size',
           rank: 2,
         },
       },
@@ -41,7 +40,7 @@ const exampleRoutes: RouteConfig[] = [
         name: 'ExampleI18n',
         component: () => import('@/views/example/views/example-i18n.vue'),
         meta: {
-          title: t('router.example.i18n'),
+          titleKey: 'router.example.i18n',
           rank: 3,
         },
       },
@@ -50,7 +49,7 @@ const exampleRoutes: RouteConfig[] = [
         name: 'ExampleRem',
         component: () => import('@/views/example/views/example-rem.vue'),
         meta: {
-          title: t('router.example.rem'),
+          titleKey: 'router.example.rem',
           rank: 4,
         },
       },
@@ -59,7 +58,7 @@ const exampleRoutes: RouteConfig[] = [
         name: 'ExampleMock',
         component: () => import('@/views/example/views/example-mock.vue'),
         meta: {
-          title: t('router.example.mock'),
+          titleKey: 'router.example.mock',
           rank: 5,
         },
       },

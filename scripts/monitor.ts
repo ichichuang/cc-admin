@@ -397,7 +397,8 @@ const monitor = new CrossPlatformMonitor({
   outputDir: 'monitor_reports',
 })
 
-if (require.main === module) {
+// ES 模块方式检查是否是主模块
+if (import.meta.url === `file://${process.argv[1]}`) {
   if (isTestToken) {
     // 仅测试 Token
     monitor['checkGitHubToken']().then(isValid => {

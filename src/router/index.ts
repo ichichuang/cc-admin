@@ -12,13 +12,7 @@ import { env } from '@/utils/env'
 import { autoImportModulesSync } from '@/utils/moduleLoader'
 import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHistory } from 'vue-router'
-import {
-  getCurrentRouteInfo,
-  initDynamicRoutes,
-  resetRouter,
-  routeHealthCheck,
-  validateRouteConfig,
-} from './utils/helper'
+import { initDynamicRoutes } from './utils/helper'
 
 // 自动导入所有路由模块
 const routeModules = import.meta.glob('./modules/**/*.ts', { eager: true })
@@ -73,33 +67,15 @@ registerRouterGuards(router, {
   isDebug: env.debug,
 })
 
-// 导出初始化、重置等方法（传递router/dynamicRouteManager等参数）
-export {
-  getCurrentRouteInfo,
-  initDynamicRoutes,
-  resetRouter,
-  routeHealthCheck,
-  validateRouteConfig,
-}
-
 // 导出路由配置供其他地方使用
 export { initialRoutes as routes, sortedStaticRoutes as staticRoutes }
-
-// 导出工具函数
-export {
-  createRouteUtils,
-  filterAuthorizedRoutes,
-  processAsyncRoutes,
-  sortRoutes,
-  transformToVueRoutes,
-} from './utils'
 
 // 注意：当你在 modules/ 目录下添加新的路由文件时，
 // 它们会自动被导入并合并到路由配置中
 // 每个路由模块应该导出一个 RouteConfig[] 数组
 
 // 动态路由使用说明：
-//. 用户登录后，系统会自动从后端获取动态路由
+// 1. 用户登录后，系统会自动从后端获取动态路由
 // 2. 动态路由会根据用户权限进行过滤
 // 3. 权限检查包括页面级权限（roles）和按钮级权限（auths）
 // 4. 路由会自动添加到 Vue Router 和权限 Store 中

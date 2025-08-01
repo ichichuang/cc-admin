@@ -193,11 +193,13 @@ class MockService {
           // 创建模拟响应
           const response = new Response(JSON.stringify(responseData), {
             status: 200,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+              'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            },
           })
-          response.headers.set('content-type', 'application/json')
-          response.headers.set('access-control-allow-origin', '*')
-          response.headers.set('access-control-allow-methods', 'GET, POST, PUT, DELETE, OPTIONS')
-          response.headers.set('access-control-allow-headers', 'Content-Type, Authorization')
           return response
         }
       }

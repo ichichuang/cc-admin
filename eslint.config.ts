@@ -98,7 +98,8 @@ export default tseslint.config(
           format: ['camelCase'],
           leadingUnderscore: 'allow',
           filter: {
-            regex: '^(@|vue/|no-|prefer-|eqeqeq|curly|VITE_|__.*__|drop_|AtRule)',
+            regex:
+              '^(@|vue/|no-|prefer-|eqeqeq|curly|VITE_|__.*__|drop_|AtRule|content-type|access-control-allow-origin|access-control-allow-methods|access-control-allow-headers|Content-Type|Access-Control-Allow-Origin|Access-Control-Allow-Methods|Access-Control-Allow-Headers)',
             match: false,
           },
         },

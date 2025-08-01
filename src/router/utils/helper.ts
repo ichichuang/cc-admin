@@ -6,11 +6,23 @@
  */
 
 import { getAuthRoutes } from '@/api'
+import { errorPages } from '@/constants'
 import { processAsyncRoutes, transformToVueRoutes } from '@/router/utils'
 import { usePermissionStoreWithOut, useUserStoreWithOut } from '@/stores'
 import { isDev } from '@/utils/env'
 import { computed } from 'vue'
 
+/**
+ * 初始化动态路由
+ *
+ * @description 从后端获取用户权限路由，处理后添加到 Vue Router 中
+ * @param router - Vue Router 实例
+ * @param sortedStaticRoutes - 已排序的静态路由数组
+ * @param isDebug - 是否开启调试模式，默认 false
+ * @param retryCount - 重试次数，默认 0
+ * @returns Promise<void> - 初始化完成后的 Promise
+ * @throws {InitDynamicRouteError} 当动态路由初始化失败时抛出错误
+ */
 export const initDynamicRoutes = async (
   router: any,
   sortedStaticRoutes: any,
@@ -87,6 +99,14 @@ export const initDynamicRoutes = async (
   }
 }
 
+/**
+ * 重置路由器状态
+ *
+ * @description 清除权限存储中的路由信息，重置动态路由管理器，并标记路由为未加载状态
+ * @param router - Vue Router 实例
+ * @param dynamicRouteManager - 动态路由管理器实例
+ * @returns void
+ */
 export const resetRouter = (router: any, dynamicRouteManager: any): void => {
   const permissionStore = usePermissionStoreWithOut()
   permissionStore.reset()
@@ -94,6 +114,14 @@ export const resetRouter = (router: any, dynamicRouteManager: any): void => {
   permissionStore.setIsRoutesLoaded(false)
 }
 
+/**
+ * 验证路由配置
+ *
+ * @description 在开发环境下验证路由配置的完整性，输出详细的调试信息
+ * @param sortedStaticRoutes - 已排序的静态路由数组
+ * @param routeUtils - 路由工具对象，包含扁平化路由、菜单树等信息
+ * @returns void
+ */
 export const validateRouteConfig = (sortedStaticRoutes: any, routeUtils: any) => {
   if (isDev()) {
     console.group('🔍 路由配置验证')
@@ -123,6 +151,19 @@ export const validateRouteConfig = (sortedStaticRoutes: any, routeUtils: any) =>
   }
 }
 
+/**
+ * 获取当前路由信息
+ *
+ * @description 获取当前激活路由的详细信息，包括路径、名称、元信息、参数等
+ * @param router - Vue Router 实例
+ * @returns {Object} 当前路由的详细信息对象
+ * @returns {string} returns.路径 - 当前路由路径
+ * @returns {string} returns.名称 - 当前路由名称
+ * @returns {Object} returns.元信息 - 当前路由元信息
+ * @returns {Object} returns.参数 - 当前路由参数
+ * @returns {Object} returns.查询 - 当前路由查询参数
+ * @returns {string[]} returns.匹配的路由 - 当前路由匹配的路由数组
+ */
 export const getCurrentRouteInfo = (router: any) => {
   const currentRoute = router.currentRoute.value
   return {
@@ -135,13 +176,24 @@ export const getCurrentRouteInfo = (router: any) => {
   }
 }
 
+/**
+ * 路由健康检查
+ *
+ * @description 检查路由系统的健康状态，检测潜在的问题和配置错误
+ * @param router - Vue Router 实例
+ * @param sortedStaticRoutes - 已排序的静态路由数组
+ * @param _routeUtils - 路由工具对象（未使用，但保留参数以保持接口一致性）
+ * @returns {Object} 健康检查结果对象
+ * @returns {boolean} returns.healthy - 路由系统是否健康
+ * @returns {string[]} returns.issues - 发现的问题列表
+ * @returns {string} returns.timestamp - 检查时间戳
+ */
 export const routeHealthCheck = (router: any, sortedStaticRoutes: any, _routeUtils: any) => {
   const issues: string[] = []
   if (sortedStaticRoutes.length === 0) {
     issues.push('静态路由为空')
   }
-  const errorRoutes = ['/404', '/403', '/500']
-  errorRoutes.forEach(path => {
+  errorPages.forEach(path => {
     if (!router.hasRoute(path.replace('/', ''))) {
       issues.push(`缺少错误页面路由: ${path}`)
     }

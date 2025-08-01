@@ -238,7 +238,8 @@ const searcher = new QuickSearcher({
   frameworkName: 'CC-Admin',
 })
 
-if (require.main === module) {
+// ES 模块方式检查是否是主模块
+if (import.meta.url === `file://${process.argv[1]}`) {
   searcher.run().catch(console.error)
 }
 

@@ -79,7 +79,12 @@
     "overrides": {
       "glob": "^11.0.3",
       "mockjs": "1.0.1-beta3"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "core-js",
+      "esbuild"
+    ]
   },
   "dependencies": {
     "@unocss/preset-rem-to-px": "^66.3.3",
@@ -116,8 +121,8 @@
     "@vitejs/plugin-vue-jsx": "^5.0.0",
     "@vue/tsconfig": "^0.7.0",
     "chokidar": "^4.0.3",
-    "concurrently": "^9.1.0",
     "commitizen": "^4.3.1",
+    "concurrently": "^9.1.0",
     "cross-env": "^7.0.3",
     "cz-conventional-changelog": "^3.3.0",
     "dayjs": "^1.11.13",

@@ -7,27 +7,31 @@
 
 import { debounce } from 'lodash-es'
 import type { DeviceInfo } from '../Types/global'
-import { REM_DEFAULT_CONFIG, env } from './env'
+import {
+  adapterStrategies,
+  breakpoints,
+  debugConfig,
+  desktopConfig,
+  deviceTypes,
+  mobileConfig,
+  remConfig,
+} from '../constants/modules/rem'
 
-// 从环境变量解析 rem 适配配置
-export const parseRemConfigFromEnv = (): RemAdapterConfig => {
-  try {
-    // 使用 env 对象获取环境变量，提供类型安全
-    return {
-      designWidth: env.remDesignWidth,
-      baseFontSize: env.remBaseFontSize,
-      minFontSize: env.remMinFontSize,
-      maxFontSize: env.remMaxFontSize,
-      mobileFirst: env.remMobileFirst,
-      breakpoints: env.remBreakpoints,
-    }
-  } catch (error) {
-    if (env.debug) {
-      console.warn('解析环境变量中的 rem 配置失败，使用默认配置:', error)
-    }
-    // fallback 到默认配置
-    return REM_DEFAULT_CONFIG
+// 从配置获取 rem 适配配置
+export const parseRemConfigFromConfig = (): RemAdapterConfig => {
+  return {
+    designWidth: remConfig.designWidth,
+    baseFontSize: remConfig.baseFontSize,
+    minFontSize: remConfig.minFontSize,
+    maxFontSize: remConfig.maxFontSize,
+    mobileFirst: remConfig.mobileFirst,
+    breakpoints: breakpoints,
   }
+}
+
+// 从环境变量获取 rem 适配配置（兼容性函数）
+export const parseRemConfigFromEnv = (): RemAdapterConfig => {
+  return parseRemConfigFromConfig()
 }
 
 // rem 适配配置
@@ -53,8 +57,8 @@ export interface RemAdapterConfig {
   }
 }
 
-// 默认配置（从环境变量解析）
-const DEFAULT_CONFIG: RemAdapterConfig = parseRemConfigFromEnv()
+// 默认配置（从配置解析）
+const DEFAULT_CONFIG: RemAdapterConfig = parseRemConfigFromConfig()
 
 export class RemAdapter {
   private config: RemAdapterConfig
@@ -85,26 +89,29 @@ export class RemAdapter {
   /**
    * 移动端优先计算策略
    */
-  private calculateMobileFirstSize(viewportWidth: number, _deviceType: 'PC' | 'Mobile'): number {
-    const { designWidth, baseFontSize, minFontSize, maxFontSize } = this.config
+  private calculateMobileFirstSize(viewportWidth: number, deviceType: 'PC' | 'Mobile'): number {
+    const { designWidth, baseFontSize } = this.config
 
-    // 🎯 移动端优先：也使用比例缩放，但可以设置不同的基准
-    // 对于移动端优先，可以考虑以较小的设计稿宽度为基准
-    const mobileDesignWidth = Math.min(designWidth, 768) // 取设计稿宽度和768px的较小值
+    // 🎯 移动端优先：使用移动端配置
+    const mobileDesignWidth = Math.min(designWidth, mobileConfig.maxDesignWidth)
+    const mobileBaseFontSize = Math.min(baseFontSize, mobileConfig.maxBaseFontSize)
+    const mobileMinFontSize = mobileConfig.minFontSize
+    const mobileMaxFontSize = mobileConfig.maxFontSize
+
     const scale = viewportWidth / mobileDesignWidth
 
     // 基于缩放比例计算字体大小
-    let fontSize = baseFontSize * scale
+    let fontSize = mobileBaseFontSize * scale
 
     // 限制字体大小范围
-    const minScale = minFontSize / baseFontSize
-    const maxScale = maxFontSize / baseFontSize
+    const minScale = mobileMinFontSize / mobileBaseFontSize
+    const maxScale = mobileMaxFontSize / mobileBaseFontSize
     const clampedScale = Math.max(minScale, Math.min(maxScale, scale))
-    fontSize = baseFontSize * clampedScale
+    fontSize = mobileBaseFontSize * clampedScale
 
-    if (env.debug) {
+    if (debugConfig.enabled) {
       console.log(
-        `📱 移动端缩放计算: 屏幕${viewportWidth}px / 移动设计稿${mobileDesignWidth}px = ${scale.toFixed(4)} | 字体: ${fontSize.toFixed(2)}px`
+        `📱 ${adapterStrategies.mobileFirst} 缩放计算: 屏幕${viewportWidth}px / 移动设计稿${mobileDesignWidth}px = ${scale.toFixed(4)} | 字体: ${fontSize.toFixed(2)}px | 设备: ${deviceTypes[deviceType.toLowerCase() as keyof typeof deviceTypes] || deviceType}`
       )
     }
 
@@ -114,24 +121,34 @@ export class RemAdapter {
   /**
    * 桌面端优先计算策略（推荐用于管理后台）
    */
-  private calculateDesktopFirstSize(viewportWidth: number, _deviceType: 'PC' | 'Mobile'): number {
-    const { designWidth, baseFontSize, minFontSize, maxFontSize } = this.config
+  private calculateDesktopFirstSize(viewportWidth: number, deviceType: 'PC' | 'Mobile'): number {
+    const { designWidth, baseFontSize } = this.config
 
-    // 🎯 核心修复：按照设计稿宽度进行比例缩放
+    // 🎯 桌面端优先：使用桌面端配置
+    const desktopMinFontSize = desktopConfig.minFontSize
+    const desktopMaxFontSize = desktopConfig.maxFontSize
+    const desktopMinBaseFontSize = desktopConfig.minBaseFontSize
+
     // 计算当前屏幕相对于设计稿的缩放比例
     const scale = viewportWidth / designWidth
 
     // 基于缩放比例计算字体大小
     // 保持 PostCSS 的 rootValue=16 基准，确保 1:1 映射
-    let fontSize = baseFontSize * scale
+    let fontSize = Math.max(baseFontSize, desktopMinBaseFontSize) * scale
 
     // 对于极小屏幕，适当调整最小缩放比例，避免字体过小
-    const minScale = minFontSize / baseFontSize // 最小缩放比例
-    const maxScale = maxFontSize / baseFontSize // 最大缩放比例
+    const minScale = desktopMinFontSize / baseFontSize // 最小缩放比例
+    const maxScale = desktopMaxFontSize / baseFontSize // 最大缩放比例
 
     // 限制缩放比例范围
     const clampedScale = Math.max(minScale, Math.min(maxScale, scale))
     fontSize = baseFontSize * clampedScale
+
+    if (debugConfig.enabled) {
+      console.log(
+        `🖥️ ${adapterStrategies.desktopFirst} 缩放计算: 屏幕${viewportWidth}px / 设计稿${designWidth}px = ${scale.toFixed(4)} | 字体: ${fontSize.toFixed(2)}px | 设备: ${deviceTypes[deviceType.toLowerCase() as keyof typeof deviceTypes] || deviceType}`
+      )
+    }
 
     return fontSize
   }
@@ -193,7 +210,8 @@ export class RemAdapter {
    */
   getAdapterInfo(deviceInfo: DeviceInfo) {
     return {
-      deviceType: deviceInfo.type,
+      deviceType:
+        deviceTypes[deviceInfo.type.toLowerCase() as keyof typeof deviceTypes] || deviceInfo.type,
       screenWidth: deviceInfo.screen.width,
       screenHeight: deviceInfo.screen.height,
       orientation: deviceInfo.screen.orientation,
@@ -201,6 +219,9 @@ export class RemAdapter {
       remBase: this.currentFontSize,
       config: this.config,
       breakpoint: this.getCurrentBreakpoint(deviceInfo.screen.width),
+      strategy: this.config.mobileFirst
+        ? adapterStrategies.mobileFirst
+        : adapterStrategies.desktopFirst,
     }
   }
 
@@ -299,9 +320,9 @@ export class RemAdapter {
           resizeCount++
           lastResizeTime = now
 
-          if (env.debug) {
+          if (debugConfig.enabled) {
             console.log(
-              `🎯 rem 适配已更新: ${currentFontSize.toFixed(2)}px (设备: ${currentDeviceInfo.type}, 宽度: ${currentDeviceInfo.screen.width}px, 变化: ${widthChange}px, 执行次数: ${resizeCount}, 防抖时间: ${adaptiveDebounceTime}ms)`
+              `🎯 rem 适配已更新: ${currentFontSize.toFixed(2)}px (设备: ${deviceTypes[currentDeviceInfo.type.toLowerCase() as keyof typeof deviceTypes] || currentDeviceInfo.type}, 宽度: ${currentDeviceInfo.screen.width}px, 变化: ${widthChange}px, 执行次数: ${resizeCount}, 防抖时间: ${adaptiveDebounceTime}ms)`
             )
           }
         }
@@ -356,41 +377,26 @@ export class RemAdapter {
 // 创建默认实例
 export const remAdapter = new RemAdapter()
 
-// 预设配置
-export const createMobileFirstAdapter = (config?: Partial<RemAdapterConfig>) => {
-  return new RemAdapter({
-    ...config,
-    mobileFirst: true,
-    designWidth: 375,
-    baseFontSize: 14,
-    breakpoints: {
-      xs: 375,
-      sm: 768,
-      md: 1024,
-      lg: 1440,
-      xl: 1660,
-      xls: 1920,
-      ...config?.breakpoints,
-    },
-  })
-}
-
+/**
+ * 创建大屏优先的 rem 适配器
+ *
+ * 优势：
+ * 1. 使用统一配置，避免硬编码，便于维护
+ * 2. 自动继承 contains 中的配置
+ * 3. 支持运行时覆盖配置
+ * 4. 桌面端优先策略，适合大屏应用
+ */
 export const createLargeScreenAdapter = (config?: Partial<RemAdapterConfig>) => {
+  // 从配置获取基础配置
+  const baseConfig = parseRemConfigFromConfig()
+
   return new RemAdapter({
-    ...config,
+    // 使用配置作为基础
+    ...baseConfig,
+    // 强制设置为桌面端优先策略
     mobileFirst: false,
-    designWidth: 1920,
-    baseFontSize: 16,
-    maxFontSize: 28,
-    breakpoints: {
-      xs: 375,
-      sm: 768,
-      md: 1024,
-      lg: 1440,
-      xl: 1660,
-      xls: 1920,
-      ...config?.breakpoints,
-    },
+    // 允许传入的配置覆盖基础配置
+    ...config,
   })
 }
 
@@ -472,21 +478,25 @@ if (typeof window !== 'undefined') {
 • remDebug.getStatus() - 获取适配器状态
 • remDebug.help() - 显示此帮助
 
+配置信息：
+• 设计稿宽度: ${remConfig.designWidth}px
+• 基准字体: ${remConfig.baseFontSize}px
+• 字体范围: ${remConfig.minFontSize}-${remConfig.maxFontSize}px
+• 适配策略: ${remConfig.mobileFirst ? adapterStrategies.mobileFirst : adapterStrategies.desktopFirst}
+
 示例：
 remDebug.toRem(200) // "12.5000rem"
 remDebug.toPx(12.5) // 200
-remDebug.getRemBase() // 16
+remDebug.getRemBase() // ${remConfig.baseFontSize}
       `)
     },
   }
 
-  if (env.debug) {
-    console.log('🛠️ rem 调试工具已加载，输入 remDebug.help() 查看使用方法')
-  }
+  console.log('🛠️ rem 调试工具已加载，输入 remDebug.help() 查看使用方法')
 }
 
 // 🧪 性能测试工具（仅开发环境）
-if (env.debug && typeof window !== 'undefined') {
+if (typeof window !== 'undefined') {
   ;(window as any).remPerformanceTest = {
     // 测试防抖效果
     testDebouncePerformance() {
@@ -554,6 +564,12 @@ if (env.debug && typeof window !== 'undefined') {
 • remPerformanceTest.testDebouncePerformance() - 测试防抖性能
 • remPerformanceTest.testMemoryLeak() - 测试内存泄漏
 • remPerformanceTest.help() - 显示此帮助
+
+调试配置：
+• 调试模式: ${debugConfig.enabled ? '启用' : '禁用'}
+• 日志间隔: ${debugConfig.logInterval}ms
+• 显示适配信息: ${debugConfig.showAdapterInfo ? '是' : '否'}
+• 显示断点信息: ${debugConfig.showBreakpointInfo ? '是' : '否'}
 
 注意：这些测试仅在开发环境下可用
       `)

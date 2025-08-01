@@ -69,7 +69,6 @@ const validationRules: ValidationRules = {
   types: {
     VITE_PORT: 'number',
     VITE_LOADING_SIZE: 'number',
-    VITE_API_TIMEOUT: 'number',
     VITE_DEV_TOOLS: 'boolean',
     VITE_MOCK_ENABLE: 'boolean',
     VITE_CONSOLE_LOG: 'boolean',
@@ -95,7 +94,6 @@ const validationRules: ValidationRules = {
   ranges: {
     VITE_PORT: { min: 1024, max: 65535 },
     VITE_LOADING_SIZE: { min: 1, max: 20 },
-    VITE_API_TIMEOUT: { min: 1000, max: 60000 },
   },
 }
 

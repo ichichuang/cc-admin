@@ -18,7 +18,10 @@ declare type LayoutMode = 'admin' | 'screen' | 'fullscreen'
  */
 declare interface RouteMeta {
   /** 页面标题（支持国际化 key） */
-  title: string
+  title?: string
+
+  /** 页面标题国际化 key */
+  titleKey?: string
 
   /** 布局模式 */
   parent?: LayoutMode

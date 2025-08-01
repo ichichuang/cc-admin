@@ -15,7 +15,7 @@ const importedCommons = autoImportModulesSync(commonModules)
 export * from './modules/constants'
 export * from './modules/function'
 export * from './modules/helpers'
-export * from './modules/route'
+export * from './modules/router'
 
 // 导出所有公共模块
 export const constants = importedCommons.constants
