@@ -1,15 +1,15 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license MIT
-  @description CC-Admin 企业级后台管理框架 - README
+  @description cc-admin 企业级后台管理框架 - README
   本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
 -->
 
-# CC-Admin 文档
+# cc-admin 文档
 
 ## 📋 项目概述
 
-CC-Admin 是基于 Vue3 + TypeScript + Vite 的企业级后台管理框架，采用模块化架构设计。
+cc-admin 是基于 Vue3 + TypeScript + Vite 的企业级后台管理框架，采用模块化架构设计。
 
 ### 技术栈
 

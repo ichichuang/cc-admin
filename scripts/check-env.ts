@@ -1,11 +1,11 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license MIT
- * @description CC-Admin 企业级后台管理框架 - 构建脚本
+ * @description cc-admin 企业级后台管理框架 - 构建脚本
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
-import { existsSync, readFileSync } from 'fs'
+import { existsSync, readFileSync, readdirSync } from 'fs'
 import { join } from 'path'
 
 /* -------------------- 类型定义 -------------------- */
@@ -40,6 +40,13 @@ interface Validators {
   route: (value: string) => boolean
 }
 
+interface ProjectConfig {
+  name: string
+  path: string
+  envPath: string
+  typePath: string
+}
+
 /* -------------------- 彩色输出 -------------------- */
 const colors: Colors = {
   red: '\x1b[31m',
@@ -58,7 +65,7 @@ const log = (msg: string, color: keyof Colors = 'reset'): void => {
 /* -------------------- 环境变量验证规则 -------------------- */
 const validationRules: ValidationRules = {
   // 必需的环境变量（所有环境都必须有）
-  required: ['VITE_APP_TITLE', 'VITE_API_BASE_URL', 'VITE_PINIA_PERSIST_KEY_PREFIX'],
+  required: ['VITE_APP_TITLE', 'VITE_API_BASE_URL'],
 
   // 已废弃的环境变量（检查时忽略）
   deprecated: [
@@ -170,6 +177,48 @@ const parseEnvTypes = (filePath: string): string[] => {
   return vars
 }
 
+/* -------------------- 获取项目配置 -------------------- */
+const getProjectConfigs = (root: string): ProjectConfig[] => {
+  const projects: ProjectConfig[] = []
+
+  // 检查 apps 目录
+  const appsPath = join(root, 'apps')
+  if (existsSync(appsPath)) {
+    const appDirs = readdirSync(appsPath, { withFileTypes: true })
+      .filter(dirent => dirent.isDirectory())
+      .map(dirent => dirent.name)
+
+    for (const appDir of appDirs) {
+      const appPath = join(appsPath, appDir)
+      const envPath = join(appPath, '.env')
+      const typePath = join(appPath, 'src/types/env.d.ts')
+
+      // 如果存在 .env 文件，则添加到项目列表
+      if (existsSync(envPath)) {
+        projects.push({
+          name: appDir,
+          path: appPath,
+          envPath: envPath,
+          typePath: typePath,
+        })
+      }
+    }
+  }
+
+  // 如果没有找到任何项目，默认检查 apps/admin
+  if (projects.length === 0) {
+    const adminPath = join(root, 'apps/admin')
+    projects.push({
+      name: 'admin',
+      path: adminPath,
+      envPath: join(adminPath, '.env'),
+      typePath: join(adminPath, 'src/types/env.d.ts'),
+    })
+  }
+
+  return projects
+}
+
 /* -------------------- 验证环境变量值 -------------------- */
 const validateValue = (name: string, value: string): string[] => {
   const errors: string[] = []
@@ -208,21 +257,22 @@ const validateValue = (name: string, value: string): string[] => {
   return errors
 }
 
-/* -------------------- 主函数 -------------------- */
-function checkEnvConfig(): void {
+/* -------------------- 检查单个项目 -------------------- */
+const checkProject = (project: ProjectConfig, _root: string): boolean => {
+  log(`\n🔍 检查项目: ${project.name}`, 'cyan')
+
   /* 读取文件 */
-  const root = process.cwd()
-  const baseVars = parseEnvFile(join(root, '.env'))
-  const devVars = parseEnvFile(join(root, '.env.development'))
-  const prodVars = parseEnvFile(join(root, '.env.production'))
-  const typeVars = parseEnvTypes(join(root, 'src/Types/env.d.ts'))
+  const baseVars = parseEnvFile(join(project.path, '.env'))
+  const devVars = parseEnvFile(join(project.path, '.env.development'))
+  const prodVars = parseEnvFile(join(project.path, '.env.production'))
+  const typeVars = parseEnvTypes(project.typePath)
 
   /* 当前环境 */
   const currentEnv = process.env.NODE_ENV === 'production' ? 'production' : 'development'
   const currentVars = currentEnv === 'production' ? prodVars : devVars
 
   let hasError = false
-  let hasWarning = false
+  let _hasWarning = false
 
   /* ---------- 1. 类型定义完整性 ---------- */
   const allVarNames = [
@@ -239,7 +289,7 @@ function checkEnvConfig(): void {
 
   // 检查已废弃变量并给出警告
   if (deprecatedVarsFound.length > 0) {
-    log('\n⚠️  发现已废弃的环境变量:', 'yellow')
+    log(`⚠️  发现已废弃的环境变量:`, 'yellow')
     deprecatedVarsFound.forEach((name: string) => {
       log(`   ${name} - 建议移除或使用新的替代变量`, 'yellow')
     })
@@ -324,7 +374,7 @@ function checkEnvConfig(): void {
       }
       log(`   ${name}: ${sources.join(' + ')}`, 'yellow')
     })
-    hasWarning = true
+    _hasWarning = true
   }
 
   /* ---------- 7. 安全性检查 ---------- */
@@ -350,28 +400,34 @@ function checkEnvConfig(): void {
 
   if (securityIssues.length > 0) {
     securityIssues.forEach((issue: string) => log(`⚠️   ${issue}`, 'yellow'))
-    hasWarning = true
+    _hasWarning = true
   }
 
-  /* ---------- 8. 统计 ---------- */
-  // 统计函数（可用于调试或扩展功能）
-  const _countVite = (obj: EnvVariables): number =>
-    Object.keys(obj).filter((k: string) => k.startsWith('VITE_')).length
-  const _countActive = (obj: EnvVariables): number =>
-    Object.keys(obj).filter(
-      (k: string) => k.startsWith('VITE_') && !validationRules.deprecated.includes(k)
-    ).length
-  const _countDeprecated = (obj: EnvVariables): number =>
-    Object.keys(obj).filter((k: string) => validationRules.deprecated.includes(k)).length
+  return !hasError
+}
+
+/* -------------------- 主函数 -------------------- */
+function checkEnvConfig(): void {
+  const root = process.cwd()
+  const projects = getProjectConfigs(root)
+
+  log(`🔍 开始检查 ${projects.length} 个项目的环境变量配置...`, 'blue')
+
+  let allProjectsPassed = true
+
+  for (const project of projects) {
+    const projectPassed = checkProject(project, root)
+    if (!projectPassed) {
+      allProjectsPassed = false
+    }
+  }
 
   /* ---------- 结束 ---------- */
-  if (hasError) {
-    log('❌ 检查完成，发现错误，请修复后重试', 'red')
-    process.exit(1)
-  } else if (hasWarning) {
-    log('⚠️ 检查完成，有警告但可以继续运行', 'yellow')
+  if (allProjectsPassed) {
+    log('\n✅ 所有项目的环境变量检查完成，一切正常', 'green')
   } else {
-    log('✅ .env 环境变量检查完成，一切正常', 'green')
+    log('\n❌ 检查完成，发现错误，请修复后重试', 'red')
+    process.exit(1)
   }
 }
 

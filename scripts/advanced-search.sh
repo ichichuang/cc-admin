@@ -1,10 +1,10 @@
 #!/bin/bash
-# advanced-search.sh - CC-Admin 框架高级代码搜索脚本
+# advanced-search.sh - cc-admin 框架高级代码搜索脚本
 
-# CC-Admin 框架独特标识符
+# cc-admin 框架独特标识符
 UNIQUE_SIGNATURES=(
     "@copyright Copyright (c) 2025 chichuang"
-    "CC-Admin 企业级后台管理框架"
+    "cc-admin 企业级后台管理框架"
     "本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途"
     "packageManager\": \"pnpm@10.12.4\""
     "Vue 3.5+ 和 TypeScript 5+ 的现代化企业级后台管理框架"
@@ -15,7 +15,7 @@ UNIQUE_SIGNATURES=(
     "defineConfig Vue3 TypeScript 池闯"
 )
 
-# CC-Admin 关键文件结构搜索
+# cc-admin 关键文件结构搜索
 FILE_STRUCTURES=(
     "src/stores/modules"
     "src/api/modules"
@@ -34,7 +34,7 @@ FILE_STRUCTURES=(
     "src/types/global.d.ts"
 )
 
-# CC-Admin 技术栈特征搜索
+# cc-admin 技术栈特征搜索
 TECH_STACK=(
     "Vue 3.5+"
     "TypeScript 5+"
@@ -64,8 +64,8 @@ if [ -z "$YOUR_USERNAME" ]; then
 fi
 
 # 执行搜索
-echo "🔍 开始 CC-Admin 框架高级搜索..."
-echo "框架名称: CC-Admin 企业级后台管理框架"
+echo "🔍 开始 cc-admin 框架高级搜索..."
+echo "框架名称: cc-admin 企业级后台管理框架"
 echo "作者: chichuang"
 echo "搜索时间: $(date)"
 echo ""
@@ -73,10 +73,10 @@ echo ""
 # 创建结果文件
 REPORT_FILE="cc-admin-monitoring-report-$(date +%Y%m%d-%H%M%S).md"
 cat > "$REPORT_FILE" << EOF
-# CC-Admin 框架代码监控报告
+# cc-admin 框架代码监控报告
 
 **扫描时间**: $(date)
-**框架名称**: CC-Admin 企业级后台管理框架
+**框架名称**: cc-admin 企业级后台管理框架
 **作者**: chichuang
 
 ## 📊 扫描结果
@@ -177,11 +177,11 @@ cat >> "$REPORT_FILE" << EOF
 
 如需商业使用授权，请联系：
 - 作者: chichuang
-- 项目: CC-Admin 企业级后台管理框架
+- 项目: cc-admin 企业级后台管理框架
 - GitHub: https://github.com/$YOUR_USERNAME
 
 ---
-*此报告由 CC-Admin 框架自动生成*
+*此报告由 cc-admin 框架自动生成*
 EOF
 
 # 输出结果

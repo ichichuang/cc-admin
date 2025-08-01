@@ -1,0 +1,32 @@
+{
+  "name": "@cc/early-bird-ui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.ts",
+  "types": "index.ts",
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "import": "./index.ts"
+    },
+    "./components": {
+      "types": "./components/index.ts",
+      "import": "./components/index.ts"
+    },
+    "./styles": {
+      "types": "./styles/index.ts",
+      "import": "./styles/index.ts"
+    },
+    "./icons": {
+      "types": "./icons/index.ts",
+      "import": "./icons/index.ts"
+    }
+  },
+  "dependencies": {
+    "@cc/early-bird-core": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}

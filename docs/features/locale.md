@@ -1,7 +1,7 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license MIT
-  @description CC-Admin 企业级后台管理框架 - locale
+  @description cc-admin 企业级后台管理框架 - locale
   本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
 -->
 
@@ -9,7 +9,7 @@
 
 ## 概述
 
-CC-Admin 使用 Vue I18n 实现完整的国际化方案，支持多语言切换和类型安全的翻译。
+cc-admin 使用 Vue I18n 实现完整的国际化方案，支持多语言切换和类型安全的翻译。
 
 ## 🏗️ 架构设计
 
@@ -147,4 +147,4 @@ console.log(i18n.global.locale.value)
 console.log(i18n.global.t('common.welcome'))
 ```
 
-通过这套国际化方案，CC-Admin 提供了完整的多语言支持。
+通过这套国际化方案，cc-admin 提供了完整的多语言支持。

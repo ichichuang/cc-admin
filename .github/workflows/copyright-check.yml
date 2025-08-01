@@ -48,9 +48,9 @@ jobs:
       - name: 检查关键文件版权
         run: |
           files=(
-            "src/main.ts"
-            "src/App.vue"
-            "vite.config.ts"
+            "apps/admin/src/main.ts"
+            "apps/admin/src/App.vue"
+            "apps/admin/vite.config.ts"
             "package.json"
             "scripts/copyright-protection.ts"
           )

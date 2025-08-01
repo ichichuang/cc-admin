@@ -1,4 +1,4 @@
-# CC-Admin Vue3 + TypeScript 规范
+# cc-admin Vue3 + TypeScript 规范
 
 ## 🎯 基本原则
 
@@ -525,7 +525,6 @@ interface ImportMetaEnv {
   readonly VITE_APP_TITLE: string
   readonly VITE_APP_VERSION: string
   readonly VITE_APP_ENV: 'development' | 'production' | 'test'
-  readonly VITE_PINIA_PERSIST_KEY_PREFIX: string
   readonly VITE_ROOT_REDIRECT: string
   readonly VITE_LOADING_SIZE: 'small' | 'default' | 'large'
   readonly VITE_DEV_TOOLS: boolean

@@ -1,7 +1,7 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license MIT
-  @description CC-Admin 企业级后台管理框架 - troubleshooting-guide
+  @description cc-admin 企业级后台管理框架 - troubleshooting-guide
   本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
 -->
 
@@ -9,7 +9,7 @@
 
 ## 概述
 
-本指南涵盖 CC-Admin 开发和生产环境中的常见问题及解决方案。
+本指南涵盖 cc-admin 开发和生产环境中的常见问题及解决方案。
 
 ## 🚀 环境问题
 
@@ -24,7 +24,7 @@
 
 ## 🎨 样式问题
 
-- UnoCSS 不生效：检查 uno.config.ts 配置和插件加载，重启开发服务器。
+- UnoCSS 不生效：检查 uno-config.ts 配置和插件加载，重启开发服务器。
 - 主题切换无效：检查 Pinia store、CSS 变量和切换逻辑。
 
 ## 🔐 认证与权限问题

@@ -1,7 +1,7 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license MIT
-  @description CC-Admin 企业级后台管理框架 - pinia-guide
+  @description cc-admin 企业级后台管理框架 - pinia-guide
   本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
 -->
 
@@ -9,7 +9,7 @@
 
 ## 概述
 
-CC-Admin 使用 Pinia 作为状态管理方案，采用模块化设计和统一的目录结构，提供类型安全的状态管理体验。
+cc-admin 使用 Pinia 作为状态管理方案，采用模块化设计和统一的目录结构，提供类型安全的状态管理体验。
 
 ## 🏗️ 架构设计
 

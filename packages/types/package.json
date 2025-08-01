@@ -1,0 +1,33 @@
+{
+  "name": "@cc/early-bird-types",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.ts",
+  "types": "index.ts",
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "import": "./index.ts"
+    },
+    "./modules/global": {
+      "types": "./modules/global.d.ts",
+      "import": "./modules/global.d.ts"
+    },
+    "./modules/device": {
+      "types": "./modules/device.d.ts",
+      "import": "./modules/device.d.ts"
+    },
+    "./modules/router": {
+      "types": "./modules/router.d.ts",
+      "import": "./modules/router.d.ts"
+    },
+    "./modules/user": {
+      "types": "./modules/user.d.ts",
+      "import": "./modules/user.d.ts"
+    }
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}

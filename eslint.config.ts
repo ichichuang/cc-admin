@@ -1,7 +1,7 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license MIT
- * @description CC-Admin 企业级后台管理框架 - eslint.config
+ * @description cc-admin 企业级后台管理框架 - eslint.config
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
@@ -98,7 +98,8 @@ export default tseslint.config(
           format: ['camelCase'],
           leadingUnderscore: 'allow',
           filter: {
-            regex: '^(@|vue/|no-|prefer-|eqeqeq|curly|VITE_|__.*__|drop_|AtRule)',
+            regex:
+              '^(@|vue/|no-|prefer-|eqeqeq|curly|VITE_|__.*__|drop_|AtRule|X-[A-Z-]+|[A-Z][A-Z0-9-]*[A-Z0-9]|Content-Type)',
             match: false,
           },
         },

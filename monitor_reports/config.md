@@ -1,13 +1,13 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license 自定义商业限制许可证
-  @description CC-Admin 企业级后台管理框架 - 监控配置说明
+  @description early-bird 企业级后台管理框架 - 监控配置说明
   本文件受版权保护，商业使用需要授权。
 -->
 
-# ⚙️ CC-Admin 监控系统配置
+# ⚙️ early-bird 监控系统配置
 
-本文档说明如何配置和使用 CC-Admin 框架的代码监控系统。
+本文档说明如何配置和使用 early-bird 框架的代码监控系统。
 
 ## 🔧 环境配置
 
@@ -19,8 +19,8 @@ export GITHUB_TOKEN="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 # 项目配置（可选，有默认值）
 export GITHUB_USERNAME="ichichuang"
-export REPO_NAME="CC-Admin"
-export FRAMEWORK_NAME="CC-Admin"
+export REPO_NAME="Early-Bird"
+export FRAMEWORK_NAME="early-bird"
 ```
 
 ### 环境变量说明
@@ -29,8 +29,8 @@ export FRAMEWORK_NAME="CC-Admin"
 | ----------------- | ---- | ------------ | ---------------- |
 | `GITHUB_TOKEN`    | ✅   | 无           | GitHub API Token |
 | `GITHUB_USERNAME` | ❌   | `ichichuang` | GitHub 用户名    |
-| `REPO_NAME`       | ❌   | `CC-Admin`   | 仓库名称         |
-| `FRAMEWORK_NAME`  | ❌   | `CC-Admin`   | 框架名称         |
+| `REPO_NAME`       | ❌   | `early-bird` | 仓库名称         |
+| `FRAMEWORK_NAME`  | ❌   | `early-bird` | 框架名称         |
 
 ## 🚀 使用方法
 
@@ -41,12 +41,12 @@ export FRAMEWORK_NAME="CC-Admin"
 pnpm monitor
 
 # 输出示例：
-# 🛡️ CC-Admin 框架代码监控系统 (跨平台版)
+# 🛡️ early-bird 框架代码监控系统 (跨平台版)
 # =======================================
 # 监控时间: 2024-12-XX XX:XX:XX
-# 框架名称: CC-Admin
+# 框架名称: early-bird
 # GitHub用户: ichichuang
-# 仓库名称: CC-Admin
+# 仓库名称: early-bird
 # =======================================
 # ✅ 环境检查通过
 # 🚀 开始监控...
@@ -83,7 +83,7 @@ pnpm token:test
 
 ```bash
 "@copyright Copyright (c) 2025 chichuang"
-"CC-Admin 企业级后台管理框架"
+"early-bird 企业级后台管理框架"
 "本文件为 chichuang 原创"
 "禁止擅自删除署名或用于商业用途"
 ```
@@ -160,7 +160,7 @@ monitor_reports/
 
 ```yaml
 # .github/workflows/cc-admin-monitor.yml
-name: CC-Admin 代码监控
+name: early-bird 代码监控
 
 on:
   schedule:
@@ -177,7 +177,7 @@ jobs:
       - name: 上传报告
         uses: actions/upload-artifact@v4
         with:
-          name: cc-admin-monitor-report
+          name: early-bird-monitor-report
           path: monitor_reports/
 ```
 
@@ -239,7 +239,7 @@ pnpm env-check
 ### 获取帮助
 
 - **文档**: 查看 `docs/protection/code-monitoring-guide.md`
-- **Issues**: https://github.com/ichichuang/CC-Admin/issues
+- **Issues**: https://github.com/ichichuang/cc-admin/issues
 - **讨论**: GitHub Discussions
 
 ### 贡献指南

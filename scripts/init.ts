@@ -1,7 +1,7 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license 自定义商业限制许可证
- * @description CC-Admin 企业级后台管理框架 - 初始化脚本
+ * @description cc-admin 企业级后台管理框架 - 初始化脚本
  * 本文件受版权保护，商业使用需要授权。
  */
 
@@ -194,7 +194,7 @@ function showSummary(successSteps: string[], failedSteps: string[]): void {
  * 主函数
  */
 function main(): void {
-  log('🚀 CC-Admin 项目初始化脚本', 'magenta')
+  log('🚀 cc-admin 项目初始化脚本', 'magenta')
   log('='.repeat(50), 'magenta')
 
   // 检查项目环境

@@ -2,7 +2,7 @@
 
 ## 概述
 
-CC-Admin 基于 Vite 7+ 构建现代化的前端工程化体系，提供高性能的开发体验和优化的生产构建。
+cc-admin 基于 Vite 7+ 构建现代化的前端工程化体系，提供高性能的开发体验和优化的生产构建。
 
 ## 🏗️ 构建架构
 
@@ -20,7 +20,7 @@ CC-Admin 基于 Vite 7+ 构建现代化的前端工程化体系，提供高性�
 
 - `vite.config.ts` - Vite 主配置文件
 - `tsconfig.json` - TypeScript 配置
-- `uno.config.ts` - UnoCSS 配置
+- `uno-config.ts` - UnoCSS 配置
 - `eslint.config.ts` - ESLint 配置
 
 ## ⚙️ 核心配置
@@ -185,7 +185,7 @@ CC-Admin 基于 Vite 7+ 构建现代化的前端工程化体系，提供高性�
 
 ## 🎯 总结
 
-CC-Admin 的构建系统具有以下特点：
+cc-admin 的构建系统具有以下特点：
 
 - ✅ **现代化工具链**: 基于 Vite 7+ 的现代化构建体系
 - ✅ **高性能开发**: 快速的热更新和构建速度

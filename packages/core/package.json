@@ -1,0 +1,54 @@
+{
+  "name": "@cc/early-bird-core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.ts",
+  "types": "index.ts",
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "import": "./index.ts"
+    },
+    "./api": {
+      "types": "./api/index.ts",
+      "import": "./api/index.ts"
+    },
+    "./stores": {
+      "types": "./stores/index.ts",
+      "import": "./stores/index.ts"
+    },
+    "./router": {
+      "types": "./router/index.ts",
+      "import": "./router/index.ts"
+    },
+    "./constants": {
+      "types": "./constants/index.ts",
+      "import": "./constants/index.ts"
+    },
+    "./utils": {
+      "types": "./utils/index.ts",
+      "import": "./utils/index.ts"
+    },
+    "./common": {
+      "types": "./common/index.ts",
+      "import": "./common/index.ts"
+    },
+    "./utils/http": {
+      "types": "./utils/http.ts",
+      "import": "./utils/http.ts"
+    }
+  },
+  "dependencies": {
+    "alova": "^3.3.3",
+    "lodash-es": "^4.17.21",
+    "pinia": "^3.0.3",
+    "pinia-plugin-persistedstate": "^4.4.0",
+    "vue": "^3.5.12",
+    "vue-router": "^4.4.5"
+  },
+  "devDependencies": {
+    "@types/lodash-es": "^4.17.12",
+    "typescript": "^5.8.3"
+  }
+}

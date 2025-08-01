@@ -62,7 +62,7 @@
   "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact", "vue"],
   "vue.updateImportsOnFileMove.enabled": true,
   "unocss.root": "./",
-  "unocss.configFile": "uno.config.ts",
+  "unocss.configFile": "uno-config.ts",
 
   // === Vue 开发配置 ===
   "vue.codeActions.enabled": true,
@@ -81,7 +81,7 @@
   // === 项目特定配置 ===
   "files.associations": {
     "*.vue": "vue",
-    "uno.config.ts": "typescript"
+    "uno-config.ts": "typescript"
   },
 
   // === 性能优化配置 ===

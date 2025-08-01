@@ -3,7 +3,7 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license MIT
- * @description CC-Admin 企业级后台管理框架 - 快速搜索脚本
+ * @description cc-admin 企业级后台管理框架 - 快速搜索脚本
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
@@ -149,7 +149,7 @@ class QuickSearcher {
   }
 
   async run(): Promise<void> {
-    console.log('🔍 CC-Admin 快速搜索工具 (跨平台版)')
+    console.log('🔍 cc-admin 快速搜索工具 (跨平台版)')
     console.log('=======================================')
     console.log(`搜索时间: ${new Date().toLocaleString('zh-CN')}`)
     console.log(`框架名称: ${this.config.frameworkName}`)
@@ -171,7 +171,7 @@ class QuickSearcher {
     try {
       // 快速搜索关键词
       const searchQueries = [
-        'CC-Admin chichuang',
+        'cc-admin chichuang',
         'vue3 typescript vite unocss',
         'vue3 admin framework',
       ]
@@ -234,8 +234,8 @@ class QuickSearcher {
 // 使用示例
 const searcher = new QuickSearcher({
   githubUsername: 'ichichuang',
-  repoName: 'CC-Admin',
-  frameworkName: 'CC-Admin',
+  repoName: 'cc-admin',
+  frameworkName: 'cc-admin',
 })
 
 if (require.main === module) {

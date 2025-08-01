@@ -1,5 +1,5 @@
 #!/bin/bash
-# cleanup.sh - CC-Admin 监控报告清理脚本
+# cleanup.sh - cc-admin 监控报告清理脚本
 
 # 颜色定义
 RED='\033[0;31m'
@@ -13,7 +13,7 @@ REPORTS_DIR="monitor_reports"
 KEEP_DAYS=90  # 保留天数
 KEEP_LATEST=true  # 是否保留最新报告
 
-echo -e "${BLUE}🧹 CC-Admin 监控报告清理脚本${NC}"
+echo -e "${BLUE}🧹 cc-admin 监控报告清理脚本${NC}"
 echo "========================================"
 echo -e "${CYAN}清理时间: $(date '+%Y-%m-%d %H:%M:%S')${NC}"
 echo -e "${CYAN}保留天数: $KEEP_DAYS 天${NC}"

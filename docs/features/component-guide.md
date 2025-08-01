@@ -1,7 +1,7 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license MIT
-  @description CC-Admin 企业级后台管理框架 - component-guide
+  @description cc-admin 企业级后台管理框架 - component-guide
   本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
 -->
 
@@ -9,7 +9,7 @@
 
 ## 概述
 
-CC-Admin 采用 Vue 3.5+ 的组合式 API 和 `<script setup>` 语法，遵循现代化的组件开发模式。本指南涵盖组件设计原则、开发规范、最佳实践和复用策略。
+cc-admin 采用 Vue 3.5+ 的组合式 API 和 `<script setup>` 语法，遵循现代化的组件开发模式。本指南涵盖组件设计原则、开发规范、最佳实践和复用策略。
 
 ## 🏗️ 组件架构
 
@@ -181,7 +181,7 @@ src/components/
 
 ## 🎯 总结
 
-CC-Admin 的组件开发体系具有以下特点：
+cc-admin 的组件开发体系具有以下特点：
 
 - ✅ **现代化语法**: 使用 Vue 3.5+ 和组合式 API
 - ✅ **类型安全**: 完整的 TypeScript 类型支持

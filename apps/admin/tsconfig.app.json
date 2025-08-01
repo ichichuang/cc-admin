@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "ESNext",
+    "target": "ESNext",
+    "moduleResolution": "bundler",
+    "skipLibCheck": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@build/*": ["./build/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@components/*": ["./src/components/*"],
+      "@views/*": ["./src/views/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@common/*": ["./src/common/*"],
+      "@test/*": ["./src/views/test/*"]
+    }
+  },
+  "include": ["src/**/*", "build/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

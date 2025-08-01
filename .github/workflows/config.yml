@@ -10,7 +10,7 @@ env:
   PNPM_VERSION: '10.12.4'
 
   # 项目配置
-  PROJECT_NAME: 'cc-admin'
+  PROJECT_NAME: 'cc-early-bird'
   PROJECT_VERSION: '0.0.0'
 
   # 构建配置
@@ -18,7 +18,7 @@ env:
   BUILD_SOURCEMAP: 'false'
 
   # 缓存配置
-  CACHE_KEY_PREFIX: 'cc-admin'
+  CACHE_KEY_PREFIX: 'cc-early-bird'
 
   # 部署配置
   DEPLOY_PLATFORM: 'vercel'
@@ -38,15 +38,15 @@ branches:
 environments:
   development:
     name: 'development'
-    url: 'https://dev.cc-admin.com'
+    url: 'https://dev.cc-early-bird.com'
 
   staging:
     name: 'staging'
-    url: 'https://staging.cc-admin.com'
+    url: 'https://staging.cc-early-bird.com'
 
   production:
     name: 'production'
-    url: 'https://cc-admin.com'
+    url: 'https://cc-early-bird.com'
 
 # 构建配置
 build:
@@ -110,15 +110,15 @@ deploy:
   env:
     development:
       VITE_APP_ENV: 'development'
-      VITE_API_BASE_URL: 'https://dev-api.cc-admin.com'
+      VITE_API_BASE_URL: 'https://dev-api.cc-early-bird.com'
 
     staging:
       VITE_APP_ENV: 'staging'
-      VITE_API_BASE_URL: 'https://staging-api.cc-admin.com'
+      VITE_API_BASE_URL: 'https://staging-api.cc-early-bird.com'
 
     production:
       VITE_APP_ENV: 'production'
-      VITE_API_BASE_URL: 'https://api.cc-admin.com'
+      VITE_API_BASE_URL: 'https://api.cc-early-bird.com'
 
 # 通知配置
 notifications:

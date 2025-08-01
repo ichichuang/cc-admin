@@ -1,7 +1,7 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license MIT
-  @description CC-Admin 企业级后台管理框架 - router-guide
+  @description cc-admin 企业级后台管理框架 - router-guide
   本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
 -->
 
@@ -9,7 +9,7 @@
 
 ## 概述
 
-CC-Admin 基于 Vue Router 4+ 构建了完整的路由管理系统，采用模块化设计，支持路由懒加载、权限控制、路由守卫等企业级功能。
+cc-admin 基于 Vue Router 4+ 构建了完整的路由管理系统，采用模块化设计，支持路由懒加载、权限控制、路由守卫等企业级功能。
 
 ## 🏗️ 架构设计
 

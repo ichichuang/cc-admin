@@ -1,12 +1,12 @@
 {
-  "name": "cc-admin",
+  "name": "cc-early-bird",
   "version": "0.0.0",
   "private": true,
   "type": "module",
   "author": "chichuang",
   "copyright": "Copyright (c) 2025 chichuang",
   "license": "Custom (Non-Commercial Use Only)",
-  "description": "CC-Admin 企业级后台管理框架 - 基于 Vue 3.5+ 和 TypeScript 5+ 的现代化企业级后台管理框架",
+  "description": "Early Bird · 由池闯打造的 Vue3 前端框架 - 基于 Vue 3.5+ 和 TypeScript 5+ 的现代化企业级后台管理框架",
   "keywords": [
     "vue3",
     "typescript",
@@ -16,16 +16,17 @@
     "alova",
     "admin",
     "framework",
-    "cc-admin",
-    "chichuang"
+    "early-bird",
+    "chichuang",
+    "cc-early-bird"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ichichuang/CC-Admin"
+    "url": "https://github.com/ichichuang/cc-early-bird"
   },
-  "homepage": "https://github.com/ichichuang/CC-Admin#readme",
+  "homepage": "https://github.com/ichichuang/cc-early-bird#readme",
   "bugs": {
-    "url": "https://github.com/ichichuang/CC-Admin/issues"
+    "url": "https://github.com/ichichuang/cc-early-bird/issues"
   },
   "engines": {
     "node": ">=22.x",
@@ -33,14 +34,15 @@
   },
   "packageManager": "pnpm@10.12.4",
   "scripts": {
-    "dev": "pnpm exec tsx scripts/dev-parallel.ts",
-    "build": "vue-tsc --noEmit && vite build",
-    "build:analyze": "vue-tsc --noEmit && vite build --mode analyze",
-    "preview": "vite preview",
+    "dev": "pnpm --filter @cc/early-bird-app-admin dev",
+    "dev:admin": "pnpm --filter @cc/early-bird-app-admin dev",
+    "build": "pnpm --filter @cc/early-bird-app-admin build",
+    "build:analyze": "pnpm --filter @cc/early-bird-app-admin build --mode analyze",
+    "preview": "pnpm --filter @cc/early-bird-app-admin preview",
     "report": "npx vite-bundle-analyzer dist/stats.html",
-    "type-check": "vue-tsc --noEmit",
+    "type-check": "pnpm --filter @cc/early-bird-app-admin type-check",
     "lint": "eslint . --fix",
-    "format": "prettier --write src/",
+    "format": "prettier --write .",
     "naming-check": "pnpm exec tsx scripts/naming-rules.ts",
     "naming-watch": "pnpm exec tsx scripts/watch-naming.ts",
     "check": "pnpm type-check && pnpm lint && pnpm naming-check && pnpm env-check && pnpm copyright:check",
@@ -55,11 +57,16 @@
     "monitor": "pnpm exec tsx scripts/monitor.ts",
     "monitor:quick": "pnpm exec tsx scripts/quick-search.ts",
     "monitor:cleanup": "./monitor_reports/cleanup.sh",
-    "monitor:report": "cat monitor_reports/latest/cc_admin_monitor_report.md",
+    "monitor:report": "cat monitor_reports/latest/cc_early_bird_monitor_report.md",
     "monitor:status": "echo '📊 监控状态:' && echo '最新报告: monitor_reports/latest/' && ls -la monitor_reports/latest/",
     "token:test": "pnpm exec tsx scripts/test-token.ts",
     "monitor:setup": "echo '请确保已设置 GITHUB_TOKEN 环境变量或创建 .env 文件' && echo '详细说明请查看: monitor_reports/config.md'",
-    "init:project": "pnpm exec tsx scripts/init.ts"
+    "init:project": "pnpm exec tsx scripts/init.ts",
+    "workspace:install": "pnpm install",
+    "workspace:clean": "pnpm -r exec rm -rf node_modules && pnpm install",
+    "workspace:build": "pnpm -r build",
+    "workspace:dev": "pnpm -r dev",
+    "workspace:type-check": "pnpm -r type-check"
   },
   "lint-staged": {
     "*.{ts,tsx,vue}": [
@@ -81,43 +88,17 @@
       "mockjs": "1.0.1-beta3"
     }
   },
-  "dependencies": {
-    "@unocss/preset-rem-to-px": "^66.3.3",
-    "alova": "^3.3.3",
-    "crypto-js": "^4.2.0",
-    "lodash-es": "^4.17.21",
-    "pinia": "^3.0.3",
-    "pinia-plugin-persistedstate": "^4.4.0",
-    "vue": "^3.5.12",
-    "vue-i18n": "^10.0.8",
-    "vue-router": "^4.4.5"
-  },
   "devDependencies": {
     "@commitlint/cli": "^19.6.0",
     "@commitlint/config-conventional": "^19.6.0",
     "@eslint/js": "^9.17.0",
     "@faker-js/faker": "^9.9.0",
-    "@iconify/json": "^2.2.353",
     "@tsconfig/node22": "^22.0.2",
     "@types/chokidar": "^2.1.7",
-    "@types/crypto-js": "^4.2.2",
-    "@types/lodash-es": "^4.17.12",
     "@types/node": "^22.10.1",
-    "@types/postcss-pxtorem": "^6.1.0",
-    "@unocss/preset-attributify": "^66.3.2",
-    "@unocss/preset-icons": "^66.3.2",
-    "@unocss/preset-typography": "^66.3.2",
-    "@unocss/preset-uno": "^66.3.2",
-    "@unocss/reset": "^66.3.2",
-    "@unocss/transformer-directives": "^66.3.2",
-    "@unocss/transformer-variant-group": "^66.3.2",
-    "@vitejs/plugin-legacy": "^7.0.0",
-    "@vitejs/plugin-vue": "^6.0.0",
-    "@vitejs/plugin-vue-jsx": "^5.0.0",
-    "@vue/tsconfig": "^0.7.0",
     "chokidar": "^4.0.3",
-    "concurrently": "^9.1.0",
     "commitizen": "^4.3.1",
+    "concurrently": "^9.1.0",
     "cross-env": "^7.0.3",
     "cz-conventional-changelog": "^3.3.0",
     "dayjs": "^1.11.13",
@@ -128,16 +109,9 @@
     "npm-run-all2": "^7.0.2",
     "postcss-pxtorem": "^6.1.0",
     "prettier": "^3.4.2",
-    "rollup-plugin-visualizer": "^6.0.3",
-    "sass": "^1.89.2",
-    "terser": "^5.36.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.3",
-    "typescript": "^5.6.2",
-    "typescript-eslint": "^8.18.1",
-    "unocss": "^66.3.2",
-    "vite": "^7.0.0",
-    "vite-plugin-compression": "^0.5.1",
-    "vue-tsc": "^2.2.10"
+    "typescript": "5.8.3",
+    "typescript-eslint": "^8.18.1"
   }
 }
