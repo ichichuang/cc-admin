@@ -172,6 +172,9 @@ jobs:
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
 
       - name: 设置 Node.js
         uses: actions/setup-node@v4
@@ -215,7 +218,7 @@ jobs:
           git config --local user.name "GitHub Action"
           git add docs/CHANGELOG.md
           git commit -m "docs: update changelog for ${{ github.ref }}" || echo "No changes to commit"
-          git push
+          git push origin main
 
   # 发布完成通知
   notify-release:
