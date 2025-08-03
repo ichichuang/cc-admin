@@ -1,13 +1,13 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license 自定义商业限制许可证
- * @description CC-Admin 企业级后台管理框架 - 构建脚本
+ * @description cc-admin 企业级后台管理框架 - 构建脚本
  *
  * 本文件受版权保护，商业使用需要授权。
- * 联系方式: https://github.com/ichichuang/CC-Admin/issues
+ * 联系方式: https://github.com/ichichuang/cc-admin/issues
  *
  * This file is protected by copyright. Commercial use requires authorization.
- * Contact: https://github.com/ichichuang/CC-Admin/issues
+ * Contact: https://github.com/ichichuang/cc-admin/issues
  */
 
 /* eslint-disable */
@@ -95,6 +95,8 @@ function checkFileName(filePath, fileName) {
     'eslint.config.ts',
     'commitlint.config.ts',
     'types.ts',
+    'env.d.ts',
+    'types.d.ts',
   ]
 
   // 国际化文件名规则（允许语言代码格式如 en-US.ts）

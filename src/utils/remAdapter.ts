@@ -1,20 +1,23 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license MIT
- * @description CC-Admin 企业级后台管理框架 - 工具函数
+ * @description cc-admin 企业级后台管理框架 - 工具函数
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
 import { debounce } from 'lodash-es'
-import type { DeviceInfo } from '../Types/global'
 import {
   adapterStrategies,
+  adaptiveConfig,
   breakpoints,
   debugConfig,
   desktopConfig,
   deviceTypes,
+  fourKConfig,
+  largeScreenConfig,
   mobileConfig,
   remConfig,
+  ultraWideConfig,
 } from '../constants/modules/rem'
 
 // 从配置获取 rem 适配配置
@@ -24,6 +27,7 @@ export const parseRemConfigFromConfig = (): RemAdapterConfig => {
     baseFontSize: remConfig.baseFontSize,
     minFontSize: remConfig.minFontSize,
     maxFontSize: remConfig.maxFontSize,
+    strategy: remConfig.mobileFirst ? 'mobile-first' : 'desktop-first',
     mobileFirst: remConfig.mobileFirst,
     breakpoints: breakpoints,
   }
@@ -44,7 +48,9 @@ export interface RemAdapterConfig {
   minFontSize: number
   // 最大字体大小
   maxFontSize: number
-  // 是否启用移动端优先策略
+  // 适配策略
+  strategy: 'mobile-first' | 'desktop-first' | 'large-screen-first' | 'adaptive'
+  // 是否启用移动端优先策略（兼容性）
   mobileFirst: boolean
   // 自定义断点配置 (与 UnoCSS 保持一致)
   breakpoints: {
@@ -54,6 +60,8 @@ export interface RemAdapterConfig {
     lg: number // 大屏 (1400px+)
     xl: number // 超大屏 (1660px+)
     xls: number // 特大屏 (1920px+)
+    xxl: number // 超宽屏 (2560px+)
+    xxxl: number // 4K屏 (3840px+)
   }
 }
 
@@ -77,37 +85,51 @@ export class RemAdapter {
     const viewportWidth = screen.width
     const deviceType = deviceInfo.type
 
-    // 移动端优先策略
-    if (this.config.mobileFirst) {
-      return this.calculateMobileFirstSize(viewportWidth, deviceType)
+    // 🎯 根据适配策略选择计算方法
+    switch (this.config.strategy) {
+      case 'mobile-first':
+        return this.calculateMobileFirstSize(viewportWidth, deviceType)
+      case 'desktop-first':
+        return this.calculateDesktopFirstSize(viewportWidth, deviceType)
+      case 'large-screen-first':
+        return this.calculateLargeScreenFirstSize(viewportWidth, deviceType)
+      case 'adaptive':
+        return this.calculateAdaptiveSize(viewportWidth, deviceType)
+      default:
+        // 兼容性：使用移动端优先策略
+        if (this.config.mobileFirst) {
+          return this.calculateMobileFirstSize(viewportWidth, deviceType)
+        }
+        return this.calculateDesktopFirstSize(viewportWidth, deviceType)
     }
-
-    // 桌面端优先策略（默认）
-    return this.calculateDesktopFirstSize(viewportWidth, deviceType)
   }
 
   /**
    * 移动端优先计算策略
    */
   private calculateMobileFirstSize(viewportWidth: number, deviceType: 'PC' | 'Mobile'): number {
-    const { designWidth, baseFontSize } = this.config
+    // 🎯 移动端优先：直接使用移动端配置的设计稿宽度
+    const mobileDesignWidth = mobileConfig.maxDesignWidth // 768px
+    const mobileBaseFontSize = mobileConfig.maxBaseFontSize // 14px
+    const mobileMinFontSize = mobileConfig.minFontSize // 10px
+    const mobileMaxFontSize = mobileConfig.maxFontSize // 18px
 
-    // 🎯 移动端优先：使用移动端配置
-    const mobileDesignWidth = Math.min(designWidth, mobileConfig.maxDesignWidth)
-    const mobileBaseFontSize = Math.min(baseFontSize, mobileConfig.maxBaseFontSize)
-    const mobileMinFontSize = mobileConfig.minFontSize
-    const mobileMaxFontSize = mobileConfig.maxFontSize
+    // 🎯 确保与 PostCSS rootValue 保持一致
+    // PostCSS 使用 16px 作为 rootValue，但移动端基准字体是 14px
+    // 我们需要调整计算逻辑以保持一致性
+    const postcssRootValue = 16 // PostCSS 配置的 rootValue
+    const mobileScale = mobileBaseFontSize / postcssRootValue // 14/16 = 0.875
 
     const scale = viewportWidth / mobileDesignWidth
 
-    // 基于缩放比例计算字体大小
-    let fontSize = mobileBaseFontSize * scale
+    // 基于缩放比例计算字体大小，并应用移动端缩放因子
+    let fontSize = postcssRootValue * scale * mobileScale
 
     // 限制字体大小范围
-    const minScale = mobileMinFontSize / mobileBaseFontSize
-    const maxScale = mobileMaxFontSize / mobileBaseFontSize
+    const minScale = mobileMinFontSize / postcssRootValue
+    const maxScale = mobileMaxFontSize / postcssRootValue
     const clampedScale = Math.max(minScale, Math.min(maxScale, scale))
-    fontSize = mobileBaseFontSize * clampedScale
+    fontSize = postcssRootValue * clampedScale
 
     if (debugConfig.enabled) {
       console.log(
@@ -119,34 +141,131 @@ export class RemAdapter {
   }
 
   /**
-   * 桌面端优先计算策略（推荐用于管理后台）
+   * 大屏优先计算策略
    */
-  private calculateDesktopFirstSize(viewportWidth: number, deviceType: 'PC' | 'Mobile'): number {
-    const { designWidth, baseFontSize } = this.config
+  private calculateLargeScreenFirstSize(
+    viewportWidth: number,
+    deviceType: 'PC' | 'Mobile'
+  ): number {
+    // 🎯 大屏优先：根据屏幕宽度选择合适的配置
+    let config: typeof largeScreenConfig | typeof ultraWideConfig | typeof fourKConfig
 
-    // 🎯 桌面端优先：使用桌面端配置
-    const desktopMinFontSize = desktopConfig.minFontSize
-    const desktopMaxFontSize = desktopConfig.maxFontSize
-    const desktopMinBaseFontSize = desktopConfig.minBaseFontSize
+    if (viewportWidth >= fourKConfig.minWidth) {
+      // 4K屏配置
+      config = fourKConfig
+      if (debugConfig.enabled) {
+        console.log('🎬 4K屏适配策略')
+      }
+    } else if (viewportWidth >= ultraWideConfig.minWidth) {
+      // 超大屏配置
+      config = ultraWideConfig
+      if (debugConfig.enabled) {
+        console.log('🖥️ 超大屏适配策略')
+      }
+    } else if (viewportWidth >= largeScreenConfig.minWidth) {
+      // 大屏配置
+      config = largeScreenConfig
+      if (debugConfig.enabled) {
+        console.log('📺 大屏适配策略')
+      }
+    } else {
+      // 默认使用桌面端配置
+      return this.calculateDesktopFirstSize(viewportWidth, deviceType)
+    }
 
-    // 计算当前屏幕相对于设计稿的缩放比例
-    const scale = viewportWidth / designWidth
+    const scale = viewportWidth / config.designWidth
 
     // 基于缩放比例计算字体大小
-    // 保持 PostCSS 的 rootValue=16 基准，确保 1:1 映射
-    let fontSize = Math.max(baseFontSize, desktopMinBaseFontSize) * scale
+    let fontSize = config.baseFontSize * scale
 
-    // 对于极小屏幕，适当调整最小缩放比例，避免字体过小
-    const minScale = desktopMinFontSize / baseFontSize // 最小缩放比例
-    const maxScale = desktopMaxFontSize / baseFontSize // 最大缩放比例
-
-    // 限制缩放比例范围
+    // 限制字体大小范围
+    const minScale = config.minFontSize / config.baseFontSize
+    const maxScale = config.maxFontSize / config.baseFontSize
     const clampedScale = Math.max(minScale, Math.min(maxScale, scale))
-    fontSize = baseFontSize * clampedScale
+    fontSize = config.baseFontSize * clampedScale
 
     if (debugConfig.enabled) {
       console.log(
-        `🖥️ ${adapterStrategies.desktopFirst} 缩放计算: 屏幕${viewportWidth}px / 设计稿${designWidth}px = ${scale.toFixed(4)} | 字体: ${fontSize.toFixed(2)}px | 设备: ${deviceTypes[deviceType.toLowerCase() as keyof typeof deviceTypes] || deviceType}`
+        `🖥️ ${adapterStrategies.largeScreenFirst} 缩放计算: 屏幕${viewportWidth}px / 设计稿${config.designWidth}px = ${scale.toFixed(4)} | 字体: ${fontSize.toFixed(2)}px | 设备: ${deviceTypes[deviceType.toLowerCase() as keyof typeof deviceTypes] || deviceType}`
+      )
+    }
+
+    return fontSize
+  }
+
+  /**
+   * 自适应计算策略
+   */
+  private calculateAdaptiveSize(viewportWidth: number, deviceType: 'PC' | 'Mobile'): number {
+    // 🎯 自适应策略：根据屏幕宽度自动选择合适的配置
+    const { strategies } = adaptiveConfig
+
+    let selectedStrategy: keyof typeof strategies = 'desktop'
+
+    if (viewportWidth <= strategies.mobile.maxWidth) {
+      selectedStrategy = 'mobile'
+    } else if (viewportWidth <= strategies.tablet.maxWidth) {
+      selectedStrategy = 'tablet'
+    } else if (viewportWidth <= strategies.desktop.maxWidth) {
+      selectedStrategy = 'desktop'
+    } else if (viewportWidth <= strategies.largeScreen.maxWidth) {
+      selectedStrategy = 'largeScreen'
+    } else if (viewportWidth <= strategies.ultraWide.maxWidth) {
+      selectedStrategy = 'ultraWide'
+    } else {
+      selectedStrategy = 'fourK'
+    }
+
+    const config = strategies[selectedStrategy]
+    const scale = viewportWidth / config.designWidth
+
+    // 基于缩放比例计算字体大小
+    let fontSize = config.baseFontSize * scale
+
+    // 限制字体大小范围
+    const minScale = config.minFontSize / config.baseFontSize
+    const maxScale = config.maxFontSize / config.baseFontSize
+    const clampedScale = Math.max(minScale, Math.min(maxScale, scale))
+    fontSize = config.baseFontSize * clampedScale
+
+    if (debugConfig.enabled) {
+      console.log(
+        `🎯 ${adapterStrategies.adaptive} 自适应策略: ${selectedStrategy} | 屏幕${viewportWidth}px / 设计稿${config.designWidth}px = ${scale.toFixed(4)} | 字体: ${fontSize.toFixed(2)}px | 设备: ${deviceTypes[deviceType.toLowerCase() as keyof typeof deviceTypes] || deviceType}`
+      )
+    }
+
+    return fontSize
+  }
+
+  /**
+   * 桌面端优先计算策略（推荐用于管理后台）
+   */
+  private calculateDesktopFirstSize(viewportWidth: number, deviceType: 'PC' | 'Mobile'): number {
+    // 🎯 桌面端优先：使用桌面端配置
+    const desktopDesignWidth = this.config.designWidth // 1800px
+    const desktopBaseFontSize = this.config.baseFontSize // 16px
+    const desktopMinFontSize = desktopConfig.minFontSize // 12px
+    const desktopMaxFontSize = desktopConfig.maxFontSize // 28px
+    const desktopMinBaseFontSize = desktopConfig.minBaseFontSize // 14px
+
+    // 计算当前屏幕相对于设计稿的缩放比例
+    const scale = viewportWidth / desktopDesignWidth
+
+    // 基于缩放比例计算字体大小
+    // 保持 PostCSS 的 rootValue=16 基准，确保 1:1 映射
+    let fontSize = Math.max(desktopBaseFontSize, desktopMinBaseFontSize) * scale
+
+    // 对于极小屏幕，适当调整最小缩放比例，避免字体过小
+    const minScale = desktopMinFontSize / desktopBaseFontSize // 最小缩放比例
+    const maxScale = desktopMaxFontSize / desktopBaseFontSize // 最大缩放比例
+
+    // 限制缩放比例范围
+    const clampedScale = Math.max(minScale, Math.min(maxScale, scale))
+    fontSize = desktopBaseFontSize * clampedScale
+
+    if (debugConfig.enabled) {
+      console.log(
+        `🖥️ ${adapterStrategies.desktopFirst} 缩放计算: 屏幕${viewportWidth}px / 设计稿${desktopDesignWidth}px = ${scale.toFixed(4)} | 字体: ${fontSize.toFixed(2)}px | 设备: ${deviceTypes[deviceType.toLowerCase() as keyof typeof deviceTypes] || deviceType}`
       )
     }
 
@@ -167,6 +286,18 @@ export class RemAdapter {
       // 设置 CSS 变量，供其他地方使用
       rootElement.style.setProperty('--root-font-size', `${fontSize}px`)
       rootElement.style.setProperty('--rem-base', fontSize.toString())
+
+      // 🎯 动态更新 PostCSS rootValue 以保持一致性
+      if (this.config.mobileFirst) {
+        // 移动端优先：使用移动端基准字体大小
+        rootElement.style.setProperty(
+          '--postcss-root-value',
+          mobileConfig.maxBaseFontSize.toString()
+        )
+      } else {
+        // 桌面端优先：使用桌面端基准字体大小
+        rootElement.style.setProperty('--postcss-root-value', this.config.baseFontSize.toString())
+      }
 
       // 触发自定义事件，通知其他组件字体大小已变更
       window.dispatchEvent(
@@ -195,14 +326,30 @@ export class RemAdapter {
    * px 转 rem （开发时辅助函数）
    */
   pxToRem(px: number): string {
-    return `${(px / this.currentFontSize).toFixed(4)}rem`
+    // 🎯 根据适配策略调整转换逻辑
+    if (this.config.mobileFirst) {
+      // 移动端优先：使用 PostCSS rootValue (16px) 作为基准
+      const postcssRootValue = 16
+      return `${(px / postcssRootValue).toFixed(4)}rem`
+    } else {
+      // 桌面端优先：使用当前字体大小作为基准
+      return `${(px / this.currentFontSize).toFixed(4)}rem`
+    }
   }
 
   /**
    * rem 转 px （开发时辅助函数）
    */
   remToPx(rem: number): number {
-    return rem * this.currentFontSize
+    // 🎯 根据适配策略调整转换逻辑
+    if (this.config.mobileFirst) {
+      // 移动端优先：使用 PostCSS rootValue (16px) 作为基准
+      const postcssRootValue = 16
+      return rem * postcssRootValue
+    } else {
+      // 桌面端优先：使用当前字体大小作为基准
+      return rem * this.currentFontSize
+    }
   }
 
   /**
@@ -219,9 +366,120 @@ export class RemAdapter {
       remBase: this.currentFontSize,
       config: this.config,
       breakpoint: this.getCurrentBreakpoint(deviceInfo.screen.width),
-      strategy: this.config.mobileFirst
-        ? adapterStrategies.mobileFirst
-        : adapterStrategies.desktopFirst,
+      strategy: this.config.strategy,
+      // 添加屏幕类型信息
+      screenType: this.getScreenType(deviceInfo.screen.width),
+      // 添加设计稿信息
+      designInfo: this.getDesignInfo(deviceInfo.screen.width),
+    }
+  }
+
+  /**
+   * 获取屏幕类型
+   */
+  private getScreenType(width: number): string {
+    if (width >= fourKConfig.minWidth) {
+      return '4K'
+    } else if (width >= ultraWideConfig.minWidth) {
+      return 'UltraWide'
+    } else if (width >= largeScreenConfig.minWidth) {
+      return 'LargeScreen'
+    } else if (width >= 1024) {
+      return 'Desktop'
+    } else if (width >= 768) {
+      return 'Tablet'
+    } else {
+      return 'Mobile'
+    }
+  }
+
+  /**
+   * 获取设计稿信息
+   */
+  private getDesignInfo(width: number): {
+    designWidth: number
+    baseFontSize: number
+    strategy: string
+  } {
+    switch (this.config.strategy) {
+      case 'mobile-first':
+        return {
+          designWidth: mobileConfig.maxDesignWidth,
+          baseFontSize: mobileConfig.maxBaseFontSize,
+          strategy: 'mobile-first',
+        }
+      case 'large-screen-first':
+        if (width >= fourKConfig.minWidth) {
+          return {
+            designWidth: fourKConfig.designWidth,
+            baseFontSize: fourKConfig.baseFontSize,
+            strategy: '4K',
+          }
+        } else if (width >= ultraWideConfig.minWidth) {
+          return {
+            designWidth: ultraWideConfig.designWidth,
+            baseFontSize: ultraWideConfig.baseFontSize,
+            strategy: 'ultra-wide',
+          }
+        } else if (width >= largeScreenConfig.minWidth) {
+          return {
+            designWidth: largeScreenConfig.designWidth,
+            baseFontSize: largeScreenConfig.baseFontSize,
+            strategy: 'large-screen',
+          }
+        } else {
+          return {
+            designWidth: remConfig.designWidth,
+            baseFontSize: remConfig.baseFontSize,
+            strategy: 'desktop',
+          }
+        }
+      case 'adaptive': {
+        const { strategies } = adaptiveConfig
+        if (width <= strategies.mobile.maxWidth) {
+          return {
+            designWidth: strategies.mobile.designWidth,
+            baseFontSize: strategies.mobile.baseFontSize,
+            strategy: 'mobile',
+          }
+        } else if (width <= strategies.tablet.maxWidth) {
+          return {
+            designWidth: strategies.tablet.designWidth,
+            baseFontSize: strategies.tablet.baseFontSize,
+            strategy: 'tablet',
+          }
+        } else if (width <= strategies.desktop.maxWidth) {
+          return {
+            designWidth: strategies.desktop.designWidth,
+            baseFontSize: strategies.desktop.baseFontSize,
+            strategy: 'desktop',
+          }
+        } else if (width <= strategies.largeScreen.maxWidth) {
+          return {
+            designWidth: strategies.largeScreen.designWidth,
+            baseFontSize: strategies.largeScreen.baseFontSize,
+            strategy: 'large-screen',
+          }
+        } else if (width <= strategies.ultraWide.maxWidth) {
+          return {
+            designWidth: strategies.ultraWide.designWidth,
+            baseFontSize: strategies.ultraWide.baseFontSize,
+            strategy: 'ultra-wide',
+          }
+        } else {
+          return {
+            designWidth: strategies.fourK.designWidth,
+            baseFontSize: strategies.fourK.baseFontSize,
+            strategy: '4K',
+          }
+        }
+      }
+      default:
+        return {
+          designWidth: remConfig.designWidth,
+          baseFontSize: remConfig.baseFontSize,
+          strategy: 'desktop-first',
+        }
     }
   }
 
@@ -249,7 +507,13 @@ export class RemAdapter {
     if (width <= breakpoints.xls) {
       return 'xls'
     }
-    return 'xxl'
+    if (width <= breakpoints.xxl) {
+      return 'xxl'
+    }
+    if (width <= breakpoints.xxxl) {
+      return 'xxxl'
+    }
+    return 'ultra-wide'
   }
 
   /**
@@ -265,8 +529,36 @@ export class RemAdapter {
    * 7. 🧹 内存清理：正确清理所有事件监听器和定时器
    */
   init(getDeviceInfo: () => DeviceInfo, debounceTime: number = 300): () => void {
-    // 立即设置一次
-    this.setRootFontSize(getDeviceInfo())
+    try {
+      // 立即设置一次
+      const deviceInfo = getDeviceInfo()
+      this.setRootFontSize(deviceInfo)
+
+      // 🎯 初始化完成后打印设计稿信息
+      const designInfo = this.getDesignInfo(deviceInfo.screen.width)
+      const deviceType =
+        deviceTypes[deviceInfo.type.toLowerCase() as keyof typeof deviceTypes] || deviceInfo.type
+      console.log(
+        `✅📐 rem 适配器初始化完成: 设计稿宽度=${designInfo.designWidth}px | 基准字体=${designInfo.baseFontSize}px | 当前字体=${this.currentFontSize.toFixed(2)}px | 策略=${designInfo.strategy} | 设备=${deviceType}`
+      )
+    } catch (error) {
+      console.warn('rem 适配器初始化失败:', error)
+      // 使用默认配置
+      this.setRootFontSize({
+        type: 'PC',
+        screen: {
+          width: 1920,
+          height: 1080,
+          orientation: 'horizontal',
+          deviceWidth: 1920,
+          deviceHeight: 1080,
+          definitely: 1080,
+          navHeight: 0,
+          tabHeight: 0,
+        },
+        system: 'Unknown',
+      })
+    }
 
     // 记录上次执行的设备信息，避免重复计算
     let lastDeviceInfo: DeviceInfo | null = null
@@ -336,15 +628,23 @@ export class RemAdapter {
     let rafId: number | null = null
 
     const handleResize = () => {
-      // 使用 RequestAnimationFrame 确保在下一帧执行
-      if (rafId) {
-        cancelAnimationFrame(rafId)
-      }
+      try {
+        // 使用 RequestAnimationFrame 确保在下一帧执行
+        if (rafId) {
+          cancelAnimationFrame(rafId)
+        }
 
-      rafId = requestAnimationFrame(() => {
-        smartDebouncedResize()
-        rafId = null
-      })
+        rafId = requestAnimationFrame(() => {
+          try {
+            smartDebouncedResize()
+          } catch (error) {
+            console.warn('rem 适配器 resize 处理失败:', error)
+          }
+          rafId = null
+        })
+      } catch (error) {
+        console.warn('rem 适配器 handleResize 失败:', error)
+      }
     }
 
     // 监听必要的事件（减少事件监听数量，使用 passive 提升性能）
@@ -421,6 +721,28 @@ export const toPx = (rem: number): number => {
 
 // 🛠️ 开发调试工具：挂载到全局 window 对象
 if (typeof window !== 'undefined') {
+  // 添加全局错误处理
+  window.addEventListener('error', event => {
+    if (
+      event.message.includes('runtime.lastError') ||
+      event.message.includes('message port closed')
+    ) {
+      console.warn('检测到浏览器扩展相关错误，已忽略:', event.message)
+      event.preventDefault()
+    }
+  })
+
+  // 添加未处理的 Promise 错误处理
+  window.addEventListener('unhandledrejection', event => {
+    if (
+      event.reason &&
+      event.reason.message &&
+      event.reason.message.includes('runtime.lastError')
+    ) {
+      console.warn('检测到未处理的 Promise 错误，已忽略:', event.reason.message)
+      event.preventDefault()
+    }
+  })
   ;(window as any).remDebug = {
     // 获取当前 rem 基准值
     getRemBase,
@@ -464,117 +786,5 @@ if (typeof window !== 'undefined') {
         return null
       }
     },
-
-    // 显示帮助信息
-    help() {
-      console.log(`
-🛠️ rem 适配调试工具
-
-用法：
-• remDebug.getRemBase() - 获取当前 rem 基准值
-• remDebug.toRem(px) - px 转 rem
-• remDebug.toPx(rem) - rem 转 px
-• remDebug.forceRefresh() - 强制刷新适配
-• remDebug.getStatus() - 获取适配器状态
-• remDebug.help() - 显示此帮助
-
-配置信息：
-• 设计稿宽度: ${remConfig.designWidth}px
-• 基准字体: ${remConfig.baseFontSize}px
-• 字体范围: ${remConfig.minFontSize}-${remConfig.maxFontSize}px
-• 适配策略: ${remConfig.mobileFirst ? adapterStrategies.mobileFirst : adapterStrategies.desktopFirst}
-
-示例：
-remDebug.toRem(200) // "12.5000rem"
-remDebug.toPx(12.5) // 200
-remDebug.getRemBase() // ${remConfig.baseFontSize}
-      `)
-    },
   }
-
-  console.log('🛠️ rem 调试工具已加载，输入 remDebug.help() 查看使用方法')
-}
-
-// 🧪 性能测试工具（仅开发环境）
-if (typeof window !== 'undefined') {
-  ;(window as any).remPerformanceTest = {
-    // 测试防抖效果
-    testDebouncePerformance() {
-      console.log('🧪 开始 rem 适配性能测试...')
-
-      const startTime = Date.now()
-      let callCount = 0
-
-      // 模拟频繁的 resize 事件
-      const testResize = () => {
-        callCount++
-        if (callCount <= 10) {
-          window.dispatchEvent(new Event('resize'))
-          setTimeout(testResize, 50) // 每50ms触发一次
-        } else {
-          const endTime = Date.now()
-          const duration = endTime - startTime
-          console.log(`🧪 性能测试完成: ${callCount} 次调用，耗时 ${duration}ms`)
-          console.log(`📊 平均每次调用: ${(duration / callCount).toFixed(2)}ms`)
-        }
-      }
-
-      testResize()
-    },
-
-    // 测试内存泄漏
-    testMemoryLeak() {
-      console.log('🧪 开始内存泄漏测试...')
-
-      const initialMemory = (performance as any).memory?.usedJSHeapSize || 0
-
-      // 模拟多次初始化
-      for (let i = 0; i < 5; i++) {
-        const adapter = new RemAdapter()
-        const cleanup = adapter.init(() => ({
-          type: 'PC' as const,
-          screen: {
-            width: 1920,
-            height: 1080,
-            orientation: 'horizontal' as const,
-            deviceWidth: 1920,
-            deviceHeight: 1080,
-            definitely: 1080,
-            navHeight: 0,
-            tabHeight: 0,
-          },
-          system: 'Windows',
-        }))
-        cleanup() // 立即清理
-      }
-
-      setTimeout(() => {
-        const finalMemory = (performance as any).memory?.usedJSHeapSize || 0
-        const memoryDiff = finalMemory - initialMemory
-        console.log(`🧪 内存测试完成: 内存变化 ${memoryDiff} bytes`)
-      }, 1000)
-    },
-
-    // 显示帮助信息
-    help() {
-      console.log(`
-🧪 rem 适配性能测试工具
-
-用法：
-• remPerformanceTest.testDebouncePerformance() - 测试防抖性能
-• remPerformanceTest.testMemoryLeak() - 测试内存泄漏
-• remPerformanceTest.help() - 显示此帮助
-
-调试配置：
-• 调试模式: ${debugConfig.enabled ? '启用' : '禁用'}
-• 日志间隔: ${debugConfig.logInterval}ms
-• 显示适配信息: ${debugConfig.showAdapterInfo ? '是' : '否'}
-• 显示断点信息: ${debugConfig.showBreakpointInfo ? '是' : '否'}
-
-注意：这些测试仅在开发环境下可用
-      `)
-    },
-  }
-
-  console.log('🧪 rem 性能测试工具已加载，输入 remPerformanceTest.help() 查看使用方法')
 }

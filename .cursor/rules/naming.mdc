@@ -1,6 +1,6 @@
-# CC-Admin Vue3 项目命名规范
+# cc-admin Vue3 项目命名规范
 
-CC-Admin 要求使用**完整名称**而非缩写，确保代码的可读性和维护性。
+cc-admin 要求使用**完整名称**而非缩写，确保代码的可读性和维护性。
 
 ## 📁 文件命名规范
 
@@ -340,7 +340,7 @@ const UI = defineComponent({}) // 缩写不清晰
 const Comp1 = defineComponent({}) // 数字后缀无意义
 ```
 
-遵循这些命名规范，确保 CC-Admin 项目代码的一致性、可读性和可维护性。
+遵循这些命名规范，确保 cc-admin 项目代码的一致性、可读性和可维护性。
 
 - No period at the end of the **Description**.
 - API order is arranged in alphabetical order, and can be put together under special circumstances (such as: xs sm md).

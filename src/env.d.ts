@@ -1,7 +1,7 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license MIT
- * @description CC-Admin 企业级后台管理框架 - env.d
+ * @description cc-admin 企业级后台管理框架 - env.d
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
@@ -134,15 +134,6 @@ declare interface ImportMetaEnv {
 
   /** 是否启用 CDN */
   readonly VITE_CDN: BooleanString
-
-  /**
-   * ==========================================
-   * rem 适配系统配置
-   * ==========================================
-   */
-
-  /** PostCSS px-to-rem 转换基准值（与 REM_BASE_FONT_SIZE 保持一致） */
-  readonly VITE_POSTCSS_ROOT_VALUE: NumberString
 }
 
 /**

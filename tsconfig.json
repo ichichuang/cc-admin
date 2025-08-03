@@ -19,7 +19,8 @@
       "@utils/*": ["./src/utils/*"],
       "@stores/*": ["./src/stores/*"],
       "@router/*": ["./src/router/*"],
-      "@test/*": ["./src/views/test/*"]
+      "@test/*": ["./src/views/test/*"],
+      "@Types/*": ["./src/Types/*"]
     }
   }
 }

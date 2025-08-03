@@ -6,7 +6,7 @@
   "author": "chichuang",
   "copyright": "Copyright (c) 2025 chichuang",
   "license": "Custom (Non-Commercial Use Only)",
-  "description": "CC-Admin 企业级后台管理框架 - 基于 Vue 3.5+ 和 TypeScript 5+ 的现代化企业级后台管理框架",
+  "description": "cc-admin 企业级后台管理框架 - 基于 Vue 3.5+ 和 TypeScript 5+ 的现代化企业级后台管理框架",
   "keywords": [
     "vue3",
     "typescript",
@@ -21,11 +21,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ichichuang/CC-Admin"
+    "url": "https://github.com/ichichuang/cc-admin"
   },
-  "homepage": "https://github.com/ichichuang/CC-Admin#readme",
+  "homepage": "https://github.com/ichichuang/cc-admin#readme",
   "bugs": {
-    "url": "https://github.com/ichichuang/CC-Admin/issues"
+    "url": "https://github.com/ichichuang/cc-admin/issues"
   },
   "engines": {
     "node": ">=22.x",

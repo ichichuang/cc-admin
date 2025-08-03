@@ -1,4 +1,4 @@
-# CC-Admin Vue3 + TypeScript 规范
+# cc-admin Vue3 + TypeScript 规范
 
 ## 🎯 基本原则
 
@@ -709,4 +709,4 @@ try {
 }
 ```
 
-遵循这些TypeScript规范，确保CC-Admin项目具有完整的类型安全、优秀的开发体验和可维护的代码质量。
+遵循这些TypeScript规范，确保cc-admin项目具有完整的类型安全、优秀的开发体验和可维护的代码质量。

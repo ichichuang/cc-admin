@@ -1,15 +1,15 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license MIT
-  @description CC-Admin 企业级后台管理框架 - project-rules
+  @description cc-admin 企业级后台管理框架 - project-rules
   本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
 -->
 
-# CC-Admin 项目配置规则说明
+# cc-admin 项目配置规则说明
 
 ## 📋 概述
 
-本文档详细记录了 CC-Admin 项目的所有配置文件、开发规则和约定，确保团队成员和AI助手都能正确理解和使用项目配置。
+本文档详细记录了 cc-admin 项目的所有配置文件、开发规则和约定，确保团队成员和AI助手都能正确理解和使用项目配置。
 
 ## 🔧 包管理器配置
 
@@ -69,6 +69,7 @@
 | ----------------------- | ---------------- | -------------------------- |
 | `.cursor/settings.json` | Cursor编辑器配置 | pnpm, Vue, TypeScript      |
 | `.cursor/cursor-rules`  | Cursor开发规范   | 项目约定, 命名规范         |
+| `.cursor/rules`         | Cursor开发规范   | 项目约定, 命名规范         |
 | `.vscode/settings.json` | VS Code配置      | 格式化, 智能提示, 文件嵌套 |
 
 ### Git & 代码质量

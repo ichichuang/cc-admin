@@ -1,7 +1,7 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license MIT
- * @description CC-Admin 企业级后台管理框架 - index
+ * @description cc-admin 企业级后台管理框架 - index
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
@@ -12,18 +12,13 @@ import { autoImportModulesSync } from '@/utils/moduleLoader'
 const commonModules = import.meta.glob('./modules/**/*.ts', { eager: true })
 const importedCommons = autoImportModulesSync(commonModules)
 
-export * from './modules/constants'
+// 导出所有公共模块
+export * from './modules/date'
 export * from './modules/function'
 export * from './modules/helpers'
 export * from './modules/router'
 
 // 导出所有公共模块
-export const constants = importedCommons.constants
-export const helpers = importedCommons.helpers
-export const router = importedCommons.router
-export const functions = importedCommons.function
-
-// 默认导出所有公共模块
 export default importedCommons
 
 // 类型定义

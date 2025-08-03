@@ -1,16 +1,16 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license 自定义商业限制许可证
-  @description CC-Admin 企业级后台管理框架 - 监控报告模板
+  @description cc-admin 企业级后台管理框架 - 监控报告模板
   本文件受版权保护，商业使用需要授权。
 -->
 
-# 🛡️ CC-Admin 框架保护监控报告
+# 🛡️ cc-admin 框架保护监控报告
 
 **监控时间**: {{TIMESTAMP}}
-**框架**: CC-Admin 企业级后台管理框架
+**框架**: cc-admin 企业级后台管理框架
 **作者**: chichuang
-**仓库**: ichichuang/CC-Admin
+**仓库**: ichichuang/cc-admin
 **监控版本**: {{VERSION}}
 
 ## 📈 项目统计
@@ -18,7 +18,7 @@
 - ⭐ **Stars**: {{STAR_COUNT}}
 - 🍴 **Forks**: {{FORK_COUNT}}
 - 📅 **最后更新**: {{LAST_UPDATE}}
-- 🔗 **仓库地址**: https://github.com/ichichuang/CC-Admin
+- 🔗 **仓库地址**: https://github.com/ichichuang/cc-admin
 
 ## 🚨 版权侵犯检测 ({{COPYRIGHT_COUNT}} 项)
 
@@ -82,7 +82,7 @@
 ### 搜索关键词
 
 - 版权标识: `@copyright Copyright (c) 2025 chichuang`
-- 框架标识: `CC-Admin 企业级后台管理框架`
+- 框架标识: `cc-admin 企业级后台管理框架`
 - 技术栈: `Vue 3.5+ TypeScript 5+ Vite 7+ UnoCSS`
 
 ## 📞 联系方式
@@ -90,11 +90,11 @@
 如需商业使用授权或报告问题，请联系：
 
 - **作者**: chichuang
-- **项目**: CC-Admin 企业级后台管理框架
-- **GitHub**: https://github.com/ichichuang/CC-Admin/issues
+- **项目**: cc-admin 企业级后台管理框架
+- **GitHub**: https://github.com/ichichuang/cc-admin/issues
 - **邮箱**: 通过 GitHub Issues 联系
 
 ---
 
-_CC-Admin 保护系统 - {{TIMESTAMP}}_
+_cc-admin 保护系统 - {{TIMESTAMP}}_
 _监控脚本版本: {{SCRIPT_VERSION}}_

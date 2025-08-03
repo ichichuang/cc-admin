@@ -1,7 +1,7 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license MIT
- * @description CC-Admin 企业级后台管理框架 - index
+ * @description cc-admin 企业级后台管理框架 - index
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
@@ -10,14 +10,13 @@ import type { MockMethod } from './types'
 
 // 导入所有 Mock 模块
 import authMock from './modules/auth'
-import exampleMock from './modules/example'
 import routerMock from './modules/router'
 
 /**
  * Mock 服务配置
  * 统一管理所有的 Mock 接口
  */
-export const mockServices: MockMethod[] = [...authMock, ...routerMock, ...exampleMock]
+export const mockServices: MockMethod[] = [...authMock, ...routerMock]
 
 /**
  * 初始化 Mock 服务

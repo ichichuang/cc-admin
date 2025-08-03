@@ -1,12 +1,12 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license MIT
- * @description CC-Admin 企业级后台管理框架 - 状态管理
+ * @description cc-admin 企业级后台管理框架 - 状态管理
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
 /* 尺寸配置 */
-import { deepClone, toKebabCase } from '@/common'
+import { cloneDeep, toKebabCase } from '@/common'
 import store, { useLayoutStoreWithOut } from '@/stores'
 import { env } from '@/utils/env'
 import { defineStore } from 'pinia'
@@ -171,7 +171,7 @@ export const useSizeStore = defineStore('size', {
     size: 'comfortable',
     sizeOptions,
 
-    sizes: deepClone(comfortableSizes),
+    sizes: cloneDeep(comfortableSizes),
 
     gap: 'md',
     rounded: 'smooth',
@@ -305,7 +305,7 @@ export const useSizeStore = defineStore('size', {
         return
       }
 
-      this.sizes = deepClone(targetSizePreset)
+      this.sizes = cloneDeep(targetSizePreset)
 
       // 立即更新 CSS 变量
       this.setCssVariables()
@@ -370,7 +370,7 @@ export const useSizeStore = defineStore('size', {
       this.size = 'comfortable'
       this.gap = 'md'
       this.rounded = 'smooth'
-      this.sizes = deepClone(comfortableSizes)
+      this.sizes = cloneDeep(comfortableSizes)
       this.setCssVariables()
     },
   },

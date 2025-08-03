@@ -1,7 +1,7 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license MIT
- * @description CC-Admin 企业级后台管理框架 - 国际化
+ * @description cc-admin 企业级后台管理框架 - 国际化
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
@@ -24,7 +24,7 @@ export const routerZhCN: RouterLocaleMessages = {
     color: '主题',
     size: '尺寸',
     rem: 'rem 适配',
-    mock: 'Mock 示例',
+    date: '日期',
   },
   error: {
     notFound: '页面未找到',
@@ -47,7 +47,7 @@ export const routerEnUS: RouterLocaleMessages = {
     color: 'Theme',
     size: 'Size',
     rem: 'rem Adapter',
-    mock: 'Mock exampleMock',
+    date: 'Date',
   },
   error: {
     notFound: 'Page Not Found',
@@ -70,7 +70,7 @@ export const routerZhTW: RouterLocaleMessages = {
     color: '主題',
     size: '尺寸',
     rem: 'rem 適配',
-    mock: 'Mock 示例',
+    date: '日期',
   },
   error: {
     notFound: '頁面未找到',

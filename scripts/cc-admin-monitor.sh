@@ -1,5 +1,5 @@
 #!/bin/bash
-# cc-admin-monitor.sh - CC-Admin 框架本地监控脚本
+# cc-admin-monitor.sh - cc-admin 框架本地监控脚本
 
 # 加载环境变量
 if [ -f ".env" ]; then
@@ -63,8 +63,8 @@ check_github_token() {
 
 # 配置
 GITHUB_USERNAME="ichichuang"
-REPO_NAME="CC-Admin"
-FRAMEWORK_NAME="CC-Admin"
+REPO_NAME="cc-admin"
+FRAMEWORK_NAME="cc-admin"
 
 # 输出文件
 TIMESTAMP=$(date '+%Y%m%d_%H%M%S')
@@ -77,7 +77,7 @@ REPORT_FILE="$OUTPUT_DIR/cc_admin_monitor_report.md"
 # 创建输出目录
 mkdir -p "$OUTPUT_DIR"
 
-echo -e "${BLUE}🛡️ CC-Admin 框架代码监控系统${NC}"
+echo -e "${BLUE}🛡️ cc-admin 框架代码监控系统${NC}"
 echo "========================================"
 echo -e "${CYAN}监控时间: $(date '+%Y-%m-%d %H:%M:%S')${NC}"
 echo -e "${CYAN}框架名称: $FRAMEWORK_NAME${NC}"
@@ -97,17 +97,17 @@ violation_count=0
 structure_count=0
 techstack_count=0
 
-# CC-Admin 特有的版权标识 - 更精确的搜索关键词
+# cc-admin 特有的版权标识 - 更精确的搜索关键词
 declare -a COPYRIGHT_SIGNATURES=(
     "@copyright Copyright (c) 2025 chichuang"
-    "CC-Admin 企业级后台管理框架"
+    "cc-admin 企业级后台管理框架"
     "本文件为 chichuang 原创"
     "禁止擅自删除署名或用于商业用途"
-    "chichuang CC-Admin"
-    "CC-ADMIN-FRAMEWORK-CHICHUANG-2025"
+    "chichuang cc-admin"
+    "cc-admin-FRAMEWORK-CHICHUANG-2025"
     "chichuang 原创"
     # 移除容易误报的关键词
-    # "CC-Admin v1.0" - 这个关键词太通用，容易误报
+    # "cc-admin v1.0" - 这个关键词太通用，容易误报
 )
 
 # 检测函数 - 更精确的版权侵犯检测
@@ -142,7 +142,7 @@ detect_copyright_violations() {
                        [[ "$line" != *"courtcanva/cc-admin"* ]] && \
                        [[ "$line" != *"Buntyu/Codeigniter"* ]] && \
                        [[ "$line" != *"hmcts/ccd-admin"* ]] && \
-                       [[ "$line" != *"shiwi123/HnCC-Admin"* ]] && \
+                       [[ "$line" != *"shiwi123/Hncc-admin"* ]] && \
                        [[ "$line" != *"codeconsortium/CCDN"* ]] && \
                        [[ "$line" != *"tianyepeng/ccAdmin"* ]] && \
                        [[ "$line" != *"dcm93/ccAdmin"* ]] && \
@@ -167,19 +167,19 @@ detect_copyright_violations() {
     violation_count=$violation_count
 }
 
-# CC-Admin 独特的文件结构模式 - 更精确的组合
+# cc-admin 独特的文件结构模式 - 更精确的组合
 declare -a STRUCTURE_PATTERNS=(
     "src/stores/modules index.ts chichuang"
     "src/api/modules index.ts chichuang"
     "src/router/modules index.ts chichuang"
     "unocss/rules unocss/shortcuts chichuang"
-    "scripts/ chichuang CC-Admin"
+    "scripts/ chichuang cc-admin"
     "src/hooks/modules chichuang"
     "src/common/modules chichuang"
     "src/locales/modules chichuang"
     "src/mock/modules chichuang"
     # 添加更独特的组合
-    "CC-Admin 企业级后台管理框架 chichuang"
+    "cc-admin 企业级后台管理框架 chichuang"
     "Vue 3.5+ TypeScript 5+ Vite 7+ chichuang"
     "UnoCSS 0.66 企业级后台 chichuang"
 )
@@ -214,7 +214,7 @@ detect_structure_similarities() {
                        [[ "$line" != *"courtcanva/cc-admin"* ]] && \
                        [[ "$line" != *"Buntyu/Codeigniter"* ]] && \
                        [[ "$line" != *"hmcts/ccd-admin"* ]] && \
-                       [[ "$line" != *"shiwi123/HnCC-Admin"* ]] && \
+                       [[ "$line" != *"shiwi123/Hncc-admin"* ]] && \
                        [[ "$line" != *"codeconsortium/CCDN"* ]] && \
                        [[ "$line" != *"tianyepeng/ccAdmin"* ]] && \
                        [[ "$line" != *"dcm93/ccAdmin"* ]] && \
@@ -239,16 +239,16 @@ detect_structure_similarities() {
     structure_count=$structure_count
 }
 
-# CC-Admin 特有的技术栈组合 - 更精确的查询
+# cc-admin 特有的技术栈组合 - 更精确的查询
 declare -a TECHSTACK_QUERIES=(
     "Vue 3.5 TypeScript 5 UnoCSS Vite chichuang"
     "Pinia 3 Alova 3 Vue I18n 10 chichuang"
     "pnpm 10.12.4 Vue3 admin chichuang"
     "UnoCSS 0.66 企业级后台 chichuang"
     "Vue 3.5+ TypeScript 5+ Vite 7+ chichuang"
-    "CC-Admin 企业级后台管理框架 chichuang"
+    "cc-admin 企业级后台管理框架 chichuang"
     # 添加更独特的组合
-    "chichuang CC-Admin 企业级后台管理框架"
+    "chichuang cc-admin 企业级后台管理框架"
     "chichuang Vue 3.5 TypeScript 5 UnoCSS"
     "chichuang Pinia 3 Alova 3 Vue I18n 10"
 )
@@ -283,7 +283,7 @@ detect_techstack_similarities() {
                        [[ "$line" != *"courtcanva/cc-admin"* ]] && \
                        [[ "$line" != *"Buntyu/Codeigniter"* ]] && \
                        [[ "$line" != *"hmcts/ccd-admin"* ]] && \
-                       [[ "$line" != *"shiwi123/HnCC-Admin"* ]] && \
+                       [[ "$line" != *"shiwi123/Hncc-admin"* ]] && \
                        [[ "$line" != *"codeconsortium/CCDN"* ]] && \
                        [[ "$line" != *"tianyepeng/ccAdmin"* ]] && \
                        [[ "$line" != *"dcm93/ccAdmin"* ]] && \
@@ -336,10 +336,10 @@ echo "$forks_response" | jq -r '.[]? | "🍴 Fork: \(.full_name) - 创建: \(.cr
 echo -e "${YELLOW}📝 5. 生成监控报告...${NC}"
 
 cat > "$REPORT_FILE" << EOF
-# 🛡️ CC-Admin 框架保护监控报告
+# 🛡️ cc-admin 框架保护监控报告
 
 **监控时间**: $(date '+%Y-%m-%d %H:%M:%S')
-**框架**: CC-Admin 企业级后台管理框架
+**框架**: cc-admin 企业级后台管理框架
 **作者**: chichuang
 **仓库**: $GITHUB_USERNAME/$REPO_NAME
 
@@ -390,7 +390,7 @@ fi)
 - 📊 定期分析
 
 ---
-*CC-Admin 保护系统 - $(date)*
+*cc-admin 保护系统 - $(date)*
 EOF
 
 # 6. 显示结果摘要
@@ -414,4 +414,4 @@ if [ "$violation_count" -gt 0 ]; then
     echo -e "${RED}建议立即查看详细报告并采取行动${NC}"
 fi
 
-echo -e "${GREEN}✅ CC-Admin 框架监控完成${NC}"
+echo -e "${GREEN}✅ cc-admin 框架监控完成${NC}"

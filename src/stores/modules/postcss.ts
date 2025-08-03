@@ -1,13 +1,12 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license MIT
- * @description CC-Admin 企业级后台管理框架 - 状态管理
+ * @description cc-admin 企业级后台管理框架 - 状态管理
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
 import store from '@/stores'
 import { useLayoutStoreWithOut } from '@/stores/modules/layout'
-import type { DeviceInfo } from '@/Types/global'
 import { env } from '@/utils/env'
 import { RemAdapter, type RemAdapterConfig, parseRemConfigFromEnv } from '@/utils/remAdapter'
 import { defineStore } from 'pinia'
@@ -25,7 +24,120 @@ export const usePostcssStore = defineStore(
     const remCleanupFn = ref<(() => void) | null>(null)
 
     // Getters
-    const getRemConfig = computed(() => remConfig.value)
+    const getRemConfig = computed(() => {
+      // 🎯 确保响应式更新，返回完整的配置对象
+      const layoutStore = useLayoutStoreWithOut()
+      const deviceInfo = layoutStore.deviceInfo
+      const screenWidth = deviceInfo.screen.width
+
+      // 根据策略计算当前设计稿信息
+      let currentDesignInfo = {
+        width: remConfig.value.designWidth,
+        description: '桌面端',
+      }
+
+      switch (remConfig.value.strategy) {
+        case 'mobile-first':
+          currentDesignInfo = {
+            width: 768,
+            description: '移动端',
+          }
+          break
+        case 'large-screen-first':
+          if (screenWidth >= 3840) {
+            currentDesignInfo = {
+              width: 3840,
+              description: '4K屏',
+            }
+          } else if (screenWidth >= 2560) {
+            currentDesignInfo = {
+              width: 3200,
+              description: '超大屏',
+            }
+          } else if (screenWidth >= 1920) {
+            currentDesignInfo = {
+              width: 2560,
+              description: '大屏',
+            }
+          } else {
+            currentDesignInfo = {
+              width: remConfig.value.designWidth,
+              description: '桌面端',
+            }
+          }
+          break
+        case 'adaptive':
+          if (screenWidth <= 768) {
+            currentDesignInfo = {
+              width: 768,
+              description: '移动端',
+            }
+          } else if (screenWidth <= 1024) {
+            currentDesignInfo = {
+              width: 1024,
+              description: '平板',
+            }
+          } else if (screenWidth <= 1920) {
+            currentDesignInfo = {
+              width: 1800,
+              description: '桌面端',
+            }
+          } else if (screenWidth <= 2560) {
+            currentDesignInfo = {
+              width: 2560,
+              description: '大屏',
+            }
+          } else if (screenWidth <= 3840) {
+            currentDesignInfo = {
+              width: 3200,
+              description: '超大屏',
+            }
+          } else {
+            currentDesignInfo = {
+              width: 3840,
+              description: '4K屏',
+            }
+          }
+          break
+        default:
+          currentDesignInfo = {
+            width: remConfig.value.designWidth,
+            description: '桌面端',
+          }
+      }
+
+      return {
+        ...remConfig.value,
+        // 添加当前设备类型信息，便于调试
+        currentDeviceType: deviceInfo.type,
+        // 添加当前屏幕宽度信息
+        currentScreenWidth: screenWidth,
+        // 添加当前设计稿信息
+        currentDesignInfo,
+        // 添加屏幕类型信息
+        screenType: getScreenType(screenWidth),
+      }
+    })
+
+    // 获取屏幕类型的辅助函数
+    const getScreenType = (width: number): string => {
+      if (width >= 3840) {
+        return '4K'
+      }
+      if (width >= 2560) {
+        return 'UltraWide'
+      }
+      if (width >= 1920) {
+        return 'LargeScreen'
+      }
+      if (width >= 1024) {
+        return 'Desktop'
+      }
+      if (width >= 768) {
+        return 'Tablet'
+      }
+      return 'Mobile'
+    }
     const getCurrentRemBase = computed(() => currentRemBase.value)
     const getRemAdapterAvailable = computed(() => !!remAdapter.value)
 
@@ -63,16 +175,32 @@ export const usePostcssStore = defineStore(
         const layoutStore = useLayoutStoreWithOut()
         const deviceInfo = layoutStore.deviceInfo
 
-        // 🎯 根据设备类型自动设置移动端优先模式
+        // 🎯 根据设备类型和屏幕宽度自动设置适配策略
         const isMobile = deviceInfo.type === 'Mobile'
-        const shouldUpdateMobileFirst = remConfig.value.mobileFirst !== isMobile
+        const screenWidth = deviceInfo.screen.width
 
-        if (shouldUpdateMobileFirst) {
-          remConfig.value.mobileFirst = isMobile
-          if (env.debug) {
-            console.log(
-              `🔄 自动切换适配模式: ${isMobile ? '移动端优先' : '桌面端优先'} (设备: ${deviceInfo.type})`
-            )
+        // 智能适配策略选择
+        let newStrategy: 'mobile-first' | 'desktop-first' | 'large-screen-first' | 'adaptive'
+        let shouldUpdateStrategy = false
+
+        if (isMobile) {
+          newStrategy = 'mobile-first'
+        } else if (screenWidth >= 1920) {
+          // 大屏及以上使用大屏优先策略
+          newStrategy = 'large-screen-first'
+        } else {
+          // 桌面端使用自适应策略
+          newStrategy = 'adaptive'
+        }
+
+        shouldUpdateStrategy = remConfig.value.strategy !== newStrategy
+
+        if (shouldUpdateStrategy) {
+          // 🎯 使用响应式更新方式，确保 getRemConfig 能够实时更新
+          remConfig.value = {
+            ...remConfig.value,
+            strategy: newStrategy,
+            mobileFirst: isMobile, // 保持兼容性
           }
         }
 
@@ -102,11 +230,10 @@ export const usePostcssStore = defineStore(
           // 🎯 检测设备类型变化，动态调整适配模式
           const currentIsMobile = latestDeviceInfo.type === 'Mobile'
           if (remConfig.value.mobileFirst !== currentIsMobile) {
-            remConfig.value.mobileFirst = currentIsMobile
-            if (env.debug) {
-              console.log(
-                `📱 设备类型变化，自动切换适配模式: ${currentIsMobile ? '移动端优先' : '桌面端优先'}`
-              )
+            // 🎯 使用响应式更新方式，确保 getRemConfig 能够实时更新
+            remConfig.value = {
+              ...remConfig.value,
+              mobileFirst: currentIsMobile,
             }
 
             // 重新创建适配器实例以应用新配置
@@ -152,9 +279,6 @@ export const usePostcssStore = defineStore(
               const newFontSize = remAdapter.value.getCurrentFontSize()
               if (Math.abs(newFontSize - currentRemBase.value) > 0.1) {
                 currentRemBase.value = newFontSize
-                if (env.debug) {
-                  console.log('📏 检测到根字体变化：', newFontSize + 'px')
-                }
               }
             }
           })
@@ -200,13 +324,11 @@ export const usePostcssStore = defineStore(
           // 🎯 检测设备类型变化，自动调整适配模式
           const isMobile = deviceInfo.type === 'Mobile'
           if (remConfig.value.mobileFirst !== isMobile) {
-            remConfig.value.mobileFirst = isMobile
-            if (env.debug) {
-              console.log(
-                `🔄 设备变化，自动切换适配模式: ${isMobile ? '移动端优先' : '桌面端优先'} (设备: ${deviceInfo.type})`
-              )
+            // 🎯 使用响应式更新方式，确保 getRemConfig 能够实时更新
+            remConfig.value = {
+              ...remConfig.value,
+              mobileFirst: isMobile,
             }
-
             // 重新创建适配器实例以应用新配置
             remAdapter.value = new RemAdapter(remConfig.value)
           }

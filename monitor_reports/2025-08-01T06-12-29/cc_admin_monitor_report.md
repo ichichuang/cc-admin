@@ -1,23 +1,23 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license 自定义商业限制许可证
-  @description CC-Admin 企业级后台管理框架 - cc_admin_monitor_report
+  @description cc-admin 企业级后台管理框架 - cc_admin_monitor_report
 
   本文件受版权保护，商业使用需要授权。
-  联系方式: https://github.com/ichichuang/CC-Admin/issues
+  联系方式: https://github.com/ichichuang/cc-admin/issues
 
   This file is protected by copyright. Commercial use requires authorization.
-  Contact: https://github.com/ichichuang/CC-Admin/issues
+  Contact: https://github.com/ichichuang/cc-admin/issues
 -->
 
-# CC-Admin 框架监控报告
+# cc-admin 框架监控报告
 
 ## 📊 监控概览
 
 - **监控时间**: 2025/8/1 14:12:29
-- **框架名称**: CC-Admin
+- **框架名称**: cc-admin
 - **GitHub用户**: ichichuang
-- **仓库名称**: CC-Admin
+- **仓库名称**: cc-admin
 
 ## 🔍 监控结果
 
@@ -53,4 +53,4 @@
 ---
 
 _报告生成时间: 2025/8/1 14:12:29_
-_监控系统: CC-Admin 跨平台监控脚本_
+_监控系统: cc-admin 跨平台监控脚本_

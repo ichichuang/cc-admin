@@ -1,7 +1,7 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license MIT
- * @description CC-Admin 企业级后台管理框架 - 国际化
+ * @description cc-admin 企业级后台管理框架 - 国际化
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
@@ -91,7 +91,7 @@ export const commonZhCN: CommonLocaleMessages = {
   },
 
   system: {
-    title: 'CC-Admin',
+    title: 'cc-admin',
     description: '企业级后台管理系统',
     version: '版本',
     copyright: '版权所有',
@@ -197,7 +197,7 @@ export const commonEnUS: CommonLocaleMessages = {
   },
 
   system: {
-    title: 'CC-Admin',
+    title: 'cc-admin',
     description: 'Enterprise Admin System',
     version: 'Version',
     copyright: 'Copyright',
@@ -303,7 +303,7 @@ export const commonZhTW: CommonLocaleMessages = {
   },
 
   system: {
-    title: 'CC-Admin',
+    title: 'cc-admin',
     description: '企業級後台管理系統',
     version: '版本',
     copyright: '版權所有',

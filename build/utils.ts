@@ -62,8 +62,6 @@ export interface ViteEnv {
   VITE_DEBUG: boolean
   VITE_DROP_DEBUGGER: boolean
   VITE_DROP_CONSOLE: boolean
-  // PostCSS 配置
-  VITE_POSTCSS_ROOT_VALUE: number
 }
 
 /** 处理环境变量 */
@@ -89,8 +87,6 @@ export const wrapperEnv = (envConf: Record<string, unknown>): ViteEnv => {
     VITE_DEBUG: false,
     VITE_DROP_DEBUGGER: true,
     VITE_DROP_CONSOLE: true,
-    // PostCSS 配置
-    VITE_POSTCSS_ROOT_VALUE: 16,
   }
 
   for (const envName of Object.keys(envConf)) {
@@ -105,11 +101,7 @@ export const wrapperEnv = (envConf: Record<string, unknown>): ViteEnv => {
     }
 
     // 处理数字类型转换
-    if (
-      envName === 'VITE_PORT' ||
-      envName === 'VITE_LOADING_SIZE' ||
-      envName === 'VITE_POSTCSS_ROOT_VALUE'
-    ) {
+    if (envName === 'VITE_PORT' || envName === 'VITE_LOADING_SIZE') {
       realName = Number(realName)
     }
 

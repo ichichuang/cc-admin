@@ -1,7 +1,7 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license MIT
-  @description CC-Admin 企业级后台管理框架 - cursor-guidelines
+  @description cc-admin 企业级后台管理框架 - cursor-guidelines
   本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
 -->
 
@@ -49,58 +49,6 @@ src/views/feature-name/
 - `@test/` -> `src/views/test/`
 - `@components/` -> `src/components/`
 - `@utils/` -> `src/utils/`
-
-## 🎯 代码生成指导
-
-### Vue 3 组件
-
-生成 Vue 3 组件时：
-
-```vue
-<script setup lang="ts">
-// 使用 camelCase 命名变量和函数
-const userName = ref('')
-const isUserActive = ref(false)
-
-// 函数使用动词开头的 camelCase
-const handleUserLogin = () => {
-  // 实现逻辑
-}
-
-const getUserInfo = async (userId: string) => {
-  // 异步操作
-}
-</script>
-```
-
-### TypeScript 接口和类型
-
-```typescript
-// 接口使用 PascalCase
-interface UserProfile {
-  userName: string // 属性使用 camelCase
-  isActive: boolean
-  createdAt: Date
-}
-
-// 类型别名使用 PascalCase
-type ApiResponse<T> = {
-  statusCode: number
-  isSuccess: boolean
-  responseData: T
-}
-```
-
-### 常量定义
-
-```typescript
-// 常量使用 SCREAMING_SNAKE_CASE
-export const API_CONFIG = {
-  BASE_URL: 'https://api.example.com',
-  TIMEOUT_DURATION: 5000,
-  MAX_RETRY_COUNT: 3,
-} as const
-```
 
 ## 🔧 开发最佳实践
 

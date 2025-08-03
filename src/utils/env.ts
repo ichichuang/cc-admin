@@ -1,7 +1,7 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license MIT
- * @description CC-Admin 企业级后台管理框架 - 工具函数
+ * @description cc-admin 企业级后台管理框架 - 工具函数
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
@@ -135,11 +135,6 @@ export const env = {
 
   get cdn(): boolean {
     return toBool(import.meta.env.VITE_CDN)
-  },
-
-  // rem 适配配置
-  get postcssRootValue(): number {
-    return toNumber(import.meta.env.VITE_POSTCSS_ROOT_VALUE)
   },
 } as const
 

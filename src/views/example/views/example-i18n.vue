@@ -1,15 +1,16 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license MIT
-  @description CC-Admin 企业级后台管理框架 - 页面组件
+  @description cc-admin 企业级后台管理框架 - 页面组件
   本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
 -->
 
 <script setup lang="ts">
+import { DateUtils } from '@/common/modules/date'
 import { useLocale } from '@/hooks/modules/useLocale'
 import type { SupportedLocale } from '@/locales/types'
 import { useLocaleStore } from '@/stores/modules/locale'
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 interface I18nExample {
   title: string
@@ -182,6 +183,93 @@ const formattedNumber = computed(() => {
   })
 })
 
+// Day.js 语言环境映射函数
+const getDayjsLocale = (locale: string): string => {
+  switch (locale) {
+    case 'zh-CN':
+      return 'zh-cn'
+    case 'en-US':
+      return 'en'
+    case 'zh-TW':
+      return 'zh-tw'
+    default:
+      return 'en'
+  }
+}
+
+// 响应式存储 Day.js 语言环境
+const currentDayjsLocale = ref('en')
+
+// 监听语言变化，更新 Day.js 语言环境
+watch(
+  currentLocale,
+  async newLocale => {
+    const dayjsLocale = getDayjsLocale(newLocale)
+    if (dayjsLocale) {
+      await DateUtils.setLocale(dayjsLocale as any)
+
+      // 更新响应式语言环境
+      currentDayjsLocale.value = dayjsLocale
+
+      // 语言切换完成后，强制更新相对时间
+      await updateRelativeTime()
+    }
+  },
+  { immediate: true }
+)
+
+// Day.js 格式化示例
+const dayjsFormattedDate = computed(() => {
+  // 使用响应式的语言环境
+  const locale = currentDayjsLocale.value
+
+  let format: string
+
+  switch (locale) {
+    case 'en':
+      format = 'YYYY-MM-DD HH:mm:ss'
+      break
+    case 'zh-cn':
+    case 'zh-tw':
+      format = 'YYYY年MM月DD日 HH:mm:ss'
+      break
+    default:
+      format = 'YYYY-MM-DD HH:mm:ss'
+  }
+
+  return DateUtils.format(currentDate, format)
+})
+
+// 相对时间示例（使用响应式数据）
+const relativeTimeText = ref('')
+
+// 更新相对时间
+const updateRelativeTime = async () => {
+  const testDate = DateUtils.subtract(currentDate, 2, 'hour')
+
+  // 使用响应式的语言环境
+  const locale = currentDayjsLocale.value
+
+  if (locale === 'zh-cn' || locale === 'zh-tw') {
+    // 中文环境，直接使用 fromNow
+    relativeTimeText.value = DateUtils.fromNow(testDate)
+  } else {
+    // 非中文环境，使用 fromNow 获取英文相对时间
+    relativeTimeText.value = DateUtils.fromNow(testDate)
+  }
+}
+
+// 移除原来的相对时间监听器，因为现在在语言切换时直接调用
+// watch(
+//   currentLocale,
+//   async () => {
+//     await updateRelativeTime()
+//   },
+//   { immediate: true }
+// )
+
+const relativeTime = computed(() => relativeTimeText.value)
+
 // 检查翻译键是否存在
 const checkKey = (key: string) => {
   try {
@@ -222,6 +310,10 @@ const checkKey = (key: string) => {
       <div class="between">
         <div class="bg-bg100 p-gap rounded">格式化日期: {{ formattedDate }}</div>
         <div class="bg-bg100 p-gap rounded">格式化数字: {{ formattedNumber }}</div>
+      </div>
+      <div class="between">
+        <div class="bg-bg100 p-gap rounded">Day.js 格式化: {{ dayjsFormattedDate }}</div>
+        <div class="bg-bg100 p-gap rounded">相对时间: {{ relativeTime }}</div>
       </div>
     </div>
   </div>

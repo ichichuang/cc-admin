@@ -1,7 +1,7 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license MIT
- * @description CC-Admin 企业级后台管理框架 - 国际化
+ * @description cc-admin 企业级后台管理框架 - 国际化
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
@@ -13,7 +13,7 @@ import type { DashboardLocaleMessages } from '../types'
 /** 中文配置 */
 export const dashboardZhCN: DashboardLocaleMessages = {
   title: '仪表盘',
-  welcome: '欢迎使用 CC-Admin',
+  welcome: '欢迎使用 cc-admin',
   overview: '概览',
   statistics: {
     totalUsers: '总用户数',
@@ -47,7 +47,7 @@ export const dashboardZhCN: DashboardLocaleMessages = {
 /** 英文配置 */
 export const dashboardEnUS: DashboardLocaleMessages = {
   title: 'Dashboard',
-  welcome: 'Welcome to CC-Admin',
+  welcome: 'Welcome to cc-admin',
   overview: 'Overview',
   statistics: {
     totalUsers: 'Total Users',
@@ -81,7 +81,7 @@ export const dashboardEnUS: DashboardLocaleMessages = {
 /** 繁体中文配置 */
 export const dashboardZhTW: DashboardLocaleMessages = {
   title: '儀表板',
-  welcome: '歡迎使用 CC-Admin',
+  welcome: '歡迎使用 cc-admin',
   overview: '概覽',
   statistics: {
     totalUsers: '總用戶數',

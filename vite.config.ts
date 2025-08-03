@@ -1,7 +1,7 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license MIT
- * @description CC-Admin 企业级后台管理框架 - vite.config
+ * @description cc-admin 企业级后台管理框架 - vite.config
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
@@ -151,7 +151,9 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
           // postcss-pxtorem 配置
           postcssPxToRem({
             // 基准字体大小，从环境变量读取
-            rootValue: Number(env.VITE_POSTCSS_ROOT_VALUE) || 16,
+            // 注意：这里使用桌面端基准值 16px
+            // 移动端适配通过 JavaScript 动态调整根字体大小实现
+            rootValue: 16,
             // 需要转换的CSS属性，* 表示所有属性
             propList: [
               '*',

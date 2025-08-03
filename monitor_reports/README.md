@@ -1,13 +1,13 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license 自定义商业限制许可证
-  @description CC-Admin 企业级后台管理框架 - 监控报告目录说明
+  @description cc-admin 企业级后台管理框架 - 监控报告目录说明
   本文件受版权保护，商业使用需要授权。
 -->
 
-# 📊 CC-Admin 监控报告目录
+# 📊 cc-admin 监控报告目录
 
-本目录包含 CC-Admin 框架的代码监控报告，用于保护知识产权和检测抄袭行为。
+本目录包含 cc-admin 框架的代码监控报告，用于保护知识产权和检测抄袭行为。
 
 ## 📁 目录结构
 
@@ -125,7 +125,7 @@ export GITHUB_TOKEN="your_github_token"
 
 # 项目配置
 export GITHUB_USERNAME="ichichuang"
-export REPO_NAME="CC-Admin"
+export REPO_NAME="cc-admin"
 ```
 
 ### 监控频率
@@ -139,8 +139,8 @@ export REPO_NAME="CC-Admin"
 如需商业使用授权或报告问题，请联系：
 
 - **作者**: chichuang
-- **项目**: CC-Admin 企业级后台管理框架
-- **GitHub**: https://github.com/ichichuang/CC-Admin/issues
+- **项目**: cc-admin 企业级后台管理框架
+- **GitHub**: https://github.com/ichichuang/cc-admin/issues
 
 ---
 

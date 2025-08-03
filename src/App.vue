@@ -1,16 +1,14 @@
 <!--
   @copyright Copyright (c) 2025 chichuang
   @license MIT
-  @description CC-Admin 企业级后台管理框架 - 根组件
+  @description cc-admin 企业级后台管理框架 - 根组件
   本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
 -->
 
 <script setup lang="ts">
 import LayoutManager from '@/layouts/index.vue'
 import { useColorStore, useLayoutStore, usePostcssStore, useSizeStore } from '@/stores'
-import { env } from '@/utils/env'
-import type { RemAdapterConfig } from '@/utils/remAdapter'
-import { computed, onBeforeUnmount, onMounted, reactive } from 'vue'
+import { onBeforeUnmount, onMounted } from 'vue'
 
 const colorStore = useColorStore()
 const sizeStore = useSizeStore()
@@ -21,31 +19,6 @@ colorStore.init()
 sizeStore.init()
 
 const cleanup = layoutStore.init()
-
-// 当前断点
-const currentBreakpoint = computed(() => {
-  const deviceInfo = layoutStore.deviceInfo
-  return postcssStore.getCurrentBreakpoint(deviceInfo)
-})
-const currentRemBase = computed(() => postcssStore.getCurrentRemBase || 16)
-
-// 临时配置
-const tempConfig = reactive<RemAdapterConfig>({
-  ...postcssStore.getRemConfig,
-})
-
-if (env.debug) {
-  console.log('=======================应用初始化 start =======================')
-  console.log('📱 当前断点:', currentBreakpoint.value)
-  console.log('📏 当前 rem 基准值:', currentRemBase.value)
-  console.log('🎨 设计稿宽度:', tempConfig.designWidth)
-  console.log('📐 基准字体大小:', tempConfig.baseFontSize)
-  console.log('📏 最小字体大小:', tempConfig.minFontSize)
-  console.log('📏 最大字体大小:', tempConfig.maxFontSize)
-  console.log('📱 是否启用移动端优先策略:', tempConfig.mobileFirst)
-  console.log('⚙️ 自定义断点配置:', tempConfig.breakpoints)
-  console.log('=======================应用初始化 end =======================')
-}
 
 onMounted(async () => {
   await postcssStore.initRemAdapter()

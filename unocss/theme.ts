@@ -1,7 +1,7 @@
 /**
  * @copyright Copyright (c) 2025 chichuang
  * @license MIT
- * @description CC-Admin 企业级后台管理框架 - theme
+ * @description cc-admin 企业级后台管理框架 - theme
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
@@ -24,6 +24,9 @@ export const themeConfig: ThemeConfig = {
     lg: '1400px',
     xl: '1660px',
     xls: '1920px',
+    // 🎯 添加缺失的断点，与 REM 适配系统完全同步
+    xxl: '2560px', // 超宽屏 (2560px+)
+    xxxl: '3840px', // 4K屏 (3840px+)
   },
 
   colors: {
