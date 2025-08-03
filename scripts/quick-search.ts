@@ -239,7 +239,10 @@ const searcher = new QuickSearcher({
 })
 
 // ES 模块方式检查是否是主模块
-if (import.meta.url === `file://${process.argv[1]}`) {
+const scriptPath = process.argv[1].replace(/\\/g, '/')
+const expectedUrl = `file:///${scriptPath}`
+
+if (import.meta.url === expectedUrl) {
   searcher.run().catch(console.error)
 }
 

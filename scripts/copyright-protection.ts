@@ -431,25 +431,41 @@ class CopyrightProtector {
       console.log(`🔇 静默模式: 已启用`)
     }
 
+    let totalFiles = 0
+    let processedFiles = 0
+
     this.walkDirectory(process.cwd(), filePath => {
+      totalFiles++
       if (this.shouldProcess(filePath)) {
+        processedFiles++
         this.processFile(filePath)
       }
     })
 
+    console.log(`📊 扫描统计: 总共 ${totalFiles} 个文件，处理 ${processedFiles} 个文件`)
     this.printSummary()
   }
 
   // 打印处理结果
   printSummary(): void {
-    // console.log(`✅ 处理成功: ${this.processedCount} 个文件`)
-    // console.log(`⏭️ 跳过文件: ${this.skippedCount} 个文件`)
-    // console.log(`❌ 处理失败: ${this.errorCount} 个文件`)
-    console.log('✅ \x1b[32m项目版权保护检查完成，一切正常\x1b[0m')
+    console.log(`✅ 处理成功: ${this.processedCount} 个文件`)
+    console.log(`⏭️ 跳过文件: ${this.skippedCount} 个文件`)
+    console.log(`❌ 处理失败: ${this.errorCount} 个文件`)
 
-    if (this.errorCount > 0) {
-      console.log('⚠️  存在处理失败的文件，请检查上方的错误信息')
-      process.exit(1)
+    if (this.isCheckMode) {
+      if (this.errorCount > 0) {
+        console.log('❌ 发现缺少版权注释的文件，请修复后重试')
+        process.exit(1)
+      } else {
+        console.log('✅ \x1b[32m项目版权保护检查完成，一切正常\x1b[0m')
+      }
+    } else {
+      if (this.errorCount > 0) {
+        console.log('⚠️  存在处理失败的文件，请检查上方的错误信息')
+        process.exit(1)
+      } else {
+        console.log('✅ \x1b[32m项目版权保护处理完成\x1b[0m')
+      }
     }
   }
 }
@@ -463,6 +479,9 @@ export function main(): void {
 }
 
 // 命令行执行
-if (import.meta.url === `file://${process.argv[1]}`) {
+const scriptPath = process.argv[1].replace(/\\/g, '/')
+const expectedUrl = `file:///${scriptPath}`
+
+if (import.meta.url === expectedUrl) {
   main()
 }
