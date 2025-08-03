@@ -11,6 +11,11 @@
  * 此文件为项目中使用的所有环境变量提供 TypeScript 类型支持
  * 所有以 VITE_ 开头的环境变量都会在客户端代码中可用
  *
+ * 变量加载优先级：
+ * 1. .env.production/.env.development（环境特定）
+ * 2. .env（通用配置）
+ * 3. build/utils.ts 中的默认值（兜底）
+ *
  * @see https://cn.vitejs.dev/guide/env-and-mode.html
  */
 

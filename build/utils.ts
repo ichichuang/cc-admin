@@ -64,23 +64,25 @@ export interface ViteEnv {
   VITE_DROP_CONSOLE: boolean
 }
 
-/** 处理环境变量 */
+/** 处理环境变量
+ * 当环境变量文件中没有定义时使用默认值
+ */
 export const wrapperEnv = (envConf: Record<string, unknown>): ViteEnv => {
   const ret: ViteEnv = {
-    VITE_PORT: 5173,
+    VITE_PORT: 8888,
     VITE_PUBLIC_PATH: '',
     VITE_CDN: false,
     VITE_COMPRESSION: 'none',
     VITE_BUILD_SOURCEMAP: false,
     VITE_BUILD_ANALYZE: false,
     VITE_LEGACY: false,
-    VITE_API_BASE_URL: 'http://localhost:3003',
-    VITE_APP_TITLE: 'CC Admin',
-    VITE_APP_VERSION: '1.0.0',
+    VITE_API_BASE_URL: '',
+    VITE_APP_TITLE: 'cc-admin',
+    VITE_APP_VERSION: '0.0.0',
     VITE_APP_ENV: 'development',
     VITE_PINIA_PERSIST_KEY_PREFIX: 'cc-admin',
     VITE_ROOT_REDIRECT: '/dashboard',
-    VITE_LOADING_SIZE: 8,
+    VITE_LOADING_SIZE: 5,
     VITE_DEV_TOOLS: true,
     VITE_MOCK_ENABLE: true,
     VITE_CONSOLE_LOG: true,
