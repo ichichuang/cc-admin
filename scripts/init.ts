@@ -229,10 +229,7 @@ function main(): void {
 }
 
 // 执行主函数
-const scriptPath = process.argv[1].replace(/\\/g, '/')
-const expectedUrl = `file:///${scriptPath}`
-
-if (import.meta.url === expectedUrl) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   main()
 }
 

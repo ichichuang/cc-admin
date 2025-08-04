@@ -398,10 +398,7 @@ const monitor = new CrossPlatformMonitor({
 })
 
 // ES 模块方式检查是否是主模块
-const scriptPath = process.argv[1].replace(/\\/g, '/')
-const expectedUrl = `file:///${scriptPath}`
-
-if (import.meta.url === expectedUrl) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   if (isTestToken) {
     // 仅测试 Token
     monitor['checkGitHubToken']().then(isValid => {

@@ -8,7 +8,7 @@
 import store from '@/stores'
 import { useLayoutStoreWithOut } from '@/stores/modules/layout'
 import { env } from '@/utils/env'
-import { RemAdapter, type RemAdapterConfig, parseRemConfigFromEnv } from '@/utils/remAdapter'
+import { RemAdapter, type RemAdapterConfig, parseRemConfigFromConfig } from '@/utils/remAdapter'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
@@ -17,7 +17,7 @@ export const usePostcssStore = defineStore(
   'postcss',
   () => {
     // State - 使用环境变量配置
-    const remConfig = ref<RemAdapterConfig>(parseRemConfigFromEnv())
+    const remConfig = ref<RemAdapterConfig>(parseRemConfigFromConfig())
 
     const currentRemBase = ref<number>(remConfig.value.baseFontSize)
     const remAdapter = ref<RemAdapter | null>(null)
@@ -44,17 +44,17 @@ export const usePostcssStore = defineStore(
           }
           break
         case 'large-screen-first':
-          if (screenWidth >= 3840) {
+          if (screenWidth > 3840) {
             currentDesignInfo = {
               width: 3840,
               description: '4K屏',
             }
-          } else if (screenWidth >= 2560) {
+          } else if (screenWidth > 2560) {
             currentDesignInfo = {
               width: 3200,
               description: '超大屏',
             }
-          } else if (screenWidth >= 1920) {
+          } else if (screenWidth > 1920) {
             currentDesignInfo = {
               width: 2560,
               description: '大屏',
@@ -121,19 +121,19 @@ export const usePostcssStore = defineStore(
 
     // 获取屏幕类型的辅助函数
     const getScreenType = (width: number): string => {
-      if (width >= 3840) {
+      if (width > 3840) {
         return '4K'
       }
-      if (width >= 2560) {
+      if (width > 2560) {
         return 'UltraWide'
       }
-      if (width >= 1920) {
+      if (width > 1920) {
         return 'LargeScreen'
       }
-      if (width >= 1024) {
+      if (width > 1024) {
         return 'Desktop'
       }
-      if (width >= 768) {
+      if (width > 768) {
         return 'Tablet'
       }
       return 'Mobile'
@@ -146,25 +146,31 @@ export const usePostcssStore = defineStore(
         const width = deviceInfo.screen.width
         const { breakpoints } = remConfig.value
 
-        if (width <= breakpoints.xs) {
-          return 'xs'
+        if (width >= breakpoints.xxxl) {
+          return 'xxxl'
         }
-        if (width <= breakpoints.sm) {
-          return 'sm'
+        if (width >= breakpoints.xxl) {
+          return 'xxl'
         }
-        if (width <= breakpoints.md) {
-          return 'md'
-        }
-        if (width <= breakpoints.lg) {
-          return 'lg'
-        }
-        if (width <= breakpoints.xl) {
-          return 'xl'
-        }
-        if (width <= breakpoints.xls) {
+        if (width >= breakpoints.xls) {
           return 'xls'
         }
-        return 'xxl'
+        if (width >= breakpoints.xl) {
+          return 'xl'
+        }
+        if (width >= breakpoints.lg) {
+          return 'lg'
+        }
+        if (width >= breakpoints.md) {
+          return 'md'
+        }
+        if (width >= breakpoints.sm) {
+          return 'sm'
+        }
+        if (width >= breakpoints.xs) {
+          return 'xs'
+        }
+        return 'xs'
       }
     })
 
@@ -185,7 +191,7 @@ export const usePostcssStore = defineStore(
 
         if (isMobile) {
           newStrategy = 'mobile-first'
-        } else if (screenWidth >= 1920) {
+        } else if (screenWidth > 1920) {
           // 大屏及以上使用大屏优先策略
           newStrategy = 'large-screen-first'
         } else {

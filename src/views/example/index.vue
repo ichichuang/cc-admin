@@ -6,7 +6,7 @@
 -->
 
 <script setup lang="ts">
-import { goName } from '@/common'
+import { goName, isCurrentRoute } from '@/common'
 import AppContainer from '@/layouts/components/AppContainer.vue'
 </script>
 <template>
@@ -14,30 +14,35 @@ import AppContainer from '@/layouts/components/AppContainer.vue'
     <div class="wfull h-headerHeight center">
       <div
         class="btn-info"
+        :class="{ 'btn-success active': isCurrentRoute('ExampleColor') }"
         @click="goName('ExampleColor')"
       >
         color
       </div>
       <div
         class="btn-info"
+        :class="{ 'btn-success active': isCurrentRoute('ExampleSize') }"
         @click="goName('ExampleSize')"
       >
         size
       </div>
       <div
         class="btn-info"
+        :class="{ 'btn-success active': isCurrentRoute('ExampleRem') }"
         @click="goName('ExampleRem')"
       >
         rem
       </div>
       <div
         class="btn-info"
+        :class="{ 'btn-success active': isCurrentRoute('ExampleI18n') }"
         @click="goName('ExampleI18n')"
       >
         i18n
       </div>
       <div
         class="btn-info"
+        :class="{ 'btn-success active': isCurrentRoute('ExampleDate') }"
         @click="goName('ExampleDate')"
       >
         date

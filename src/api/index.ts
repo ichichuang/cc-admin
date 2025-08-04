@@ -20,3 +20,6 @@ export default importedAPIs
 
 // 类型定义
 export type APIModules = typeof importedAPIs
+
+// 按需导出常用 API 函数，便于使用
+export { getAuthRoutes, getUserInfo, login } from './modules/auth'

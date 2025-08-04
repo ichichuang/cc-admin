@@ -33,11 +33,6 @@ export const parseRemConfigFromConfig = (): RemAdapterConfig => {
   }
 }
 
-// 从环境变量获取 rem 适配配置（兼容性函数）
-export const parseRemConfigFromEnv = (): RemAdapterConfig => {
-  return parseRemConfigFromConfig()
-}
-
 // rem 适配配置
 export interface RemAdapterConfig {
   // 设计稿基准宽度
@@ -150,19 +145,19 @@ export class RemAdapter {
     // 🎯 大屏优先：根据屏幕宽度选择合适的配置
     let config: typeof largeScreenConfig | typeof ultraWideConfig | typeof fourKConfig
 
-    if (viewportWidth >= fourKConfig.minWidth) {
+    if (viewportWidth > fourKConfig.minWidth) {
       // 4K屏配置
       config = fourKConfig
       if (debugConfig.enabled) {
         console.log('🎬 4K屏适配策略')
       }
-    } else if (viewportWidth >= ultraWideConfig.minWidth) {
+    } else if (viewportWidth > ultraWideConfig.minWidth) {
       // 超大屏配置
       config = ultraWideConfig
       if (debugConfig.enabled) {
         console.log('🖥️ 超大屏适配策略')
       }
-    } else if (viewportWidth >= largeScreenConfig.minWidth) {
+    } else if (viewportWidth > largeScreenConfig.minWidth) {
       // 大屏配置
       config = largeScreenConfig
       if (debugConfig.enabled) {
@@ -202,17 +197,24 @@ export class RemAdapter {
 
     let selectedStrategy: keyof typeof strategies = 'desktop'
 
+    // 🎯 使用更清晰的边界判断，避免断点重叠
     if (viewportWidth <= strategies.mobile.maxWidth) {
+      // 移动端：<= 768px
       selectedStrategy = 'mobile'
     } else if (viewportWidth <= strategies.tablet.maxWidth) {
+      // 平板：769px - 1024px
       selectedStrategy = 'tablet'
     } else if (viewportWidth <= strategies.desktop.maxWidth) {
+      // 桌面端：1025px - 1920px
       selectedStrategy = 'desktop'
     } else if (viewportWidth <= strategies.largeScreen.maxWidth) {
+      // 大屏：1921px - 2560px
       selectedStrategy = 'largeScreen'
     } else if (viewportWidth <= strategies.ultraWide.maxWidth) {
+      // 超大屏：2561px - 3840px
       selectedStrategy = 'ultraWide'
     } else {
+      // 4K屏：> 3840px
       selectedStrategy = 'fourK'
     }
 
@@ -378,15 +380,15 @@ export class RemAdapter {
    * 获取屏幕类型
    */
   private getScreenType(width: number): string {
-    if (width >= fourKConfig.minWidth) {
+    if (width > fourKConfig.minWidth) {
       return '4K'
-    } else if (width >= ultraWideConfig.minWidth) {
+    } else if (width > ultraWideConfig.minWidth) {
       return 'UltraWide'
-    } else if (width >= largeScreenConfig.minWidth) {
+    } else if (width > largeScreenConfig.minWidth) {
       return 'LargeScreen'
-    } else if (width >= 1024) {
+    } else if (width > 1024) {
       return 'Desktop'
-    } else if (width >= 768) {
+    } else if (width > 768) {
       return 'Tablet'
     } else {
       return 'Mobile'
@@ -409,19 +411,19 @@ export class RemAdapter {
           strategy: 'mobile-first',
         }
       case 'large-screen-first':
-        if (width >= fourKConfig.minWidth) {
+        if (width > fourKConfig.minWidth) {
           return {
             designWidth: fourKConfig.designWidth,
             baseFontSize: fourKConfig.baseFontSize,
             strategy: '4K',
           }
-        } else if (width >= ultraWideConfig.minWidth) {
+        } else if (width > ultraWideConfig.minWidth) {
           return {
             designWidth: ultraWideConfig.designWidth,
             baseFontSize: ultraWideConfig.baseFontSize,
             strategy: 'ultra-wide',
           }
-        } else if (width >= largeScreenConfig.minWidth) {
+        } else if (width > largeScreenConfig.minWidth) {
           return {
             designWidth: largeScreenConfig.designWidth,
             baseFontSize: largeScreenConfig.baseFontSize,
@@ -489,31 +491,31 @@ export class RemAdapter {
   private getCurrentBreakpoint(width: number): string {
     const { breakpoints } = this.config
 
-    if (width <= breakpoints.xs) {
-      return 'xs'
-    }
-    if (width <= breakpoints.sm) {
-      return 'sm'
-    }
-    if (width <= breakpoints.md) {
-      return 'md'
-    }
-    if (width <= breakpoints.lg) {
-      return 'lg'
-    }
-    if (width <= breakpoints.xl) {
-      return 'xl'
-    }
-    if (width <= breakpoints.xls) {
-      return 'xls'
-    }
-    if (width <= breakpoints.xxl) {
-      return 'xxl'
-    }
-    if (width <= breakpoints.xxxl) {
+    if (width >= breakpoints.xxxl) {
       return 'xxxl'
     }
-    return 'ultra-wide'
+    if (width >= breakpoints.xxl) {
+      return 'xxl'
+    }
+    if (width >= breakpoints.xls) {
+      return 'xls'
+    }
+    if (width >= breakpoints.xl) {
+      return 'xl'
+    }
+    if (width >= breakpoints.lg) {
+      return 'lg'
+    }
+    if (width >= breakpoints.md) {
+      return 'md'
+    }
+    if (width >= breakpoints.sm) {
+      return 'sm'
+    }
+    if (width >= breakpoints.xs) {
+      return 'xs'
+    }
+    return 'xs'
   }
 
   /**
@@ -785,6 +787,26 @@ if (typeof window !== 'undefined') {
         console.warn('请先初始化 postcss store')
         return null
       }
+    },
+
+    // 🧪 测试边界逻辑
+    testBoundaryLogic() {
+      const testWidths = [768, 1024, 1920, 2560, 3840, 4096]
+      const adapter = new RemAdapter()
+
+      console.log('🧪 测试边界逻辑:')
+      testWidths.forEach(width => {
+        // 测试大屏优先策略
+        const largeScreenResult = adapter['calculateLargeScreenFirstSize'](width, 'PC')
+
+        // 测试自适应策略
+        const adaptiveResult = adapter['calculateAdaptiveSize'](width, 'PC')
+
+        console.log(`屏幕宽度 ${width}px:`)
+        console.log(`  大屏优先策略: ${largeScreenResult.toFixed(2)}px`)
+        console.log(`  自适应策略: ${adaptiveResult.toFixed(2)}px`)
+        console.log('---')
+      })
     },
   }
 }

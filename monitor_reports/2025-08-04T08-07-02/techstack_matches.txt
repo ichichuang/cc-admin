@@ -1,0 +1,36 @@
+chansee97/nova-admin: A simple and flexible admin template based on Vue3, Vite, TypeScript, NaiveUI
+zclzone/vue-naive-admin: ⚡️基于 Vue3 + Vite + Pinia + Unocss + Naive UI 的轻量级后台管理模板。
+vok123/vue3-ts-vite-ssr-starter: Use vue3 vite4 typescript eslint SSR pinia unocss vue-router element-plus scss
+oyjt/uniapp-vue3-template: 使用uniapp+vite+vue3+typescript+uview-plus+unocss 搭建的适合团队协作的快速开发模版
+yang1206/uniapp-template: 基于vite，unocss和typescript的uniapp起始模版
+zmtlwzy/zmtlwzy-admin: A  original style admin template, based on Vue3、Vite、Naive UI、TypeScript、Unocss.
+vbenjs/vben3: Next-generation Vben framework
+Chadwuo/li-ji-weapp: 专注于记录和管理人情往来中的随礼、收礼、份子钱、礼金、心意、礼物、红包等，多维度查询和统计亲友间的往来记录，家人共享记账，你贴心的人情往来数字记账伙伴。
+vue-rookie/uni-vue3: 开箱即用：基于前端最新技术栈：uni-app Vue3 + Vite5 + TypeScript + Pinia + Unocss 搭建的小程序快速开发模板框架
+KYX1234/Element-Admin: 基于 Vue3、TypeScript、Vite、Pinia、Element-Plus、Unocss 的一套后台管理框架。
+viarotel-org/vite-uniapp-template: 🚀 以实用为先的 uni-app 起手模板。
+eonova/vitesse-star: ✨ Vue3 起手模版
+Haoyue-zhi/uni-fastkit: 快如其名，开箱即用。基于uni-app + vue 3 + vite 5 + Typescript + Tailwind CSS构建的快速开发框架。
+AnyFork/vite-standard-template: 这是一个基于Vite4.X + Vue3.X + TypeScript + Naive UI + Pinia + VueRouter + Unocss + Alova + Eslint + Prettier + husky + lint-staged + commitlint + commitizen + cz-customizable+ conventional-changelog构建的标准的vue项目模板。整个项目包依赖采用pnpm进行依赖管理，Node版本为16.17.0, 同时也集成了项目中常用的插件，包含组件自动导入API
+xzw-nice/commonTemplate: a common background management template（vue3 + vite + autofit + pinia +element-plus + alova）
+4xian/uniapp-vite-template: uniapp微信小程序快速启动模板：Vite + Vue3 + Typescript + Pinia + Unocss + Wot Design Uni + Alova + uni-mini-router。
+jzfai/vue3-admin-plus: 👏 An amazing admin framework of vue3
+insistence/RuoYi-Vue3-FastAPI: 基于Vue3+Element Plus+FastAPI开发的一个通用中后台管理框架（若依的FastAPI版本），支持代码生成。A general middle and backend management framework developed with Vue3 + Element Plus + FastAPI (FastAPI Edition of RuoYi), supporting code generation.
+vbenjs/vben3: Next-generation Vben framework
+nsnail/NetAdmin: 通用后台权限管理系统、快速开发框架（基于C#13/.NET9、Vue3/Vite、ElementPlus等现代技术构建，具有十分整洁、优雅的编码规范）Universal backend permission management system, rapid development framework (based on modern technologies such as C#13/.NET9, Vue3/Vite, ElementPlus, etc., with very neat and elegant coding standards)
+dirkhe1051931999/quasar-typescript-admin-template: :dizzy: This is a management system written using the Class API for Vue2 and Vue3 versions of the Quasar framework and supports TypeScript. where the master branch is used for the Vue2 version and the v3-admin branch is used for the Vue3 version.
+devforth/adminforth: Create Admin Panels faster on Node.js and Vue.js with AdminForth Framework. Setup main CRUD pages within minutes, extend as you need with Vue3 
+fast-crud/fast-crud: 面向配置的crud框架，开发crud 快如闪电，超级表格；Options-oriented crud framework,  develop crud as fast as lightning；based on vue3；super table
+wang9203tao/vue3-admin-electron: 🚀A new  generation Cross-desktop framework ，It's  easy and fast!
+calvin008/dahe: 👏👏Admin Framework -- Based on Spring Boot3 and Vue3😍  这是一个轻量级RBAC后台管理,应用实战多门店管理小程序,非常实战
+nodite/nodite-light: A web framework with Vuetify & Express, use Typescript for everything.
+vbenjs/vue-vben-admin: A modern vue admin panel built with Vue3, Shadcn UI, Vite, TypeScript, and Monorepo. It's fast!
+un-pany/v3-admin-vite: ☀️ A crafted Vue3 admin template | Vue Admin | Vue Template | Vue3 Admin | Vue3 Template | Vue 后台 | Vue 模板 | Vue3 后台 | Vue3 模板
+vbenjs/vben-admin-thin-next: vue-vben-admin-2.0 mini template.vue3,vite,typescript
+buqiyuan/vue3-antdv-admin: 基于 vite5.x + vue3.x + ant-design-vue4.x + typescript hooks 的基础后台管理系统  RBAC的权限系统, JSON Schema动态表单,动态表格,锁屏界面
+kailong321200875/vue-element-plus-admin: A backend management system based on vue3, typescript, element-plus, and vite
+pure-admin/vue-pure-admin: 全面ESM+Vue3+Vite+Element-Plus+TypeScript编写的一款后台管理系统（兼容移动端）
+RainManGO/vue3-composition-admin: 🎉  基于vue3 的管理端模板(Vue3 TS Vuex4  element-plus vue-i18n-next  composition-api)  vue3-admin   vue3-ts-admin
+youlaitech/vue3-element-admin: 🔥基于 vue 3 + vite 6+ typescript + element-plus 构建的后台管理前端模板（配套后端源码），vue-element-admin 的 vue3 版本。
+soybeanjs/soybean-admin: A clean, elegant, beautiful and powerful admin template, based on Vue3, Vite7, TypeScript, Pinia, NaiveUI and UnoCSS. 一个清新优雅、高颜值且功能强大的后台管理模板，基于最新的前端技术栈，包括 Vue3, Vite7, TypeScript, Pinia, NaiveUI 和 UnoCSS。
+HalseySpicy/Geeker-Admin: ✨✨✨ Geeker Admin，基于 Vue3.4、TypeScript、Vite5、Pinia、Element-Plus 开源的一套后台管理框架。

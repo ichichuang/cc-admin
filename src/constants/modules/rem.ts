@@ -71,17 +71,17 @@ export const adapterStrategies = {
  * 当启用移动端优先策略时，会自动使用这些配置：
  * - 设计稿宽度：768px（而不是桌面端的 1800px）
  * - 基准字体大小：14px（而不是桌面端的 16px）
- * - 字体大小范围：10px - 18px
+ * - 字体大小范围：12px - 18px
  */
 export const mobileConfig = {
   // 移动端最大设计稿宽度
   maxDesignWidth: 768,
 
   // 移动端最大基准字体大小
-  maxBaseFontSize: 14,
+  maxBaseFontSize: 16,
 
   // 移动端最小字体大小
-  minFontSize: 10,
+  minFontSize: 12,
 
   // 移动端最大字体大小
   maxFontSize: 18,
@@ -112,7 +112,7 @@ export const desktopConfig = {
 /**
  * 大屏特殊配置
  *
- * 当屏幕宽度 >= 1920px 时，会使用这些配置：
+ * 当屏幕宽度 > 1920px 时，会使用这些配置：
  * - 设计稿宽度：2560px
  * - 基准字体大小：18px
  * - 字体大小范围：14px - 32px
@@ -137,7 +137,7 @@ export const largeScreenConfig = {
 /**
  * 超大屏特殊配置
  *
- * 当屏幕宽度 >= 2560px 时，会使用这些配置：
+ * 当屏幕宽度 > 2560px 时，会使用这些配置：
  * - 设计稿宽度：3200px
  * - 基准字体大小：20px
  * - 字体大小范围：16px - 36px
@@ -162,7 +162,7 @@ export const ultraWideConfig = {
 /**
  * 4K屏特殊配置
  *
- * 当屏幕宽度 >= 3840px 时，会使用这些配置：
+ * 当屏幕宽度 > 3840px 时，会使用这些配置：
  * - 设计稿宽度：3840px
  * - 基准字体大小：24px
  * - 字体大小范围：20px - 48px
@@ -201,7 +201,7 @@ export const adaptiveConfig = {
       maxWidth: 768,
       designWidth: 768,
       baseFontSize: 14,
-      minFontSize: 10,
+      minFontSize: 12,
       maxFontSize: 18,
     },
     tablet: {

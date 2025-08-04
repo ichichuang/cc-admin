@@ -5,53 +5,54 @@
  * 本文件为 chichuang 原创，禁止擅自删除署名或用于商业用途。
  */
 
-/**
- * 多语言状态管理
- */
+/* 多语言配置 */
 import { getCurrentLocale, setLocale, supportedLocales } from '@/locales'
 import type { LocaleInfo, SupportedLocale } from '@/locales/types'
+import store from '@/stores'
 import { env } from '@/utils/env'
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
 
 interface LocaleState {
   locale: SupportedLocale
   loading: boolean
 }
 
-export const useLocaleStore = defineStore(
-  'locale',
-  () => {
-    // 状态
-    const state = ref<LocaleState>({
-      locale: getCurrentLocale(),
-      loading: false,
-    })
+/* 多语言store */
+export const useLocaleStore = defineStore('locale', {
+  state: (): LocaleState => ({
+    locale: getCurrentLocale(),
+    loading: false,
+  }),
 
-    // 计算属性
-    const currentLocale = computed(() => state.value.locale)
+  getters: {
+    // 获取当前语言
+    currentLocale: (state: LocaleState) => state.locale,
+    // 获取当前语言信息
+    currentLocaleInfo: (state: LocaleState) =>
+      supportedLocales.find(item => item.key === state.locale),
+    // 是否为中文语言
+    isChineseLang: (state: LocaleState) => state.locale.startsWith('zh'),
+    // 是否为 RTL 语言
+    isRTL: (state: LocaleState) => {
+      const localeInfo = supportedLocales.find(item => item.key === state.locale)
+      return localeInfo?.direction === 'rtl'
+    },
+    // 获取可用语言列表
+    availableLocales: () => supportedLocales,
+  },
 
-    const currentLocaleInfo = computed(() =>
-      supportedLocales.find(item => item.key === state.value.locale)
-    )
-
-    const isChineseLang = computed(() => state.value.locale.startsWith('zh'))
-
-    const isRTL = computed(() => currentLocaleInfo.value?.direction === 'rtl')
-
-    const availableLocales = computed(() => supportedLocales)
-
-    // 动作
-    const switchLocale = async (newLocale: SupportedLocale) => {
-      if (state.value.locale === newLocale) {
+  actions: {
+    // 切换语言
+    async switchLocale(newLocale: SupportedLocale) {
+      if (this.locale === newLocale) {
         return
       }
 
-      state.value.loading = true
+      this.loading = true
 
       try {
         setLocale(newLocale)
-        state.value.locale = newLocale
+        this.locale = newLocale
 
         // 触发自定义事件
         window.dispatchEvent(
@@ -63,46 +64,33 @@ export const useLocaleStore = defineStore(
         console.error('Failed to switch locale:', error)
         throw error
       } finally {
-        state.value.loading = false
+        this.loading = false
       }
-    }
+    },
 
-    const initLocale = () => {
+    // 初始化语言
+    initLocale() {
       const current = getCurrentLocale()
-      state.value.locale = current
+      this.locale = current
 
       // 确保HTML属性设置正确
       document.documentElement.lang = current
       const localeInfo = supportedLocales.find(item => item.key === current)
       document.documentElement.dir = localeInfo?.direction || 'ltr'
-    }
-
-    const getLocaleInfo = (locale: SupportedLocale): LocaleInfo | undefined => {
-      return supportedLocales.find(item => item.key === locale)
-    }
-
-    return {
-      // 状态
-      state,
-
-      // 计算属性
-      currentLocale,
-      currentLocaleInfo,
-      isChineseLang,
-      isRTL,
-      availableLocales,
-      loading: computed(() => state.value.loading),
-
-      // 动作
-      switchLocale,
-      initLocale,
-      getLocaleInfo,
-    }
-  },
-  {
-    persist: {
-      key: `${env.piniaKeyPrefix}-locale`,
-      storage: localStorage,
     },
-  }
-)
+
+    // 获取语言信息
+    getLocaleInfo(locale: SupportedLocale): LocaleInfo | undefined {
+      return supportedLocales.find(item => item.key === locale)
+    },
+  },
+
+  persist: {
+    key: `${env.piniaKeyPrefix}-locale`,
+    storage: localStorage,
+  },
+})
+
+export const useLocaleStoreWithOut = () => {
+  return useLocaleStore(store)
+}

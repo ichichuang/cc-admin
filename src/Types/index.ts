@@ -31,3 +31,9 @@ export type {
   RouteUtils,
   UserInfo,
 } from './modules/router'
+
+// 按需导出常用类型，便于使用
+export type { DeviceInfo, DeviceType, ScreenSize } from './modules/device'
+export type { MenuItem, RouteConfig, RouteMeta } from './modules/router'
+export type { UserInfo, UserPermission, UserRole } from './modules/user'
+export type { ComponentRef, Nullable, Recordable } from './modules/utils'

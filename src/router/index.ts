@@ -70,6 +70,10 @@ registerRouterGuards(router, {
 // 导出路由配置供其他地方使用
 export { initialRoutes as routes, sortedStaticRoutes as staticRoutes }
 
+// 按需导出常用路由工具，便于使用
+export { registerRouterGuards } from './utils/customs'
+export { initDynamicRoutes } from './utils/helper'
+
 // 注意：当你在 modules/ 目录下添加新的路由文件时，
 // 它们会自动被导入并合并到路由配置中
 // 每个路由模块应该导出一个 RouteConfig[] 数组

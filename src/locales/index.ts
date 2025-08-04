@@ -133,6 +133,6 @@ export function n(number: number, format?: string): string {
   return format ? i18n.global.n(number, format) : i18n.global.n(number)
 }
 
-// 导出类型和工具函数
+// 按需导出常用国际化函数，便于使用
 export { getDefaultLocale, messages }
 export type { LocaleInfo, LocaleMessages, SupportedLocale }

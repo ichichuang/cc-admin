@@ -12,8 +12,6 @@ export * from './modules/rem'
 export * from './modules/router'
 
 // 重新导出常用配置，方便使用
-export { apiEndpoints, errorMessages, httpConfig, httpMethods } from './modules/http'
-
 export {
   adapterStrategies,
   breakpoints,
@@ -23,12 +21,4 @@ export {
   remConfig,
 } from './modules/rem'
 
-export { appConfig, debugConfig, i18nConfig, loadingConfig, themeConfig } from './modules/app'
-
-export {
-  errorPages,
-  routeMetaConfig,
-  routePermissionConfig,
-  routerConfig,
-  routeWhiteList,
-} from './modules/router'
+export { errorPages, routeWhiteList } from './modules/router'

@@ -512,6 +512,30 @@ export const getHistoryLength = (): number => {
   return history.length
 }
 
+/**
+ * 检查当前是否在指定路由
+ *
+ * @description 检查当前路由名称是否与指定的路由名称匹配
+ * @param name - 要检查的路由名称
+ * @returns 如果当前在指定路由则返回 true，否则返回 false
+ * @example
+ * // 检查当前是否在仪表板页面
+ * const isOnDashboard = isCurrentRoute('dashboard')
+ * if (isOnDashboard) {
+ *   console.log('当前在仪表板页面')
+ * }
+ *
+ * // 检查当前是否在用户页面
+ * const isOnUserPage = isCurrentRoute('user')
+ * if (isOnUserPage) {
+ *   // 执行用户页面相关逻辑
+ * }
+ */
+export const isCurrentRoute = (name: string): boolean => {
+  const currentRouteName = router.currentRoute.value.name as string
+  return currentRouteName === name
+}
+
 // ==================== 动态路由管理相关 ====================
 
 /**
@@ -773,6 +797,7 @@ export default {
 
   // 工具函数
   getHistoryLength, // 获取路由历史记录数量
+  isCurrentRoute, // 检查当前是否在指定路由
 
   // 动态路由管理
   initDynamicRoutesAsync, // 初始化动态路由
@@ -825,7 +850,11 @@ export default {
  * import { checkCurrentRoutePermission } from '@/common/modules/router'
  * const hasPermission = checkCurrentRoutePermission(['admin']) // 检查权限
  *
- * // 6. 路由健康检查
+ * // 6. 检查当前路由
+ * import { isCurrentRoute } from '@/common/modules/router'
+ * const isOnDashboard = isCurrentRoute('dashboard') // 检查是否在仪表板页面
+ *
+ * // 7. 路由健康检查
  * import { checkRouteHealth } from '@/common/modules/router'
  * const health = checkRouteHealth() // 检查路由系统健康状态
  *

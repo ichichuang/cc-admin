@@ -196,25 +196,5 @@ if (isDev()) {
   }
 }
 
-/**
- * rem 适配系统默认配置
- * 统一管理所有 rem 相关的默认值，避免在多个文件中重复定义
- */
-export const REM_DEFAULT_CONFIG = {
-  designWidth: 1800,
-  baseFontSize: 16,
-  minFontSize: 12,
-  maxFontSize: 24,
-  mobileFirst: false,
-  breakpoints: {
-    xs: 375,
-    sm: 768,
-    md: 1024,
-    lg: 1400,
-    xl: 1660,
-    xls: 1920,
-  },
-} as const
-
-// 注意：rem 配置现在统一从 src/constants/modules/rem.ts 获取
-// 不再需要从环境变量解析，避免配置重复和不一致
+// 注意：rem 配置统一从 src/constants/modules/rem.ts 获取
+// 不再需要在此处定义默认配置，避免配置重复和不一致

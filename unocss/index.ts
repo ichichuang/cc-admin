@@ -137,6 +137,21 @@ export default defineConfig({
         selector: s => `${s}:active`,
       }
     },
+
+    // 🎯 响应式断点变体 - 确保与 rem 适配系统断点一致
+    matcher => {
+      const breakpointVariants = ['xs:', 'sm:', 'md:', 'lg:', 'xl:', 'xls:', 'xxl:', 'xxxl:']
+      for (const variant of breakpointVariants) {
+        if (matcher.startsWith(variant)) {
+          return {
+            matcher: matcher.slice(variant.length),
+            selector: s =>
+              `@media (min-width: ${themeConfig.breakpoints[variant.slice(0, -1)]}) { ${s} }`,
+          }
+        }
+      }
+      return matcher
+    },
   ],
 
   // 快捷方式配置

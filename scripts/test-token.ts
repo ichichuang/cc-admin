@@ -229,10 +229,7 @@ async function main() {
 }
 
 // ES 模块方式检查是否是主模块
-const scriptPath = process.argv[1].replace(/\\/g, '/')
-const expectedUrl = `file:///${scriptPath}`
-
-if (import.meta.url === expectedUrl) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   main().catch(error => {
     console.error('❌ 程序执行失败:', error)
     process.exit(1)

@@ -51,6 +51,105 @@
 - ❌ **禁止**: `npm install`, `yarn install`, `npm run dev`
 - 🤖 **AI规则**: AI助手必须使用 `pnpm` 命令，不得使用 `npm` 或 `yarn`
 
+## 📦 模块导出规范
+
+### 统一导出策略
+
+项目采用 `index.ts` 统一导出方式，简化导入路径，提高开发体验。
+
+#### 1. 导出原则
+
+```typescript
+// ✅ 推荐：明确导出常用项
+export { login, getUserInfo } from './modules/auth'
+export { remConfig } from './modules/rem'
+
+// ❌ 不推荐：导出所有（可能增加打包体积）
+export * from './modules/auth'
+```
+
+#### 2. 适用场景
+
+**✅ 推荐使用统一导出的模块：**
+
+- API 模块 (`src/api/`)
+- 工具函数 (`src/utils/`)
+- 类型定义 (`src/types/`)
+- 常量配置 (`src/constants/`)
+- 状态管理 (`src/stores/`)
+
+**⚠️ 需要谨慎的场景：**
+
+- 大型组件库（可能增加打包体积）
+- 第三方库集成（可能产生冲突）
+- 性能敏感模块（需要按需加载）
+
+#### 3. 导出规范
+
+```typescript
+// src/api/index.ts - API模块统一导出
+export * from './modules/auth'
+export { login, getUserInfo, getAuthRoutes } from './modules/auth'
+
+// src/constants/index.ts - 常量模块分类导出
+export { errorPages, routeWhiteList } from './modules/router'
+export { remConfig, breakpoints, deviceTypes } from './modules/rem'
+
+// src/stores/index.ts - 状态管理统一导出
+export * from './modules/app'
+export * from './modules/user'
+export * from './modules/permission'
+
+// src/common/index.ts - 公共模块统一导出（方法较多时使用 export *）
+export * from './modules/date'
+export * from './modules/function'
+export * from './modules/helpers'
+export * from './modules/router'
+```
+
+#### 4. 导出策略选择
+
+**使用 `export *` 的场景：**
+
+- 模块导出方法很多（如 `src/common/modules/date.ts` 有 50+ 个方法）
+- 工具函数集合（如 lodash 风格的函数库）
+- 类型定义模块（如 `src/Types/`）
+- 常量配置模块（如 `src/constants/`）
+
+**使用按需导出的场景：**
+
+- 模块导出方法较少（如 API 模块通常只有几个方法）
+- 需要明确控制导出的模块
+- 性能敏感的场景（避免打包体积过大）
+
+**混合策略：**
+
+- 主要使用 `export *` 导出所有
+- 同时按需导出常用项，便于使用
+
+#### 4. 类型支持
+
+```typescript
+// 导出类型定义
+export type { UserInfo, BackendRouteConfig } from './modules/auth'
+export type { RemAdapterConfig } from './utils/remAdapter'
+```
+
+#### 5. 向后兼容
+
+```typescript
+// 支持多种导入方式
+export { auth } from './modules/auth' // 命名空间导入
+export { login } from './modules/auth' // 直接导入
+```
+
+#### 6. 最佳实践
+
+- **明确导出常用项**，避免导出所有
+- **提供良好的类型支持**
+- **保持模块的独立性**
+- **支持按需导入和统一导入**
+
 ## 🎯 项目配置文件一览
 
 ### 核心配置文件
@@ -98,109 +197,78 @@
   - Vue Router: 4+
 
 HTTP客户端:
-  - Alova: 3+
+  - Axios: 1.6+
+  - 自定义拦截器
 
 样式方案:
-  - UnoCSS: 66+
-  - @unocss/preset-uno
-  - @unocss/preset-attributify
-  - @unocss/preset-icons
-  - @unocss/preset-typography
+  - UnoCSS: 0.60+
+  - PostCSS: 8+
+  - SCSS: 1.69+
 
-代码质量:
+开发工具:
   - ESLint: 9+
   - Prettier: 3+
-  - TypeScript ESLint: 8+
-  - Commitizen + Commitlint
+  - TypeScript: 5+
+  - Vue DevTools: 7+
 ```
 
-### 开发工具链
+### 构建优化配置
 
 ```yaml
-包管理: pnpm 10.12.4
-构建工具: Vite 7+
-类型检查: vue-tsc 2+
-代码检查: ESLint 9+
-格式化: Prettier 3+
-Git钩子: Husky + lint-staged
+Vite优化:
+  - 代码分割: 自动分包
+  - 压缩: gzip/brotli
+  - 缓存: 强缓存策略
+  - 分析: 构建分析报告
+
+UnoCSS优化:
+  - 按需生成: 只生成使用的样式
+  - 预设: 内置常用预设
+  - 主题: 支持多主题切换
+  - 图标: 自动导入图标
+
+TypeScript优化:
+  - 严格模式: 启用所有严格检查
+  - 路径别名: 简化导入路径
+  - 类型检查: 构建时类型检查
 ```
 
-## 📁 目录结构规范
+## 🎨 主题系统配置
 
-### 统一的模块组织方式
+### 多主题支持
 
-项目采用 `index.ts + modules/` 模式：
+```yaml
+主题配置:
+  - 浅色主题: 默认主题
+  - 深色主题: 支持切换
+  - 动态主题: CSS变量绑定
+  - 主题持久化: 本地存储
 
-```
-src/
-├── api/                    # API管理
-│   ├── index.ts           # 自动导入API模块
-│   └── modules/           # 具体API实现
-├── stores/                # 状态管理
-│   ├── index.ts           # 自动导入Store模块
-│   ├── modules/           # 具体Store实现
-│   └── types/             # Store类型定义
-├── router/                # 路由管理
-│   ├── index.ts           # 自动导入路由模块
-│   ├── modules/           # 具体路由配置
-│   ├── types.ts           # 路由类型
-│   └── utils.ts           # 路由工具
-├── hooks/                 # 组合式函数
-│   └── index.ts           # 自动导入hooks
-├── common/                # 公共模块
-│   ├── index.ts           # 自动导入公共模块
-│   └── modules/           # 具体公共功能
-├── layouts/               # 布局组件
-├── views/                 # 页面组件
-└── utils/                 # 工具函数
+颜色系统:
+  - 主色调: 品牌色
+  - 功能色: 成功/警告/错误
+  - 中性色: 文字/背景/边框
+  - 语义色: 状态/交互
 ```
 
-### 自动导入机制
+### 响应式设计
 
-通过 `autoImportModulesSync` 函数实现模块自动导入：
+```yaml
+断点系统:
+  - xs: 375px+ (超小屏)
+  - sm: 768px+ (小屏)
+  - md: 1024px+ (中屏)
+  - lg: 1400px+ (大屏)
+  - xl: 1660px+ (超大屏)
+  - xls: 1920px+ (特大屏)
+  - xxl: 2560px+ (超宽屏)
+  - xxxl: 3840px+ (4K屏)
 
-- 扫描 `modules/` 目录下的所有模块
-- 自动合并导出内容
-- 支持类型安全的模块导入
-
-## 🎨 样式系统配置
-
-### UnoCSS 配置特性
-
-```typescript
-// uno.config.ts 主要配置
-{
-  presets: [
-    presetUno(),           // 基础工具类
-    presetAttributify(),   // 属性化模式
-    presetIcons(),         // 图标系统
-    presetTypography()     // 排版预设
-  ],
-
-  theme: {
-    colors: {
-      // 深色主题
-      dark: { /* 颜色定义 */ },
-      // 浅色主题
-      light: { /* 颜色定义 */ }
-    }
-  },
-
-  shortcuts: {
-    // 快捷类定义
-  },
-
-  rules: [
-    // 自定义规则
-  ]
-}
+适配策略:
+  - 移动端优先: 默认策略
+  - 桌面端优先: 可选策略
+  - 自适应: 根据屏幕自动选择
 ```
-
-### 主题系统
-
-- **双主题**: 支持深色/浅色模式切换
-- **动态颜色**: CSS变量绑定主题颜色
-- **类型安全**: TypeScript类型定义完整的主题配置
 
 ## 📝 命名规范配置
 
@@ -279,7 +347,14 @@ src/
 - **必须**: 使用自动导入机制
 - **禁止**: 深层次嵌套目录
 
-### 5. 提交规范约束
+### 5. 模块导出约束
+
+- **必须**: 使用 `index.ts` 统一导出
+- **必须**: 明确导出常用项，避免导出所有
+- **必须**: 提供类型支持
+- **推荐**: 支持多种导入方式
+
+### 6. 提交规范约束
 
 - **必须**: 使用 `pnpm commit` 生成提交信息
 - **格式**: 遵循 Conventional Commits 规范
